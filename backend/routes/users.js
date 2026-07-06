@@ -1,0 +1,97 @@
+const router = require("express").Router();
+const User = require("../models/User");
+const authMiddleware = require("../middleware/auth");
+const { isAdmin } = require("../middleware/auth");
+const { isValidPhone, sanitizeText, requireValidId } = require("../middleware/validate");
+
+// All users (admin)
+router.get("/", authMiddleware, isAdmin, async (req, res) => {
+  try {
+    const users = await User.find().select("-password");
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Delete user (admin)
+router.delete("/:id", authMiddleware, isAdmin, requireValidId(), async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json({ message: "User deleted" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Update Addresses
+router.put("/addresses", authMiddleware, async (req, res) => {
+  try {
+    if (!Array.isArray(req.body.addresses)) {
+      return res.status(400).json({ message: "addresses must be an array" });
+    }
+    if (req.body.addresses.length > 20) {
+      return res.status(400).json({ message: "Too many addresses (max 20)" });
+    }
+    for (const a of req.body.addresses) {
+      if (!a || typeof a !== "object") {
+        return res.status(400).json({ message: "Invalid address entry" });
+      }
+      if (!a.name || !a.street || !a.city) {
+        return res.status(400).json({ message: "Each address needs a name, street and city" });
+      }
+      if (a.phone && !isValidPhone(a.phone)) {
+        return res.status(400).json({ message: "Invalid phone number in address" });
+      }
+    }
+    const clean = req.body.addresses.map(a => ({
+      name: sanitizeText(String(a.name)).slice(0, 100),
+      phone: a.phone ? String(a.phone).trim().slice(0, 20) : "",
+      street: sanitizeText(String(a.street)).slice(0, 300),
+      city: sanitizeText(String(a.city)).slice(0, 100),
+      province: sanitizeText(String(a.province || "")).slice(0, 100),
+      postal: sanitizeText(String(a.postal || "")).slice(0, 20),
+      isDefault: !!a.isDefault
+    }));
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { addresses: clean },
+      { new: true }
+    ).select("-password");
+    res.json({ addresses: user.addresses });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Update profile
+router.put("/profile", authMiddleware, async (req, res) => {
+  try {
+    const update = {};
+    if (req.body.fname !== undefined) {
+      if (!req.body.fname || String(req.body.fname).trim().length < 2) {
+        return res.status(400).json({ message: "First name must be at least 2 characters" });
+      }
+      update.fname = sanitizeText(String(req.body.fname)).slice(0, 50);
+    }
+    if (req.body.lname !== undefined) update.lname = sanitizeText(String(req.body.lname)).slice(0, 50);
+    if (req.body.phone !== undefined) {
+      if (req.body.phone && !isValidPhone(req.body.phone)) {
+        return res.status(400).json({ message: "Invalid phone number" });
+      }
+      update.phone = String(req.body.phone || "").trim().slice(0, 20);
+    }
+    if (req.body.dob !== undefined) update.dob = sanitizeText(String(req.body.dob)).slice(0, 20);
+    if (req.body.gender !== undefined) update.gender = sanitizeText(String(req.body.gender)).slice(0, 20);
+
+    const user = await User.findByIdAndUpdate(req.user.id, update, { new: true }).select("-password");
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json({ fname: user.fname, lname: user.lname, email: user.email, phone: user.phone, dob: user.dob, gender: user.gender, isAdmin: user.isAdmin, addresses: user.addresses || [] });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+module.exports = router;
