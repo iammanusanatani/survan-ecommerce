@@ -51,6 +51,21 @@ app.use('/api/upload', require('./routes/upload'));
 app.use('/api/payment', paymentRoutes.router);
 app.use('/api/config', require('./routes/config'));
 
+app.get("/", (req, res) => {
+  res.json({
+    status: "OK",
+    message: "Survan Backend is Running 🚀"
+  });
+});
+
+app.get("/api/health", (req, res) => {
+  res.json({
+    success: true,
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString()
+  });
+});
+
 // 404 for unknown API routes
 app.use('/api', (req, res) => res.status(404).json({ message: 'Not found' }));
 
