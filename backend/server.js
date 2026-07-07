@@ -14,8 +14,8 @@ if (missing.length) {
 if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
   console.warn('⚠️  RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET not set — online card payments will fail until these are added to .env. COD still works.');
 }
-if (!process.env.EMAIL_HOST || !process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-  console.warn('⚠️  EMAIL_HOST / EMAIL_USER / EMAIL_PASS not set — order confirmation emails will be skipped until these are added to .env.');
+if (!process.env.BREVO_API_KEY) {
+  console.warn('⚠️  BREVO_API_KEY not set — order confirmation emails will be skipped until this is added to .env.');
 }
 if (!process.env.WHATSAPP_NUMBER) {
   console.warn('⚠️  WHATSAPP_NUMBER not set — the "message us" WhatsApp popup will stay hidden until this is added to .env.');

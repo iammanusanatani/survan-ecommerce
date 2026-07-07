@@ -1,37 +1,54 @@
-const nodemailer = require('nodemailer');
+// Email is sent via Brevo's HTTP API (see below) — no SMTP library needed.
 
-let transporter = null;
-
+// Sends email via Brevo's REST API (https://api.brevo.com) over normal HTTPS
+// instead of raw SMTP. Render's free tier blocks outbound SMTP ports
+// (25/465/587) entirely, but regular HTTPS traffic like this is unaffected.
 function isMailConfigured() {
-  return !!(process.env.EMAIL_HOST && process.env.EMAIL_USER && process.env.EMAIL_PASS);
+  return !!process.env.BREVO_API_KEY;
 }
 
-function getTransporter() {
-  if (!isMailConfigured()) return null;
-  if (!transporter) {
-    transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: Number(process.env.EMAIL_PORT) || 587,
-      secure: Number(process.env.EMAIL_PORT) === 465,
-      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS }
-    });
+// Parses "Name <email@example.com>" or a bare "email@example.com" into parts.
+function parseSender(fromString) {
+  const match = String(fromString || '').match(/^(.*)<(.+)>$/);
+  if (match) {
+    return { name: match[1].trim().replace(/^"|"$/g, '') || 'SURVAN', email: match[2].trim() };
   }
-  return transporter;
+  return { name: 'SURVAN', email: String(fromString || '').trim() };
 }
 
 async function sendMail({ to, subject, html, text }) {
-  const t = getTransporter();
-  if (!t) {
-    console.warn('⚠️  Email not configured (EMAIL_HOST/EMAIL_USER/EMAIL_PASS missing) — skipping send to', to);
+  if (!isMailConfigured()) {
+    console.warn('⚠️  Email not configured (BREVO_API_KEY missing) — skipping send to', to);
     return { skipped: true };
   }
-  return t.sendMail({
-    from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
-    to,
-    subject,
-    html,
-    text
+
+  const sender = parseSender(process.env.EMAIL_FROM);
+  if (!sender.email) {
+    console.warn('⚠️  EMAIL_FROM not set — skipping send to', to);
+    return { skipped: true };
+  }
+
+  const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'api-key': process.env.BREVO_API_KEY
+    },
+    body: JSON.stringify({
+      sender,
+      to: [{ email: to }],
+      subject,
+      htmlContent: html,
+      textContent: text
+    })
   });
+
+  if (!res.ok) {
+    const errBody = await res.text().catch(() => '');
+    throw new Error(`Brevo API error (${res.status}): ${errBody}`);
+  }
+  return res.json();
 }
 
 function escapeHtml(str) {
