@@ -3820,6 +3820,22 @@
         </div>
       </div>
 
+      <!-- COUPONS SECTION -->
+      <div style="margin-top:3rem">
+        <div
+          style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:.5rem">
+          <div style="font-family:var(--fd);font-size:1.5rem;font-weight:900;text-transform:uppercase"><i
+              data-lucide="ticket-percent" style="width:20px;height:20px;vertical-align:middle;margin-right:8px"></i>Coupons</div>
+          <button onclick="openAddCouponModal()"
+            style="background:var(--neon);color:var(--dark);padding:.5rem 1.2rem;border-radius:4px;cursor:pointer;font-family:var(--fd);font-size:.85rem;font-weight:900;text-transform:uppercase;border:none;letter-spacing:.05em">+
+            Add Coupon</button>
+        </div>
+        <div id="admin-coupons-list"
+          style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem">
+          <div style="color:var(--gray);text-align:center;padding:2rem">Loading...</div>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -3896,18 +3912,18 @@
   <script>
     // ════ DATA ════
     let PRODUCTS = [
-      // { id: 1, name: "VOLT OVERSIZED TEE", cat: "Oversized", price: 1799, old: 2200, tag: "Best Seller", emoji: "👕", img: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&q=80", imgs: ["https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&q=80", "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&q=80", "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80", "https://images.unsplash.com/photo-1503341504253-dff4815485f1?w=600&q=80"], badge: "sale", sizes: ["XS", "S", "M", "L", "XL"], desc: "Our signature oversized tee in heavyweight 280gsm cotton. Drop-shoulder cut, screen-printed SURVAN graphic on the back. Made to live in.", rating: 4.9, reviews: 142 },
-      // { id: 2, name: "NEON STRIKE HOODIE", cat: "Hoodie", price: 3499, old: null, tag: "New Drop", emoji: "🧥", img: "https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=600&q=80", imgs: ["https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=600&q=80", "https://images.unsplash.com/photo-1509942774463-acf339cf87d5?w=600&q=80", "https://images.unsplash.com/photo-1614495800597-27ba9f4ce6f3?w=600&q=80", "https://images.unsplash.com/photo-1572307480813-ceb0e59d8325?w=600&q=80"], badge: "new", sizes: ["S", "M", "L", "XL", "XXL"], desc: "Premium fleece-lined hoodie with a bold neon strike graphic. Kangaroo pocket, drawstring hood, ribbed cuffs. The warmth hits different.", rating: 4.8, reviews: 87 },
-      // { id: 3, name: "BLACKOUT CARGO PANTS", cat: "Cargo", price: 2999, old: 3500, tag: "Trending", emoji: "👖", img: "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600&q=80", imgs: ["https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600&q=80", "https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&q=80", "https://images.unsplash.com/photo-1517445312882-bc9910d016b7?w=600&q=80", "https://images.unsplash.com/photo-1604671801908-6f0c6a092c05?w=600&q=80"], badge: "sale", sizes: ["28", "30", "32", "34", "36"], desc: "6-pocket tactical cargo pants in durable ripstop fabric. Adjustable ankle ties, hidden zip closure. Utility meets street.", rating: 4.7, reviews: 203 },
-      // { id: 4, name: "CIRCUIT BOARD JACKET", cat: "Jacket", price: 5499, old: null, tag: "Limited Ed.", emoji: "🫡", img: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&q=80", imgs: ["https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&q=80", "https://images.unsplash.com/photo-1520975954732-35dd22299614?w=600&q=80", "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&q=80", "https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=600&q=80"], badge: "new", sizes: ["S", "M", "L", "XL"], desc: "Statement bomber jacket with circuit-board all-over print. Satin lining, ribbed collar and cuffs. Only 50 pieces worldwide.", rating: 5.0, reviews: 34 },
-      // { id: 5, name: "STATIC SHORTS", cat: "Shorts", price: 1499, old: null, tag: "Summer Hit", emoji: "🩳", img: "https://images.unsplash.com/photo-1591195853828-11db59a44f43?w=600&q=80", imgs: ["https://images.unsplash.com/photo-1591195853828-11db59a44f43?w=600&q=80", "https://images.unsplash.com/photo-1562588673-7b7e7bbae7bb?w=600&q=80", "https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=600&q=80", "https://images.unsplash.com/photo-1517720359744-6d12f8a09b10?w=600&q=80"], badge: "new", sizes: ["S", "M", "L", "XL"], desc: "Lightweight mesh shorts with side stripes and elastic waistband. Perfect for gym, street, or just vibing. Available in 4 colourways.", rating: 4.6, reviews: 118 },
-      // { id: 6, name: "SURVAN CAP", cat: "Cap", price: 999, old: 1200, tag: "Accessory", emoji: "🧢", img: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=600&q=80", imgs: ["https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=600&q=80", "https://images.unsplash.com/photo-1521369909029-2afed882baee?w=600&q=80", "https://images.unsplash.com/photo-1534215754734-18e55d13e346?w=600&q=80", "https://images.unsplash.com/photo-1565084888279-aca607ecce0c?w=600&q=80"], badge: "sale", sizes: ["One Size"], desc: "6-panel structured cap with embroidered SURVAN bolt logo. Adjustable strapback, one size fits all.", rating: 4.8, reviews: 267 },
-      // { id: 7, name: "GLITCH GRAPHIC TEE", cat: "Oversized", price: 1599, old: null, tag: "New Arrival", emoji: "👕", img: "https://images.unsplash.com/photo-1503341504253-dff4815485f1?w=600&q=80", imgs: ["https://images.unsplash.com/photo-1503341504253-dff4815485f1?w=600&q=80", "https://images.unsplash.com/photo-1562157873-818bc0726f68?w=600&q=80", "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=600&q=80", "https://images.unsplash.com/photo-1554568218-0f1715e72254?w=600&q=80"], badge: "new", sizes: ["XS", "S", "M", "L", "XL"], desc: "Distorted glitch-art graphic on the chest, crew neck, boxy fit. 100% ringspun cotton. Looks like it was corrupted in the best way.", rating: 4.7, reviews: 56 },
-      // { id: 8, name: "URBAN TECH HOODIE", cat: "Hoodie", price: 3999, old: 4500, tag: "Fan Fav", emoji: "🧥", img: "https://images.unsplash.com/photo-1572307480813-ceb0e59d8325?w=600&q=80", imgs: ["https://images.unsplash.com/photo-1572307480813-ceb0e59d8325?w=600&q=80", "https://images.unsplash.com/photo-1614495800597-27ba9f4ce6f3?w=600&q=80", "https://images.unsplash.com/photo-1509942774463-acf339cf87d5?w=600&q=80", "https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=600&q=80"], badge: "sale", sizes: ["S", "M", "L", "XL"], desc: "Tech-fleece construction for lightweight warmth. Zip chest pocket, thumbhole cuffs, minimal branding. The city is your runway.", rating: 4.9, reviews: 179 },
-      // { id: 9, name: "ACID WASH CARGO", cat: "Cargo", price: 2799, old: null, tag: "Drop 02", emoji: "👖", img: "https://images.unsplash.com/photo-1604671801908-6f0c6a092c05?w=600&q=80", imgs: ["https://images.unsplash.com/photo-1604671801908-6f0c6a092c05?w=600&q=80", "https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&q=80", "https://images.unsplash.com/photo-1517445312882-bc9910d016b7?w=600&q=80", "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600&q=80"], badge: "new", sizes: ["28", "30", "32", "34", "36"], desc: "Hand-treated acid wash finish on our bestselling cargo silhouette. Every pair is unique. Side-cargo pockets, tapered leg.", rating: 4.6, reviews: 44 },
-      // { id: 10, name: "REBEL JOGGERS", cat: "Shorts", price: 1899, old: null, tag: "Comfy", emoji: "🩳", img: "https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=600&q=80", imgs: ["https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=600&q=80", "https://images.unsplash.com/photo-1591195853828-11db59a44f43?w=600&q=80", "https://images.unsplash.com/photo-1562588673-7b7e7bbae7bb?w=600&q=80", "https://images.unsplash.com/photo-1517720359744-6d12f8a09b10?w=600&q=80"], badge: "new", sizes: ["S", "M", "L", "XL"], desc: "Heavyweight jogger in brushed fleece. Tapered fit, deep side pockets. For when you want comfort that still looks cold.", rating: 4.5, reviews: 91 },
-      // { id: 11, name: "SHADOW OVERSIZED", cat: "Oversized", price: 1699, old: 2000, tag: "Classic", emoji: "👕", img: "https://images.unsplash.com/photo-1554568218-0f1715e72254?w=600&q=80", imgs: ["https://images.unsplash.com/photo-1554568218-0f1715e72254?w=600&q=80", "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&q=80", "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&q=80", "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=600&q=80"], badge: "sale", sizes: ["S", "M", "L", "XL", "XXL"], desc: "The crowd-pleaser. Solid black body, tonal shadow print on the back. Goes with everything in your wardrobe.", rating: 4.8, reviews: 311 },
-      // { id: 12, name: "STORM WINDBREAKER", cat: "Jacket", price: 4999, old: null, tag: "Limited", emoji: "🫡", img: "https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=600&q=80", imgs: ["https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=600&q=80", "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&q=80", "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&q=80", "https://images.unsplash.com/photo-1520975954732-35dd22299614?w=600&q=80"], badge: "new", sizes: ["S", "M", "L", "XL"], desc: "Lightweight packable windbreaker with neon trim details. Water-resistant shell, zippered pockets, packable into its own hood.", rating: 4.9, reviews: 22 },
+      { id: 1, name: "VOLT OVERSIZED TEE", cat: "Oversized", price: 1799, old: 2200, tag: "Best Seller", emoji: "👕", img: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&q=80", imgs: ["https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&q=80", "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&q=80", "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80", "https://images.unsplash.com/photo-1503341504253-dff4815485f1?w=600&q=80"], badge: "sale", sizes: ["XS", "S", "M", "L", "XL"], desc: "Our signature oversized tee in heavyweight 280gsm cotton. Drop-shoulder cut, screen-printed SURVAN graphic on the back. Made to live in.", rating: 4.9, reviews: 142 },
+      { id: 2, name: "NEON STRIKE HOODIE", cat: "Hoodie", price: 3499, old: null, tag: "New Drop", emoji: "🧥", img: "https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=600&q=80", imgs: ["https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=600&q=80", "https://images.unsplash.com/photo-1509942774463-acf339cf87d5?w=600&q=80", "https://images.unsplash.com/photo-1614495800597-27ba9f4ce6f3?w=600&q=80", "https://images.unsplash.com/photo-1572307480813-ceb0e59d8325?w=600&q=80"], badge: "new", sizes: ["S", "M", "L", "XL", "XXL"], desc: "Premium fleece-lined hoodie with a bold neon strike graphic. Kangaroo pocket, drawstring hood, ribbed cuffs. The warmth hits different.", rating: 4.8, reviews: 87 },
+      { id: 3, name: "BLACKOUT CARGO PANTS", cat: "Cargo", price: 2999, old: 3500, tag: "Trending", emoji: "👖", img: "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600&q=80", imgs: ["https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600&q=80", "https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&q=80", "https://images.unsplash.com/photo-1517445312882-bc9910d016b7?w=600&q=80", "https://images.unsplash.com/photo-1604671801908-6f0c6a092c05?w=600&q=80"], badge: "sale", sizes: ["28", "30", "32", "34", "36"], desc: "6-pocket tactical cargo pants in durable ripstop fabric. Adjustable ankle ties, hidden zip closure. Utility meets street.", rating: 4.7, reviews: 203 },
+      { id: 4, name: "CIRCUIT BOARD JACKET", cat: "Jacket", price: 5499, old: null, tag: "Limited Ed.", emoji: "🫡", img: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&q=80", imgs: ["https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&q=80", "https://images.unsplash.com/photo-1520975954732-35dd22299614?w=600&q=80", "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&q=80", "https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=600&q=80"], badge: "new", sizes: ["S", "M", "L", "XL"], desc: "Statement bomber jacket with circuit-board all-over print. Satin lining, ribbed collar and cuffs. Only 50 pieces worldwide.", rating: 5.0, reviews: 34 },
+      { id: 5, name: "STATIC SHORTS", cat: "Shorts", price: 1499, old: null, tag: "Summer Hit", emoji: "🩳", img: "https://images.unsplash.com/photo-1591195853828-11db59a44f43?w=600&q=80", imgs: ["https://images.unsplash.com/photo-1591195853828-11db59a44f43?w=600&q=80", "https://images.unsplash.com/photo-1562588673-7b7e7bbae7bb?w=600&q=80", "https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=600&q=80", "https://images.unsplash.com/photo-1517720359744-6d12f8a09b10?w=600&q=80"], badge: "new", sizes: ["S", "M", "L", "XL"], desc: "Lightweight mesh shorts with side stripes and elastic waistband. Perfect for gym, street, or just vibing. Available in 4 colourways.", rating: 4.6, reviews: 118 },
+      { id: 6, name: "SURVAN CAP", cat: "Cap", price: 999, old: 1200, tag: "Accessory", emoji: "🧢", img: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=600&q=80", imgs: ["https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=600&q=80", "https://images.unsplash.com/photo-1521369909029-2afed882baee?w=600&q=80", "https://images.unsplash.com/photo-1534215754734-18e55d13e346?w=600&q=80", "https://images.unsplash.com/photo-1565084888279-aca607ecce0c?w=600&q=80"], badge: "sale", sizes: ["One Size"], desc: "6-panel structured cap with embroidered SURVAN bolt logo. Adjustable strapback, one size fits all.", rating: 4.8, reviews: 267 },
+      { id: 7, name: "GLITCH GRAPHIC TEE", cat: "Oversized", price: 1599, old: null, tag: "New Arrival", emoji: "👕", img: "https://images.unsplash.com/photo-1503341504253-dff4815485f1?w=600&q=80", imgs: ["https://images.unsplash.com/photo-1503341504253-dff4815485f1?w=600&q=80", "https://images.unsplash.com/photo-1562157873-818bc0726f68?w=600&q=80", "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=600&q=80", "https://images.unsplash.com/photo-1554568218-0f1715e72254?w=600&q=80"], badge: "new", sizes: ["XS", "S", "M", "L", "XL"], desc: "Distorted glitch-art graphic on the chest, crew neck, boxy fit. 100% ringspun cotton. Looks like it was corrupted in the best way.", rating: 4.7, reviews: 56 },
+      { id: 8, name: "URBAN TECH HOODIE", cat: "Hoodie", price: 3999, old: 4500, tag: "Fan Fav", emoji: "🧥", img: "https://images.unsplash.com/photo-1572307480813-ceb0e59d8325?w=600&q=80", imgs: ["https://images.unsplash.com/photo-1572307480813-ceb0e59d8325?w=600&q=80", "https://images.unsplash.com/photo-1614495800597-27ba9f4ce6f3?w=600&q=80", "https://images.unsplash.com/photo-1509942774463-acf339cf87d5?w=600&q=80", "https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=600&q=80"], badge: "sale", sizes: ["S", "M", "L", "XL"], desc: "Tech-fleece construction for lightweight warmth. Zip chest pocket, thumbhole cuffs, minimal branding. The city is your runway.", rating: 4.9, reviews: 179 },
+      { id: 9, name: "ACID WASH CARGO", cat: "Cargo", price: 2799, old: null, tag: "Drop 02", emoji: "👖", img: "https://images.unsplash.com/photo-1604671801908-6f0c6a092c05?w=600&q=80", imgs: ["https://images.unsplash.com/photo-1604671801908-6f0c6a092c05?w=600&q=80", "https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&q=80", "https://images.unsplash.com/photo-1517445312882-bc9910d016b7?w=600&q=80", "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=600&q=80"], badge: "new", sizes: ["28", "30", "32", "34", "36"], desc: "Hand-treated acid wash finish on our bestselling cargo silhouette. Every pair is unique. Side-cargo pockets, tapered leg.", rating: 4.6, reviews: 44 },
+      { id: 10, name: "REBEL JOGGERS", cat: "Shorts", price: 1899, old: null, tag: "Comfy", emoji: "🩳", img: "https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=600&q=80", imgs: ["https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=600&q=80", "https://images.unsplash.com/photo-1591195853828-11db59a44f43?w=600&q=80", "https://images.unsplash.com/photo-1562588673-7b7e7bbae7bb?w=600&q=80", "https://images.unsplash.com/photo-1517720359744-6d12f8a09b10?w=600&q=80"], badge: "new", sizes: ["S", "M", "L", "XL"], desc: "Heavyweight jogger in brushed fleece. Tapered fit, deep side pockets. For when you want comfort that still looks cold.", rating: 4.5, reviews: 91 },
+      { id: 11, name: "SHADOW OVERSIZED", cat: "Oversized", price: 1699, old: 2000, tag: "Classic", emoji: "👕", img: "https://images.unsplash.com/photo-1554568218-0f1715e72254?w=600&q=80", imgs: ["https://images.unsplash.com/photo-1554568218-0f1715e72254?w=600&q=80", "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&q=80", "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&q=80", "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=600&q=80"], badge: "sale", sizes: ["S", "M", "L", "XL", "XXL"], desc: "The crowd-pleaser. Solid black body, tonal shadow print on the back. Goes with everything in your wardrobe.", rating: 4.8, reviews: 311 },
+      { id: 12, name: "STORM WINDBREAKER", cat: "Jacket", price: 4999, old: null, tag: "Limited", emoji: "🫡", img: "https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=600&q=80", imgs: ["https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=600&q=80", "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&q=80", "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&q=80", "https://images.unsplash.com/photo-1520975954732-35dd22299614?w=600&q=80"], badge: "new", sizes: ["S", "M", "L", "XL"], desc: "Lightweight packable windbreaker with neon trim details. Water-resistant shell, zippered pockets, packable into its own hood.", rating: 4.9, reviews: 22 },
     ];
 
     const CATS = [
@@ -3932,6 +3948,7 @@
     let detailFrom = 'shop';
     let detailSelected = {};
     let promoDiscount = 0;
+    let appliedPromoCode = '';
 
     // ════ PAGES (defined in auth section above) ════
     function _oldShowPage_removed() { }
@@ -4419,18 +4436,29 @@
     </div>`;
     }
 
-    function applyPromo() {
+    async function applyPromo() {
       const code = document.getElementById('promo-input').value.trim().toUpperCase();
-      if (code === 'SURVAN10') {
-        promoDiscount = Math.round(cartTotal() * 0.1);
-        showToast('10% discount applied! -Rs.' + promoDiscount.toLocaleString());
+      if (!code) { showToast('Enter a promo code'); return; }
+      try {
+        const res = await fetch(`${API}/coupons/validate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code, subtotal: cartTotal() })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.valid) {
+          promoDiscount = 0;
+          appliedPromoCode = '';
+          showToast(data.message || 'Invalid promo code');
+          renderCart();
+          return;
+        }
+        promoDiscount = data.discount;
+        appliedPromoCode = data.code;
+        showToast(`🎉 Code applied! -Rs.${promoDiscount.toLocaleString()}`);
         renderCart();
-      } else if (code === 'VOLT20') {
-        promoDiscount = Math.round(cartTotal() * 0.2);
-        showToast('🔥 20% VIP discount applied!');
-        renderCart();
-      } else {
-        showToast('Invalid promo code');
+      } catch (e) {
+        showToast('Could not apply promo code. Please try again.');
       }
     }
 
@@ -4560,8 +4588,7 @@
             orderId: oid, name: fname, phone, email,
             address: `${address}, ${city}`,
             items: [...cart], sub, ship,
-            discount: promoDiscount,
-            total: sub + ship - promoDiscount,
+            promoCode: appliedPromoCode || undefined,
             payment: selectedPM.toUpperCase()
           })
         }).catch(() => { });
@@ -4578,7 +4605,7 @@
       sendEmailNotification(order);
       showWAPopup(order);
 
-      cart = []; promoDiscount = 0;
+      cart = []; promoDiscount = 0; appliedPromoCode = '';
       updateBadges();
       document.getElementById('success-oid').textContent = 'Order #' + order.id;
     }
@@ -4612,7 +4639,7 @@
         const createRes = await fetch(`${API}/payment/create-order`, {
           method: 'POST',
           headers,
-          body: JSON.stringify({ amount: total, items: [...cart] })
+          body: JSON.stringify({ amount: total, items: [...cart], sub, promoCode: appliedPromoCode || undefined })
         });
         const createData = await createRes.json();
         if (!createRes.ok) throw new Error(createData.message || 'Could not start payment');
@@ -4632,7 +4659,8 @@
                 orderId: oid, name: fname, phone, email,
                 address: `${address}, ${city}`,
                 items: [...cart], sub, ship,
-                discount: promoDiscount, total
+                discount: promoDiscount, total,
+                promoCode: appliedPromoCode || undefined
               };
               const verifyRes = await fetch(`${API}/payment/verify`, {
                 method: 'POST',
@@ -5456,6 +5484,7 @@
       renderAdminStats();
       renderAdminTable(orders);
       loadAdminProducts();
+      loadAdminCoupons();
       loadAdminReturns();
       loadAdminReviews();
       const hasNew = orders.some(o => o.isNew);
@@ -6225,6 +6254,140 @@ Chahiye: ${details}`;
       } catch { showToast('Server se connect nahi ho saka'); }
     }
 
+    // ── ADMIN COUPONS ──
+    let adminCoupons = [];
+    async function loadAdminCoupons() {
+      const el = document.getElementById('admin-coupons-list');
+      el.innerHTML = '<div style="color:var(--gray);text-align:center;padding:2rem;grid-column:1/-1">Loading...</div>';
+      try {
+        const token = localStorage.getItem('survan_token');
+        const res = await fetch(`${API}/coupons`, { headers: { 'Authorization': 'Bearer ' + token } });
+        const data = await res.json();
+        adminCoupons = data;
+        if (!data.length) {
+          el.innerHTML = '<div style="color:var(--gray);text-align:center;padding:2rem;grid-column:1/-1;font-family:var(--fd)">Koi coupon nahi — Add Coupon button dabayein</div>';
+          return;
+        }
+        el.innerHTML = data.map(c => {
+          const expired = c.expiresAt && new Date(c.expiresAt) < new Date();
+          const limitReached = c.usageLimit !== null && c.usedCount >= c.usageLimit;
+          const isActive = c.enabled && !expired && !limitReached;
+          return `
+          <div style="background:var(--dark2);border:1px solid var(--dark3);border-radius:6px;padding:1rem">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem">
+              <div style="font-family:var(--fd);font-weight:900;font-size:1.05rem;letter-spacing:.03em">${c.code}</div>
+              <span style="font-size:.68rem;font-weight:900;padding:.2rem .5rem;border-radius:3px;text-transform:uppercase;background:${isActive ? '#10b98122' : '#ef444422'};color:${isActive ? '#10b981' : '#ef4444'}">${isActive ? 'Active' : (expired ? 'Expired' : (limitReached ? 'Limit Reached' : 'Disabled'))}</span>
+            </div>
+            <div style="color:var(--neon);font-family:var(--fd);font-weight:900;font-size:1rem;margin-bottom:.4rem">${c.type === 'percent' ? c.value + '% OFF' : 'Rs.' + c.value.toLocaleString() + ' OFF'}${c.maxDiscount ? ` (max Rs.${c.maxDiscount.toLocaleString()})` : ''}</div>
+            <div style="color:var(--gray);font-size:.75rem;line-height:1.6;margin-bottom:.8rem">
+              ${c.minOrderValue ? `Min order: Rs.${c.minOrderValue.toLocaleString()}<br>` : ''}
+              Used: ${c.usedCount}${c.usageLimit ? ' / ' + c.usageLimit : ' (unlimited)'}<br>
+              ${c.expiresAt ? 'Expires: ' + new Date(c.expiresAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'No expiry'}
+            </div>
+            <div style="display:flex;gap:.5rem">
+              <button onclick="editCoupon('${c._id}')" style="flex:1;background:none;border:1px solid #333;color:var(--gray);padding:.4rem;border-radius:4px;cursor:pointer;font-family:var(--fd);font-size:.72rem;font-weight:700;text-transform:uppercase">Edit</button>
+              <button onclick="toggleCoupon('${c._id}')" style="flex:1;background:none;border:1px solid #333;color:var(--gray);padding:.4rem;border-radius:4px;cursor:pointer;font-family:var(--fd);font-size:.72rem;font-weight:700;text-transform:uppercase">${c.enabled ? 'Disable' : 'Enable'}</button>
+              <button onclick="deleteCoupon('${c._id}','${c.code}')" style="flex:1;background:none;border:1px solid #ef444466;color:#ef4444;padding:.4rem;border-radius:4px;cursor:pointer;font-family:var(--fd);font-size:.72rem;font-weight:700;text-transform:uppercase">Delete</button>
+            </div>
+          </div>`;
+        }).join('');
+      } catch (e) { el.innerHTML = '<div style="color:#ef4444;text-align:center;padding:2rem;grid-column:1/-1">Error loading coupons</div>'; }
+    }
+
+    function openAddCouponModal() {
+      document.getElementById('coupon-modal-title').textContent = '+ Add New Coupon';
+      document.getElementById('coupon-edit-id').value = '';
+      document.getElementById('cp-code').value = '';
+      document.getElementById('cp-type').value = 'percent';
+      document.getElementById('cp-value-label').textContent = 'Discount Percent (%) *';
+      document.getElementById('cp-value').value = '';
+      document.getElementById('cp-min').value = '';
+      document.getElementById('cp-max').value = '';
+      document.getElementById('cp-limit').value = '';
+      document.getElementById('cp-expiry').value = '';
+      document.getElementById('coupon-modal').style.display = 'flex';
+    }
+
+    function editCoupon(id) {
+      const c = adminCoupons.find(x => x._id === id);
+      if (!c) return;
+      document.getElementById('coupon-modal-title').textContent = 'Edit Coupon';
+      document.getElementById('coupon-edit-id').value = c._id;
+      document.getElementById('cp-code').value = c.code;
+      document.getElementById('cp-type').value = c.type;
+      document.getElementById('cp-value-label').textContent = c.type === 'flat' ? 'Discount Amount (Rs.) *' : 'Discount Percent (%) *';
+      document.getElementById('cp-value').value = c.value;
+      document.getElementById('cp-min').value = c.minOrderValue || '';
+      document.getElementById('cp-max').value = c.maxDiscount ?? '';
+      document.getElementById('cp-limit').value = c.usageLimit ?? '';
+      document.getElementById('cp-expiry').value = c.expiresAt ? new Date(c.expiresAt).toISOString().slice(0, 10) : '';
+      document.getElementById('coupon-modal').style.display = 'flex';
+    }
+
+    async function saveCoupon() {
+      const code = document.getElementById('cp-code').value.trim().toUpperCase();
+      const value = parseFloat(document.getElementById('cp-value').value);
+      if (!code) { showToast('Enter a coupon code'); return; }
+      if (isNaN(value) || value <= 0) { showToast('Enter a valid discount value'); return; }
+
+      const editId = document.getElementById('coupon-edit-id').value;
+      const minVal = document.getElementById('cp-min').value;
+      const maxVal = document.getElementById('cp-max').value;
+      const limitVal = document.getElementById('cp-limit').value;
+      const expiryVal = document.getElementById('cp-expiry').value;
+
+      const payload = {
+        code,
+        type: document.getElementById('cp-type').value,
+        value,
+        minOrderValue: minVal ? parseFloat(minVal) : 0,
+        maxDiscount: maxVal ? parseFloat(maxVal) : null,
+        usageLimit: limitVal ? parseInt(limitVal) : null,
+        expiresAt: expiryVal || null
+      };
+
+      try {
+        const token = localStorage.getItem('survan_token');
+        const url = editId ? `${API}/coupons/${editId}` : `${API}/coupons`;
+        const res = await fetch(url, {
+          method: editId ? 'PUT' : 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) { showToast(data.message || 'Could not save coupon'); return; }
+        showToast(editId ? 'Coupon update ho gaya!' : 'Coupon ban gaya!');
+        closeModal('coupon-modal');
+        loadAdminCoupons();
+      } catch { showToast('Server se connect nahi ho saka'); }
+    }
+
+    async function toggleCoupon(id) {
+      try {
+        const token = localStorage.getItem('survan_token');
+        const res = await fetch(`${API}/coupons/${id}/toggle`, {
+          method: 'PATCH',
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (!res.ok) { showToast('Could not update coupon'); return; }
+        loadAdminCoupons();
+      } catch { showToast('Server se connect nahi ho saka'); }
+    }
+
+    async function deleteCoupon(id, code) {
+      if (!confirm(`"${code}" coupon delete karna chahte hain?`)) return;
+      try {
+        const token = localStorage.getItem('survan_token');
+        const res = await fetch(`${API}/coupons/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (!res.ok) { showToast('Delete failed'); return; }
+        showToast('Coupon delete ho gaya!');
+        loadAdminCoupons();
+      } catch { showToast('Server se connect nahi ho saka'); }
+    }
+
     // ── ADMIN RETURNS ──
     async function loadAdminReturns() {
       const el = document.getElementById('admin-returns-list');
@@ -6501,6 +6664,50 @@ Chahiye: ${details}`;
       <div style="display:flex;gap:.8rem;margin-top:1rem">
         <button class="btn-primary" style="flex:1" onclick="saveProduct()">Save Product ✓</button>
         <button onclick="closeModal('product-modal')"
+          style="background:none;border:1px solid #333;color:var(--gray);padding:.5rem 1.2rem;border-radius:4px;cursor:pointer;font-family:var(--fd);font-size:.85rem;font-weight:700;text-transform:uppercase">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Coupon Modal -->
+  <div id="coupon-modal"
+    style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9999;align-items:flex-start;justify-content:center;padding:1rem;overflow-y:auto">
+    <div
+      style="background:var(--dark2);border:1px solid var(--dark3);border-radius:8px;width:100%;max-width:520px;padding:2rem;position:relative;margin:2rem auto">
+      <button onclick="closeModal('coupon-modal')"
+        style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--gray);font-size:1.3rem;cursor:pointer">✕</button>
+      <div id="coupon-modal-title"
+        style="font-family:var(--fd);font-size:1.3rem;font-weight:900;text-transform:uppercase;margin-bottom:1.5rem">+
+        Add New Coupon</div>
+      <input type="hidden" id="coupon-edit-id">
+
+      <div class="form-group"><label>Coupon Code *</label><input type="text" id="cp-code"
+          placeholder="SURVAN10" style="text-transform:uppercase"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Discount Type *</label>
+          <select id="cp-type" onchange="document.getElementById('cp-value-label').textContent = this.value === 'flat' ? 'Discount Amount (Rs.) *' : 'Discount Percent (%) *'">
+            <option value="percent">Percent (%)</option>
+            <option value="flat">Flat Amount (Rs.)</option>
+          </select>
+        </div>
+        <div class="form-group"><label id="cp-value-label">Discount Percent (%) *</label><input type="number" id="cp-value"
+            placeholder="10"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Min Order Value (Rs.)</label><input type="number" id="cp-min"
+            placeholder="0 (no minimum)"></div>
+        <div class="form-group"><label>Max Discount Cap (Rs.)</label><input type="number" id="cp-max"
+            placeholder="Leave blank for no cap"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Usage Limit (total uses)</label><input type="number" id="cp-limit"
+            placeholder="Leave blank for unlimited"></div>
+        <div class="form-group"><label>Expiry Date</label><input type="date" id="cp-expiry"></div>
+      </div>
+
+      <div style="display:flex;gap:.8rem;margin-top:1rem">
+        <button class="btn-primary" style="flex:1" onclick="saveCoupon()">Save Coupon ✓</button>
+        <button onclick="closeModal('coupon-modal')"
           style="background:none;border:1px solid #333;color:var(--gray);padding:.5rem 1.2rem;border-radius:4px;cursor:pointer;font-family:var(--fd);font-size:.85rem;font-weight:700;text-transform:uppercase">Cancel</button>
       </div>
     </div>

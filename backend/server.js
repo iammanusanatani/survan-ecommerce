@@ -50,6 +50,7 @@ app.use('/api/reviews', require('./routes/reviews'));
 app.use('/api/upload', require('./routes/upload'));
 app.use('/api/payment', paymentRoutes.router);
 app.use('/api/config', require('./routes/config'));
+app.use('/api/coupons', require('./routes/coupons'));
 
 app.get("/", (req, res) => {
   res.json({

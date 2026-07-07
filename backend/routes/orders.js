@@ -5,6 +5,7 @@ const { isAdmin } = require("../middleware/auth");
 const { isValidEmail, isValidPhone, isNonEmptyString, sanitizeText, requireValidId } = require("../middleware/validate");
 const { sendOrderEmails } = require("../utils/mailer");
 const { decrementStock, restoreStock, checkStockAvailable } = require("../utils/stock");
+const { validateAndComputeDiscount, incrementCouponUsage } = require("../utils/coupon");
 
 const ORDER_ID_RE = /^[A-Za-z0-9-]{5,30}$/;
 const STATUS_VALUES = ["Processing", "Packed", "Shipped", "Delivered", "Cancelled"];
@@ -27,8 +28,6 @@ function validateOrderBody(body) {
   }
   if (typeof body.sub !== "number" || body.sub < 0) errors.push("invalid subtotal");
   if (typeof body.ship !== "number" || body.ship < 0) errors.push("invalid shipping amount");
-  if (body.discount !== undefined && (typeof body.discount !== "number" || body.discount < 0)) errors.push("invalid discount");
-  if (typeof body.total !== "number" || body.total < 0) errors.push("invalid total");
   if (!isNonEmptyString(body.payment, { min: 2, max: 20 })) errors.push("payment method is required");
   return errors;
 }
@@ -50,6 +49,18 @@ router.post("/", authMiddleware, async (req, res) => {
       return res.status(400).json({ message: `Not enough stock: ${detail}` });
     }
 
+    // The discount is never trusted from the client — only a coupon *code*
+    // is, and the actual discount is priced here from the real coupon record.
+    // Without this, anyone could open devtools and set an arbitrary discount.
+    let discount = 0;
+    const promoCode = req.body.promoCode ? String(req.body.promoCode).trim() : "";
+    if (promoCode) {
+      const result = await validateAndComputeDiscount(promoCode, req.body.sub);
+      if (!result.valid) return res.status(400).json({ message: result.message });
+      discount = result.discount;
+    }
+    const total = Math.max(0, req.body.sub + req.body.ship - discount);
+
     const order = await Order.create({
       orderId: sanitizeText(String(req.body.orderId || "")).slice(0, 30),
       name: sanitizeText(req.body.name),
@@ -59,8 +70,8 @@ router.post("/", authMiddleware, async (req, res) => {
       items: req.body.items,
       sub: req.body.sub,
       ship: req.body.ship,
-      discount: req.body.discount || 0,
-      total: req.body.total,
+      discount,
+      total,
       payment: sanitizeText(req.body.payment).slice(0, 20),
       userEmail: req.user.email,
       paymentStatus: "Pending"
@@ -68,6 +79,7 @@ router.post("/", authMiddleware, async (req, res) => {
     res.json(order);
     sendOrderEmails(order).catch(err => console.error("sendOrderEmails failed:", err.message));
     decrementStock(order.items).catch(err => console.error("decrementStock failed:", err.message));
+    if (promoCode) incrementCouponUsage(promoCode).catch(err => console.error("incrementCouponUsage failed:", err.message));
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

@@ -6,6 +6,7 @@ const Order = require('../models/Order');
 const { isValidEmail, isValidPhone, isNonEmptyString, sanitizeText } = require('../middleware/validate');
 const { sendOrderEmails } = require('../utils/mailer');
 const { decrementStock, checkStockAvailable } = require('../utils/stock');
+const { validateAndComputeDiscount, incrementCouponUsage } = require('../utils/coupon');
 
 // ── Razorpay client ──
 // Requires RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in .env (get these from
@@ -43,7 +44,7 @@ function optionalAuth(req, res, next) {
 // ═══ 1. Create a Razorpay order (called when user selects Card/Online payment) ═══
 router.post('/create-order', optionalAuth, async (req, res) => {
   try {
-    const { amount, items } = req.body;
+    const { amount, items, promoCode, sub } = req.body;
 
     if (amount === undefined || amount === null || typeof amount !== 'number' || isNaN(amount) || amount <= 0) {
       return res.status(400).json({ message: 'A valid numeric amount is required' });
@@ -58,6 +59,15 @@ router.post('/create-order', optionalAuth, async (req, res) => {
         const detail = stockProblems.map(p => `${p.name} (only ${p.available} left, requested ${p.requested})`).join(', ');
         return res.status(400).json({ message: `Not enough stock: ${detail}` });
       }
+    }
+
+    // Check the coupon is still valid *before* charging the customer — the
+    // final amount itself is still trusted from the client here (same as
+    // before), but we don't want to take payment against a code that's
+    // expired, disabled, or over its usage limit.
+    if (promoCode && typeof sub === 'number') {
+      const result = await validateAndComputeDiscount(promoCode, sub);
+      if (!result.valid) return res.status(400).json({ message: result.message });
     }
 
     const client = getRazorpay();
@@ -146,6 +156,7 @@ router.post('/verify', optionalAuth, async (req, res) => {
     res.json({ message: 'Payment verified successfully', order });
     sendOrderEmails(order).catch(err => console.error('sendOrderEmails failed:', err.message));
     decrementStock(order.items).catch(err => console.error('decrementStock failed:', err.message));
+    if (orderData.promoCode) incrementCouponUsage(orderData.promoCode).catch(err => console.error('incrementCouponUsage failed:', err.message));
   } catch (err) {
     console.error('Razorpay verify error:', err.message);
     res.status(500).json({ message: 'Payment verification failed. If money was deducted, it will be auto-refunded within 5-7 days.' });
