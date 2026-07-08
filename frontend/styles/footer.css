@@ -1,0 +1,142 @@
+    /* NEWSLETTER */
+    .newsletter {
+      background: var(--bg2);
+      border-top: 1px solid var(--bg4);
+      border-bottom: 1px solid var(--bg4);
+      padding: 3.2rem 2.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+      align-items: center
+    }
+
+    .nl-title {
+      font-family: var(--ff);
+      font-size: 1.9rem;
+      font-weight: 700;
+      text-transform: none;
+      line-height: 1.15;
+      margin-bottom: .5rem
+    }
+
+    .nl-title span {
+      color: var(--accent);
+      font-style: italic;
+    }
+
+    .nl-sub {
+      color: var(--gray);
+      font-size: .88rem;
+      line-height: 1.6
+    }
+
+    .nl-form {
+      display: flex;
+      gap: .6rem
+    }
+
+    .nl-form input {
+      flex: 1;
+      background: var(--bg3);
+      border: 1px solid var(--bg4);
+      color: var(--white);
+      padding: .75rem 1.1rem;
+      border-radius: 4px;
+      font-family: var(--fb);
+      font-size: .88rem;
+      outline: none;
+      transition: border-color .2s
+    }
+
+    .nl-form input:focus {
+      border-color: var(--accent)
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--ink);
+      border-top: none;
+      padding: 3rem 2.5rem 2rem
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 2.5rem;
+      margin-bottom: 2.5rem
+    }
+
+    .footer-logo {
+      font-family: var(--fd);
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--white);
+      letter-spacing: .08em
+    }
+
+    .footer-logo span {
+      color: var(--neon)
+    }
+
+    .footer-tagline {
+      color: var(--gray);
+      font-size: .83rem;
+      margin-top: .6rem;
+      line-height: 1.7;
+      max-width: 220px
+    }
+
+    .footer-col h4 {
+      font-family: var(--fd);
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--neon);
+      margin-bottom: 1rem
+    }
+
+    .footer-col a {
+      display: block;
+      color: var(--gray);
+      text-decoration: none;
+      font-size: .83rem;
+      margin-bottom: .55rem;
+      transition: color .2s;
+      cursor: pointer
+    }
+
+    .footer-col a:hover {
+      color: var(--white)
+    }
+
+    .footer-bottom {
+      border-top: 1px solid #1a1a1a;
+      padding-top: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem
+    }
+
+    .footer-copy {
+      font-size: .78rem;
+      color: #444
+    }
+
+    .footer-pay {
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap
+    }
+
+    .pay-chip {
+      background: #1a1a1a;
+      border-radius: 4px;
+      padding: .3rem .7rem;
+      font-size: .72rem;
+      color: #555;
+      font-weight: 600
+    }
+

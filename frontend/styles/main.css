@@ -1,0 +1,299 @@
+/* ROOT/RESET */
+    @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap');
+
+    :root {
+      --accent: #B8935A;
+      --accent2: #E85D4A;
+      --bg: #FAFAF8;
+      --bg2: #FFFFFF;
+      --bg3: #F4F3F0;
+      --bg4: #EAE9E5;
+      --ink: #1C1C1A;
+      --ink2: #3D3D3A;
+      --muted: #8A8A85;
+      --neon: #B8935A;
+      --neon2: #E85D4A;
+      --dark: #FAFAF8;
+      --dark2: #FFFFFF;
+      --dark3: #F4F3F0;
+      --dark4: #EAE9E5;
+      --gray: #8A8A85;
+      --light: #1C1C1A;
+      --white: #1C1C1A;
+      --fd: 'Barlow Condensed', sans-serif;
+      --fb: 'DM Sans', sans-serif;
+      --ff: 'Playfair Display', serif;
+      --shadow-sm: 0 1px 4px rgba(0, 0, 0, .06);
+      --shadow: 0 4px 20px rgba(0, 0, 0, .08);
+      --shadow-lg: 0 12px 40px rgba(0, 0, 0, .12);
+      --radius: 4px;
+      --radius-lg: 8px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--fb);
+      overflow-x: hidden;
+      font-size: 14px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── DARK MODE — Premium Charcoal ── */
+    body.light-mode {
+      --accent: #D4A857;
+      --accent2: #E8694F;
+      --bg: #15151A;
+      --bg2: #1C1C22;
+      --bg3: #24242C;
+      --bg4: #303038;
+      --ink: #F2F1EC;
+      --ink2: #B8B7B0;
+      --muted: #7A7A82;
+      --neon: #D4A857;
+      --neon2: #E8694F;
+      --dark: #15151A;
+      --dark2: #1C1C22;
+      --dark3: #24242C;
+      --dark4: #303038;
+      --gray: #7A7A82;
+      --light: #F2F1EC;
+      --white: #F2F1EC;
+      --shadow: 0 4px 24px rgba(0, 0, 0, .5);
+    }
+
+    body.light-mode nav {
+      background: rgba(21, 21, 26, .92);
+      border-bottom-color: var(--bg4);
+    }
+
+    body.light-mode .product-card {
+      border: 1px solid var(--bg4);
+    }
+
+    body.light-mode .product-card:hover {
+      box-shadow: 0 12px 40px rgba(212, 168, 87, .12);
+    }
+
+    body.light-mode .btn-primary {
+      background: var(--accent);
+      color: #15151A;
+    }
+
+    body.light-mode .btn-primary:hover {
+      background: #E0B96A;
+      box-shadow: 0 8px 24px rgba(212, 168, 87, .3);
+    }
+
+    body.light-mode .btn-outline {
+      border-color: var(--bg4);
+      color: var(--ink);
+    }
+
+    body.light-mode .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    body.light-mode .section-title {
+      color: var(--ink);
+    }
+
+    body.light-mode .form-group input,
+    body.light-mode .form-group select,
+    body.light-mode .form-group textarea {
+      background: var(--bg3);
+      border-color: var(--bg4);
+      color: var(--ink);
+    }
+
+    body.light-mode .order-card,
+    body.light-mode .admin-stat,
+    body.light-mode .auth-box {
+      background: var(--bg2);
+      border-color: var(--bg4);
+    }
+
+    body.light-mode #mobile-menu {
+      background: var(--bg2);
+      border-bottom-color: var(--bg4);
+    }
+
+    body.light-mode #mobile-menu a {
+      color: var(--ink2);
+      border-bottom-color: var(--bg4);
+    }
+
+    body.light-mode .nav-logo {
+      color: var(--ink);
+    }
+
+    body.light-mode .nav-logo span {
+      color: var(--accent);
+    }
+
+    /* Theme toggle button */
+    #theme-toggle {
+      background: none;
+      border: 1px solid var(--bg4);
+      border-radius: 20px;
+      color: var(--muted);
+      padding: .35rem .7rem;
+      cursor: pointer;
+      font-size: .9rem;
+      transition: all .2s;
+    }
+
+    #theme-toggle:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ── BACK BUTTON BAR ── */
+    #back-btn-bar {
+      display: none;
+      align-items: center;
+      gap: .6rem;
+      padding: .6rem 2rem;
+      background: var(--dark2);
+      border-bottom: 1px solid var(--dark3);
+      position: sticky;
+      top: 64px;
+      z-index: 900;
+    }
+
+    #back-btn-bar.visible {
+      display: flex;
+    }
+
+    #back-btn {
+      background: none;
+      border: 1px solid #333;
+      color: var(--gray);
+      padding: .35rem .9rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: var(--fd);
+      font-size: .85rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+    }
+
+    #back-btn:hover {
+      border-color: var(--neon);
+      color: var(--neon);
+    }
+
+    #back-btn-label {
+      font-size: .75rem;
+      color: var(--gray);
+      font-family: var(--fd);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+
+    /* TOAST */
+    #toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 9999;
+      background: var(--neon);
+      color: var(--dark);
+      padding: .8rem 1.4rem;
+      border-radius: 4px;
+      font-family: var(--fd);
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all .3s ease;
+      pointer-events: none;
+      max-width: 280px
+    }
+
+    #toast.show {
+      transform: translateY(0);
+      opacity: 1
+    }
+
+    /* PAGES */
+    .page {
+      display: none
+    }
+
+    .page.active {
+      display: block
+    }
+
+    /* SECTION */
+    .section-header {
+      padding: 3rem 2.5rem 1.6rem
+    }
+
+    .section-eyebrow {
+      font-family: var(--fb);
+      font-size: .76rem;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      margin-bottom: .5rem
+    }
+
+    .section-title {
+      font-family: var(--ff);
+      font-size: clamp(1.7rem, 3.6vw, 2.4rem);
+      font-weight: 700;
+      text-transform: none;
+      color: var(--white);
+      line-height: 1.15
+    }
+
+    /* SCROLL TOP */
+    #scroll-top {
+      position: fixed;
+      bottom: 2rem;
+      left: 2rem;
+      background: var(--dark2);
+      border: 1px solid #333;
+      color: var(--gray);
+      width: 40px;
+      height: 40px;
+      border-radius: 4px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 500;
+      transition: all .2s
+    }
+
+    #scroll-top.show {
+      display: flex
+    }
+
+    #scroll-top:hover {
+      border-color: var(--neon);
+      color: var(--neon)
+    }
+
+    /* ═══════════════════════════════
+       RESPONSIVE — ALL DEVICES
+    ═══════════════════════════════ */
+
