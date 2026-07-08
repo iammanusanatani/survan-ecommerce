@@ -94,4 +94,36 @@ router.put("/profile", authMiddleware, async (req, res) => {
   }
 });
 
+// Get wishlist (the logged-in user's own — this is what makes it consistent across devices)
+router.get("/wishlist", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("wishlist");
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json({ wishlist: user.wishlist || [] });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Replace wishlist (called whenever the user adds/removes an item, and on login to merge)
+router.put("/wishlist", authMiddleware, async (req, res) => {
+  try {
+    if (!Array.isArray(req.body.wishlist)) {
+      return res.status(400).json({ message: "wishlist must be an array" });
+    }
+    if (req.body.wishlist.length > 500) {
+      return res.status(400).json({ message: "Wishlist is too large (max 500 items)" });
+    }
+    const clean = [...new Set(req.body.wishlist.map(id => String(id).slice(0, 100)))];
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { wishlist: clean },
+      { new: true }
+    ).select("wishlist");
+    res.json({ wishlist: user.wishlist });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;

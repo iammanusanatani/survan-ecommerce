@@ -4463,6 +4463,19 @@
     }
 
     // ════ WISHLIST ════
+    // Pushes the current wishlist to the backend for the logged-in user, so
+    // it stays consistent across devices instead of being stuck in this
+    // browser's localStorage. Silently does nothing for guests.
+    function syncWishlistToBackend() {
+      const token = localStorage.getItem('survan_token');
+      if (!token) return;
+      fetch(`${API}/users/wishlist`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ wishlist })
+      }).catch(() => { });
+    }
+
     function toggleWish(id, btn) {
       id = String(id);
       if (wishlist.map(String).includes(id)) {
@@ -4475,6 +4488,7 @@
         showToast('Added to wishlist!');
       }
       localStorage.setItem('survan_wish', JSON.stringify(wishlist));
+      syncWishlistToBackend();
       updateBadges();
     }
 
@@ -4712,7 +4726,7 @@
 
     // ════ AUTH SYSTEM ════
     // ── BACKEND API ──
-    const API = 'https://survan-ecommerce.onrender.com/api';
+    const API = 'http://localhost:5000/api';
 
     let currentUser = JSON.parse(localStorage.getItem('survan_user') || 'null');
 
@@ -4770,6 +4784,14 @@
         currentUser = data.user;
         if (!currentUser.addresses) currentUser.addresses = [];
         localStorage.setItem('survan_user', JSON.stringify(currentUser));
+
+        // Merge whatever was wishlisted as a guest (this browser) with the
+        // account's saved wishlist, so nothing gets silently lost either way.
+        const accountWishlist = (data.user.wishlist || []).map(String);
+        wishlist = [...new Set([...wishlist.map(String), ...accountWishlist])];
+        localStorage.setItem('survan_wish', JSON.stringify(wishlist));
+        syncWishlistToBackend();
+
         closeAuth();
         updateNavUser();
         if (data.user.isAdmin) {
@@ -4810,6 +4832,7 @@
         currentUser = data.user;
         if (!currentUser.addresses) currentUser.addresses = [];
         localStorage.setItem('survan_user', JSON.stringify(currentUser));
+        if (wishlist.length) syncWishlistToBackend();
         closeAuth();
         updateNavUser();
         showToast('Account ban gaya! Welcome, ' + fname + '!');
@@ -5028,7 +5051,7 @@
       }
     }
 
-    function renderAccountPage() {
+    async function renderAccountPage() {
       if (!currentUser) { openAuth('login'); return; }
       // Reload from storage (get latest)
       const users = JSON.parse(localStorage.getItem('survan_users') || '[]');
@@ -5069,13 +5092,30 @@
       if (currentUser.dob) document.getElementById('acc-dob').value = currentUser.dob;
       if (currentUser.gender) document.getElementById('acc-gender').value = currentUser.gender;
 
-      // Stats
-      const userOrders = orders.filter(o => o.userEmail === currentUser.email);
-      const totalSpent = userOrders.reduce((s, o) => s + o.total, 0);
+      // Stats — fetched from the backend so they're correct on every device,
+      // not just whichever browser happens to have orders in localStorage.
       document.getElementById('acc-stats').innerHTML = `
-    <div class="profile-stat"><div class="profile-stat-num">${userOrders.length}</div><div class="profile-stat-label">Orders</div></div>
+    <div class="profile-stat"><div class="profile-stat-num">…</div><div class="profile-stat-label">Orders</div></div>
+    <div class="profile-stat"><div class="profile-stat-num">…</div><div class="profile-stat-label">Total Spent</div></div>
+    <div class="profile-stat"><div class="profile-stat-num">${wishlist.length}</div><div class="profile-stat-label">Wishlist Items</div></div>`;
+      (async () => {
+        let orderCount = 0, totalSpent = 0;
+        try {
+          const token = localStorage.getItem('survan_token');
+          if (token) {
+            const res = await fetch(`${API}/orders/my`, { headers: { 'Authorization': 'Bearer ' + token } });
+            if (res.ok) {
+              const backendOrders = await res.json();
+              orderCount = backendOrders.length;
+              totalSpent = backendOrders.reduce((s, o) => s + (o.total || 0), 0);
+            }
+          }
+        } catch (e) { console.log('Account stats fetch error:', e); }
+        document.getElementById('acc-stats').innerHTML = `
+    <div class="profile-stat"><div class="profile-stat-num">${orderCount}</div><div class="profile-stat-label">Orders</div></div>
     <div class="profile-stat"><div class="profile-stat-num">Rs.${totalSpent.toLocaleString()}</div><div class="profile-stat-label">Total Spent</div></div>
     <div class="profile-stat"><div class="profile-stat-num">${wishlist.length}</div><div class="profile-stat-label">Wishlist Items</div></div>`;
+      })();
 
       renderAddresses();
       renderAccOrders();
@@ -6562,8 +6602,28 @@ Chahiye: ${details}`;
       } catch (e) { console.log('Site config fetch error:', e); }
     }
 
+    // If already logged in (returning session), refresh the wishlist from
+    // the backend so a page reload/reopen always reflects the account's
+    // real cross-device state, not just whatever was last saved locally.
+    async function syncWishlistFromBackend() {
+      const token = localStorage.getItem('survan_token');
+      if (!token || !currentUser) return;
+      try {
+        const res = await fetch(`${API}/users/wishlist`, {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          wishlist = (data.wishlist || []).map(String);
+          localStorage.setItem('survan_wish', JSON.stringify(wishlist));
+          updateBadges();
+        }
+      } catch (e) { console.log('Wishlist fetch error:', e); }
+    }
+
     loadProductsFromBackend();
     loadSiteConfig();
+    syncWishlistFromBackend();
     updateBadges();
     updateNavUser();
 

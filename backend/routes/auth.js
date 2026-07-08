@@ -60,7 +60,7 @@ router.post("/login", async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
-    res.json({ token, user: { fname: user.fname, lname: user.lname, email: user.email, phone: user.phone, isAdmin: user.isAdmin } });
+    res.json({ token, user: { fname: user.fname, lname: user.lname, email: user.email, phone: user.phone, isAdmin: user.isAdmin, wishlist: user.wishlist || [] } });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
