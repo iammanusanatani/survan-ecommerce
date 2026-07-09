@@ -143,49 +143,105 @@
       justify-content: center
     }
 
-    .hamburger {
+    /* BOTTOM TAB BAR — hidden by default (desktop); shown on mobile in responsive.css */
+    #bottom-nav {
       display: none;
-      background: none;
-      border: none;
-      color: var(--white);
-      font-size: 1.4rem;
-      cursor: pointer;
-      padding: .3rem
-    }
-
-    /* MOBILE MENU */
-    #mobile-menu {
-      display: none;
-      position: fixed;
-      top: 64px;
       left: 0;
       right: 0;
-      background: #0d0d0d;
-      border-bottom: 1px solid #222;
-      z-index: 999;
-      padding: 1.5rem;
+      bottom: 0;
+      z-index: 1000;
+      background: rgba(250, 250, 248, .96);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid var(--bg4);
+      padding-bottom: env(safe-area-inset-bottom);
+      box-shadow: 0 -2px 16px rgba(0, 0, 0, .05);
+    }
+
+    .bnav-item {
+      background: none;
+      border: none;
+      appearance: none;
+      color: var(--muted);
+      display: flex;
       flex-direction: column;
-      gap: 1rem
-    }
-
-    #mobile-menu.open {
-      display: flex
-    }
-
-    #mobile-menu a {
-      color: var(--gray);
-      font-family: var(--fd);
-      font-size: 1.3rem;
-      font-weight: 700;
-      letter-spacing: .06em;
-      text-transform: uppercase;
+      align-items: center;
+      justify-content: center;
+      gap: .2rem;
+      flex: 1;
+      padding: .5rem 0 .4rem;
       cursor: pointer;
-      padding: .4rem 0;
-      border-bottom: 1px solid #1a1a1a
+      -webkit-tap-highlight-color: transparent;
+      transition: color .15s;
     }
 
-    #mobile-menu a:hover {
-      color: var(--neon)
+    #bnav-menu{
+      background: none;
+      border: none;
+      appearance: none;
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: .2rem;
+      flex: 1;
+      padding: .5rem 0 .4rem;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: color .15s;
+    }
+
+    .bnav-item svg,
+    .bnav-item [data-lucide] {
+      width: 22px;
+      height: 22px;
+      stroke-width: 1.8;
+      transition: transform .15s;
+    }
+
+    .bnav-item .bnav-label {
+      font-size: .62rem;
+      font-weight: 600;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+    }
+
+    .bnav-item.active {
+      color: var(--accent);
+    }
+
+    .bnav-item.active svg,
+    .bnav-item.active [data-lucide] {
+      transform: translateY(-1px) scale(1.06);
+    }
+
+    .bnav-item:active svg,
+    .bnav-item:active [data-lucide] {
+      transform: scale(.88);
+    }
+
+    .bnav-icon-wrap {
+      position: relative;
+      display: inline-flex;
+    }
+
+    .bnav-badge {
+      position: absolute;
+      top: -4px;
+      right: -8px;
+      background: var(--accent2);
+      color: #fff;
+      font-size: .58rem;
+      font-weight: 800;
+      min-width: 15px;
+      height: 15px;
+      padding: 0 3px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
     }
 
     /* SEARCH OVERLAY */
@@ -247,8 +303,8 @@
 
     .search-close {
       position: absolute;
-      top: 1.5rem;
-      right: 2rem;
+      top: 0.5rem;
+      right: 1.5rem;
       background: none;
       border: none;
       color: var(--gray);
@@ -261,3 +317,195 @@
       color: var(--white)
     }
 
+
+    /* ═══════════════════════════════
+       SLIDE-IN MENU DRAWER
+       ═══════════════════════════════ */
+
+    /* Overlay backdrop */
+    #menu-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(3px);
+      -webkit-backdrop-filter: blur(3px);
+      z-index: 1500;
+      opacity: 0;
+      transition: opacity .28s ease;
+    }
+    #menu-overlay.open {
+      display: block;
+      opacity: 1;
+    }
+
+    /* Drawer panel — slides from RIGHT */
+    #menu-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: min(300px, 82vw);
+      background: var(--bg2);
+      z-index: 1600;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform .3s cubic-bezier(0.32, 0.72, 0, 1);
+      box-shadow: -8px 0 40px rgba(0,0,0,.18);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    #menu-drawer.open {
+      transform: translateX(0);
+    }
+
+    /* Header row */
+    .menu-drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 1.2rem 1rem;
+      border-bottom: 1px solid var(--bg4);
+      flex-shrink: 0;
+    }
+    .menu-drawer-logo {
+      font-family: var(--fd);
+      font-size: 1.3rem;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+    .menu-drawer-logo span { color: var(--accent); }
+    .menu-drawer-close {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      padding: .35rem;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color .15s, background .15s;
+    }
+    .menu-drawer-close:hover { color: var(--ink); background: var(--bg4); }
+
+    /* User info block */
+    .menu-drawer-user {
+      display: flex;
+      align-items: center;
+      gap: .9rem;
+      padding: 1rem 1.2rem;
+      background: var(--bg3);
+      margin: .75rem .9rem;
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+    .menu-drawer-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-family: var(--fd);
+      font-weight: 700;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      letter-spacing: .04em;
+    }
+    .menu-drawer-username {
+      font-weight: 700;
+      font-size: .9rem;
+      color: var(--ink);
+      line-height: 1.2;
+    }
+    .menu-drawer-useremail {
+      font-size: .64rem;
+      color: var(--muted);
+      margin-top: .15rem;
+    }
+
+    /* Divider */
+    .menu-drawer-divider {
+      height: 1px;
+      background: var(--bg4);
+      margin: .3rem .9rem;
+      flex-shrink: 0;
+    }
+
+    /* Nav items */
+    .menu-drawer-items {
+      display: flex;
+      flex-direction: column;
+      padding: .4rem .6rem;
+      flex-shrink: 0;
+    }
+    .menu-drawer-item {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      padding: .8rem .8rem;
+      background: none;
+      border: none;
+      color: var(--ink2);
+      font-family: var(--fb);
+      font-size: .9rem;
+      font-weight: 500;
+      text-align: left;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background .15s, color .15s;
+      -webkit-tap-highlight-color: transparent;
+      position: relative;
+    }
+    .menu-drawer-item:hover,
+    .menu-drawer-item:active {
+      background: var(--bg3);
+      color: var(--ink);
+    }
+    .menu-drawer-item:active { transform: scale(.98); }
+    .mdi-icon {
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      width: 22px;
+    }
+
+    /* Badge in drawer items */
+    .menu-badge {
+      margin-left: auto;
+      background: var(--accent2);
+      color: #fff;
+      font-size: .65rem;
+      font-weight: 800;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 4px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .menu-badge:empty,
+    .menu-badge[data-count="0"] { display: none; }
+
+    /* Logout item — red tint */
+    .menu-logout-btn { color: var(--neon2) !important; }
+    .menu-logout-btn .mdi-icon { color: var(--neon2) !important; }
+
+    /* Footer */
+    .menu-drawer-footer {
+      margin-top: auto;
+      padding: 1rem 1.2rem;
+      font-size: .72rem;
+      color: var(--muted);
+      border-top: 1px solid var(--bg4);
+      text-align: center;
+      flex-shrink: 0;
+    }

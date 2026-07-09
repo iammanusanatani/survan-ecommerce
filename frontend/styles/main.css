@@ -2,32 +2,33 @@
     @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap');
 
     :root {
-      --accent: #B8935A;
-      --accent2: #E85D4A;
-      --bg: #FAFAF8;
-      --bg2: #FFFFFF;
-      --bg3: #F4F3F0;
-      --bg4: #EAE9E5;
-      --ink: #1C1C1A;
-      --ink2: #3D3D3A;
-      --muted: #8A8A85;
-      --neon: #B8935A;
-      --neon2: #E85D4A;
-      --dark: #FAFAF8;
-      --dark2: #FFFFFF;
-      --dark3: #F4F3F0;
-      --dark4: #EAE9E5;
-      --gray: #8A8A85;
-      --light: #1C1C1A;
-      --white: #1C1C1A;
+      /* SURVAN LIGHT — Clean & Premium */
+      --accent:  #C49A4A;
+      --accent2: #E8563A;
+      --bg:      #F7F5F0;
+      --bg2:     #FFFFFF;
+      --bg3:     #F0EDE6;
+      --bg4:     #E2DDD4;
+      --ink:     #18181A;
+      --ink2:    #38383A;
+      --muted:   #888480;
+      --neon:    #C49A4A;
+      --neon2:   #E8563A;
+      --dark:    #F7F5F0;
+      --dark2:   #FFFFFF;
+      --dark3:   #F0EDE6;
+      --dark4:   #E2DDD4;
+      --gray:    #888480;
+      --light:   #18181A;
+      --white:   #18181A;
       --fd: 'Barlow Condensed', sans-serif;
-      --fb: 'DM Sans', sans-serif;
-      --ff: 'Playfair Display', serif;
-      --shadow-sm: 0 1px 4px rgba(0, 0, 0, .06);
-      --shadow: 0 4px 20px rgba(0, 0, 0, .08);
-      --shadow-lg: 0 12px 40px rgba(0, 0, 0, .12);
-      --radius: 4px;
-      --radius-lg: 8px;
+      --fb: 'Inter', sans-serif;
+      --ff: 'Barlow Condensed', sans-serif;
+      --shadow-sm: 0 1px 6px rgba(0,0,0,.07);
+      --shadow:    0 4px 24px rgba(0,0,0,.10);
+      --shadow-lg: 0 16px 48px rgba(0,0,0,.14);
+      --radius:    6px;
+      --radius-lg: 12px;
     }
 
     * {
@@ -46,27 +47,27 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── DARK MODE — Premium Charcoal ── */
+    /* SURVAN DARK MODE — Deep Charcoal */
     body.light-mode {
-      --accent: #D4A857;
-      --accent2: #E8694F;
-      --bg: #15151A;
-      --bg2: #1C1C22;
-      --bg3: #24242C;
-      --bg4: #303038;
-      --ink: #F2F1EC;
-      --ink2: #B8B7B0;
-      --muted: #7A7A82;
-      --neon: #D4A857;
-      --neon2: #E8694F;
-      --dark: #15151A;
-      --dark2: #1C1C22;
-      --dark3: #24242C;
-      --dark4: #303038;
-      --gray: #7A7A82;
-      --light: #F2F1EC;
-      --white: #F2F1EC;
-      --shadow: 0 4px 24px rgba(0, 0, 0, .5);
+      --accent:  #D4A84A;
+      --accent2: #E86040;
+      --bg:      #0F0F12;
+      --bg2:     #17171C;
+      --bg3:     #1E1E26;
+      --bg4:     #28282F;
+      --ink:     #F0EFE8;
+      --ink2:    #B5B3AC;
+      --muted:   #72706A;
+      --neon:    #D4A84A;
+      --neon2:   #E86040;
+      --dark:    #0F0F12;
+      --dark2:   #17171C;
+      --dark3:   #1E1E26;
+      --dark4:   #28282F;
+      --gray:    #72706A;
+      --light:   #F0EFE8;
+      --white:   #F0EFE8;
+      --shadow:  0 4px 28px rgba(0,0,0,.6);
     }
 
     body.light-mode nav {
@@ -121,23 +122,31 @@
       border-color: var(--bg4);
     }
 
-    body.light-mode #mobile-menu {
-      background: var(--bg2);
-      border-bottom-color: var(--bg4);
+    body.light-mode #bottom-nav {
+      background: rgba(15, 15, 18, .97);
+      border-top-color: var(--bg4);
     }
-
-    body.light-mode #mobile-menu a {
-      color: var(--ink2);
-      border-bottom-color: var(--bg4);
+    body.light-mode #menu-drawer {
+      background: var(--bg2);
+      border-right-color: var(--bg4);
+    }
+    body.light-mode #menu-overlay {
+      background: rgba(0,0,0,.75);
     }
 
     body.light-mode .nav-logo {
+      color: var(--ink);
+    }
+    body.light-mode #bnav-menu {
       color: var(--ink);
     }
 
     body.light-mode .nav-logo span {
       color: var(--accent);
     }
+    body.light .nav-center-logo img{
+    filter: brightness(0) invert(1);
+}
 
     /* Theme toggle button */
     #theme-toggle {
@@ -211,33 +220,40 @@
       bottom: 2rem;
       right: 2rem;
       z-index: 9999;
-      background: var(--neon);
-      color: var(--dark);
-      padding: .8rem 1.4rem;
-      border-radius: 4px;
-      font-family: var(--fd);
-      font-size: 1rem;
-      font-weight: 700;
-      letter-spacing: .05em;
-      transform: translateY(100px);
+      background: var(--ink);
+      color: var(--bg);
+      padding: .85rem 1.5rem;
+      border-radius: 12px;
+      font-family: var(--fb);
+      font-size: .9rem;
+      font-weight: 600;
+      letter-spacing: .01em;
+      transform: translateY(16px);
       opacity: 0;
-      transition: all .3s ease;
+      transition: transform .28s cubic-bezier(0.34, 1.56, 0.64, 1), opacity .22s ease;
       pointer-events: none;
-      max-width: 280px
+      max-width: 300px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.18);
     }
 
     #toast.show {
       transform: translateY(0);
-      opacity: 1
+      opacity: 1;
     }
 
     /* PAGES */
     .page {
-      display: none
+      display: none;
     }
 
     .page.active {
-      display: block
+      display: block;
+      animation: pageSlideIn 0.22s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+    }
+
+    @keyframes pageSlideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     /* SECTION */
@@ -266,32 +282,44 @@
 
     /* SCROLL TOP */
     #scroll-top {
-      position: fixed;
-      bottom: 2rem;
-      left: 2rem;
-      background: var(--dark2);
-      border: 1px solid #333;
-      color: var(--gray);
-      width: 40px;
-      height: 40px;
-      border-radius: 4px;
-      font-size: 1.1rem;
-      cursor: pointer;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 500;
-      transition: all .2s
+     position: fixed;
+    right: 18px;
+    bottom: 85px; /* Bottom navbar ke upar */
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 1px solid rgba(200,155,90,.35);
+    background: rgba(255,255,255,.95);
+    backdrop-filter: blur(10px);
+    color: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(0,0,0,.15);
+    transition: all .3s ease;
+    z-index: 9999;
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
     }
 
     #scroll-top.show {
-      display: flex
+      opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
     }
 
     #scroll-top:hover {
-      border-color: var(--neon);
-      color: var(--neon)
+      background: #111;
+    color: #C89B5A;
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0,0,0,.25);
     }
+    .scroll-top i{
+    font-size: 22px;
+}
 
     /* ═══════════════════════════════
        RESPONSIVE — ALL DEVICES

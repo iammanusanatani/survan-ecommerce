@@ -107,15 +107,16 @@
       font-weight: 600;
       letter-spacing: .02em;
       text-transform: none;
-      padding: .6rem 1rem;
+      padding: .65rem 1rem;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
-      transition: opacity .15s
+      transition: opacity .15s;
+      min-height: 40px;
     }
 
     .quick-add:hover {
-      opacity: .85
+      opacity: .85;
     }
 
     .quick-wish {
@@ -124,9 +125,11 @@
       color: #1C1C1A;
       font-size: 1rem;
       padding: .55rem .75rem;
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
-      transition: all .2s
+      transition: all .2s;
+      min-width: 40px;
+      min-height: 40px;
     }
 
     .quick-wish:hover,

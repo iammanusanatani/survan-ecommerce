@@ -1,0 +1,115 @@
+/* ==============================
+   Mobile Menu Button
+============================== */
+
+#bnav-menu{
+    width:48px;
+    height:48px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:none;
+    outline:none;
+    cursor:pointer;
+    background:none;
+    backdrop-filter:blur(10px);
+    color:#111;
+    font-size:22px;
+
+    transition:all .3s ease;
+
+    -webkit-tap-highlight-color:transparent;
+}
+
+#bnav-menu:hover{
+    color:#C89B5A;
+    transform:translateY(-2px);
+}
+
+#bnav-menu:active{
+    transform:scale(.95);
+}
+
+#bnav-menu svg{
+    width:24px;
+    height:24px;
+    stroke-width:2.2;
+}
+
+/* ==============================
+   Mobile
+============================== */
+
+@media (max-width:767px){
+
+    #bnav-menu{
+        width:46px;
+        height:46px;
+        font-size:21px;
+    }
+
+}
+
+/* ==============================
+   Tablet
+============================== */
+
+@media (min-width:768px) and (max-width:1023px){
+
+    #bnav-menu{
+        width:50px;
+        height:50px;
+    }
+    .nav-center-logo{
+        display: none;
+    }
+
+}
+
+/* ==============================
+   Desktop
+============================== */
+
+@media (min-width:1024px){
+
+    #bnav-menu{
+        display:none;
+    }
+    .nav-center-logo{
+        display: none;
+    }
+}
+
+/* Center Logo */
+
+.nav-center-logo{
+    position:absolute;
+    margin-top: 4px;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    cursor:pointer;
+    z-index:5;
+}
+
+.nav-center-logo img{
+    width:120px;
+    height:auto;
+    display:block;
+    object-fit:contain;
+    transition:.3s;
+}
+
+.nav-center-logo img:hover{
+    transform:scale(1.05);
+}
+
+/* Responsive */
+
+@media(max-width:768px){
+
+    .nav-center-logo img{
+        width:90px;
+    }
+
+}

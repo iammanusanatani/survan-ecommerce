@@ -34,8 +34,16 @@
 
     // ════ UTILS ════
     function updateBadges() {
-      document.getElementById('cart-count').textContent = cart.reduce((s, c) => s + c.qty, 0);
+      const cartCount = cart.reduce((s, c) => s + c.qty, 0);
+      document.getElementById('cart-count').textContent = cartCount;
       document.getElementById('wish-count').textContent = wishlist.length;
+      const bCart = document.getElementById('bnav-cart-count');
+      if (bCart) bCart.textContent = cartCount;
+      // Menu drawer badges
+      const mCart = document.getElementById('menu-cart-count');
+      const mWish = document.getElementById('menu-wish-count');
+      if (mCart) mCart.textContent = cartCount;
+      if (mWish) mWish.textContent = wishlist.length;
     }
 
     function showToast(msg) {

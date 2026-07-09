@@ -41,11 +41,6 @@
     // ════ PAGES (defined in auth section above) ════
     function _oldShowPage_removed() { }
 
-    function toggleMenu() {
-      const m = document.getElementById('mobile-menu');
-      m.classList.toggle('open');
-    }
-
     // ── PAGE HISTORY (back button) ──
     let pageHistory = [];
     const PAGE_LABELS = {
@@ -67,6 +62,13 @@
       document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
       const nl = document.getElementById('nav-' + name);
       if (nl) nl.classList.add('active');
+      document.querySelectorAll('.bnav-item').forEach(b => b.classList.remove('active'));
+      const bnavId = (name === 'checkout' || name === 'success') ? 'cart'
+        : (name === 'account' || name === 'orders' || name === 'admin') ? 'account'
+        : (name === 'detail') ? 'shop'
+        : name;
+      const bn = document.getElementById('bnav-' + bnavId);
+      if (bn) bn.classList.add('active');
       window.scrollTo(0, 0);
       if (name === 'cart') renderCart();
       if (name === 'checkout') { renderCheckout(); autoFillCheckout(); }
@@ -322,3 +324,117 @@
 
     // Init Lucide Icons
     if (typeof lucide !== 'undefined') lucide.createIcons();
+
+    // ════ MOBILE UX ENHANCEMENTS ════
+
+    // 1. Hardware-accelerated scroll restoration — instant on mobile
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+    // 2. iOS viewport height fix (100vh is wrong on Safari)
+    function setMobileVH() {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    setMobileVH();
+    window.addEventListener('resize', setMobileVH, { passive: true });
+
+    // 3. Swipe-back gesture (right-swipe → goBack)
+    (function initSwipeBack() {
+      let startX = 0, startY = 0;
+      const THRESHOLD = 80, EDGE_ZONE = 30;
+      document.addEventListener('touchstart', e => {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+      }, { passive: true });
+      document.addEventListener('touchend', e => {
+        const dx = e.changedTouches[0].clientX - startX;
+        const dy = Math.abs(e.changedTouches[0].clientY - startY);
+        if (startX < EDGE_ZONE && dx > THRESHOLD && dy < 60) goBack();
+      }, { passive: true });
+    })();
+
+    // 4. Prevent double-tap zoom on buttons
+    document.addEventListener('touchend', e => {
+      if (e.target.closest('button, .btn-primary, .btn-outline, .product-card, .cat-card'))
+        e.preventDefault();
+    }, { passive: false });
+
+    // 5. Add haptic-like press animation to product cards & buttons via CSS class
+    document.addEventListener('touchstart', e => {
+      const card = e.target.closest('.product-card, .cat-card');
+      if (card) card.style.transform = 'scale(0.97)';
+    }, { passive: true });
+    document.addEventListener('touchend', e => {
+      const card = e.target.closest('.product-card, .cat-card');
+      if (card) setTimeout(() => card.style.transform = '', 120);
+    }, { passive: true });
+
+    // ════ MENU DRAWER ════
+    function openMenuDrawer() {
+      document.getElementById('menu-drawer').classList.add('open');
+      document.getElementById('menu-overlay').classList.add('open');
+      document.body.style.overflow = 'hidden';
+      // Sync user info into drawer
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+      updateMenuDrawerUser();
+      updateMenuThemeLabel();
+      // Sync badge counts
+      const cartBadge = document.getElementById('cart-count');
+      const wishBadge = document.getElementById('wish-count');
+      const mCart = document.getElementById('menu-cart-count');
+      const mWish = document.getElementById('menu-wish-count');
+      if (mCart && cartBadge) mCart.textContent = cartBadge.textContent;
+      if (mWish && wishBadge) mWish.textContent = wishBadge.textContent;
+    }
+
+    function closeMenuDrawer() {
+      document.getElementById('menu-drawer').classList.remove('open');
+      document.getElementById('menu-overlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function updateMenuDrawerUser() {
+      const nameEl   = document.getElementById('menu-drawer-username');
+      const emailEl  = document.getElementById('menu-drawer-useremail');
+      const avatarEl = document.getElementById('menu-drawer-avatar');
+      const logoutBtn = document.getElementById('menu-logout-btn');
+      if (currentUser) {
+        const name = currentUser.firstName || currentUser.email?.split('@')[0] || 'User';
+        if (nameEl)   nameEl.textContent  = currentUser.fname + ' ' + (currentUser.lname || '');
+        if (emailEl)  emailEl.textContent = currentUser.email || '';
+        if (avatarEl) avatarEl.textContent = currentUser.fname.charAt(0).toUpperCase();
+        if (logoutBtn) logoutBtn.style.display = 'flex';
+      } else {
+        if (nameEl)   nameEl.textContent  = 'Guest';
+        if (emailEl)  emailEl.textContent = 'Sign in to your account';
+        if (avatarEl) avatarEl.textContent = '?';
+        if (logoutBtn) logoutBtn.style.display = 'none';
+      }
+    }
+
+    function updateMenuThemeLabel() {
+      const isDark = document.body.classList.contains('light-mode');
+      const lbl  = document.getElementById('menu-theme-label');
+      const icon = document.getElementById('menu-theme-icon');
+      if (lbl)  lbl.textContent = isDark ? 'Light Mode' : 'Dark Mode';
+      if (icon) icon.innerHTML  = isDark
+        ? '<i data-lucide="sun" style="width:18px;height:18px"></i>'
+        : '<i data-lucide="moon" style="width:18px;height:18px"></i>';
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    // Close drawer on back-swipe when open
+    (function() {
+      let sx = 0, sy = 0;
+      document.addEventListener('touchstart', e => {
+        sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+      }, { passive: true });
+      document.addEventListener('touchend', e => {
+        const dx = e.changedTouches[0].clientX - sx;
+        const dy = Math.abs(e.changedTouches[0].clientY - sy);
+        const drawer = document.getElementById('menu-drawer');
+        if (drawer && drawer.classList.contains('open') && dx > 60 && dy < 60) {
+          closeMenuDrawer();
+        }
+      }, { passive: true });
+    })();

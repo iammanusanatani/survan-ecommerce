@@ -189,6 +189,16 @@
       else showPage(page);
     }
 
+    // Bottom tab bar's Account button: logged-out -> open login modal;
+    // logged-in admin -> jump straight to the admin dashboard (same shortcut
+    // the desktop "Dashboard" button gives); regular logged-in user -> account page.
+    function handleBottomNavAccount() {
+      if (!currentUser) { openAuth('login'); return; }
+      const isAdmin = currentUser.email && currentUser.email.toLowerCase() === 'admin@survan.com';
+      if (isAdmin) showAdmin();
+      else showPage('account');
+    }
+
     function refreshIcons() {
       if (typeof lucide !== 'undefined') setTimeout(() => lucide.createIcons(), 50);
     }
@@ -219,6 +229,8 @@
         if (mob) mob.textContent = 'Login / Signup';
       }
       if (typeof lucide !== 'undefined') setTimeout(() => lucide.createIcons(), 10);
+      // Sync menu drawer user info
+      if (typeof updateMenuDrawerUser === 'function') updateMenuDrawerUser();
     }
 
     function autoFillCheckout() {

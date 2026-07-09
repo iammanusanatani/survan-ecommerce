@@ -3,7 +3,15 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="SURVAN">
+  <meta name="theme-color" content="#FAFAF8" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#15151A" media="(prefers-color-scheme: dark)">
+  <meta name="format-detection" content="telephone=no">
   <title>SURVAN — Premium Streetwear</title>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
@@ -17,6 +25,7 @@
   <link rel="stylesheet" href="styles/admin.css">
   <link rel="stylesheet" href="styles/footer.css">
   <link rel="stylesheet" href="styles/responsive.css">
+  <link rel="stylesheet" href="styles/menu.css">
 </head>
 
 <body>
@@ -26,8 +35,7 @@
   <!-- SEARCH OVERLAY -->
   <div id="search-overlay">
     <div class="search-modal" style="position:relative">
-      <button class="search-close" onclick="closeSearch()"><i data-lucide="x"
-          style="width:18px;height:18px"></i></button>
+      <button class="search-close" onclick="closeSearch()"><i data-lucide="X"></i></button>
       <input class="search-modal-input" id="search-input" placeholder="Search products..."
         oninput="liveSearch(this.value)" autocomplete="off">
       <div class="search-results" id="search-results"></div>
@@ -37,6 +45,10 @@
   <!-- NAV -->
   <nav>
     <div class="nav-logo" onclick="showPage('home')">SUR<span>VAN</span></div>
+    <!-- Center Logo -->
+    <div class="nav-center-logo" onclick="showPage('home')">
+    <img id="site-logo" src="assets/images/SV_logo.png" alt="SURVAN Logo">
+</div>
     <ul class="nav-links" id="nav-links">
       <li><a id="nav-home" class="active" onclick="showPage('home')">Home</a></li>
       <li><a id="nav-shop" onclick="showPage('shop')">Shop</a></li>
@@ -45,12 +57,12 @@
       <li id="nav-admin-li" style="display:none"><a id="nav-admin" onclick="showAdmin()">⚙️ Admin</a></li>
     </ul>
     <div class="nav-right">
-      <div class="nav-search-wrap">
+      <button id="search-btn" class="icon-btn" onclick="openSearch()" title="Search"><i data-lucide="search"
+          style="width:18px;height:18px"></i></button>
+      <!-- <div class="nav-search-wrap">
         <i data-lucide="search" style="width:16px;height:16px"></i>
         <input class="nav-search" placeholder="Search..." onfocus="openSearch()">
-      </div>
-      <button class="icon-btn" onclick="openSearch()" title="Search"><i data-lucide="search"
-          style="width:18px;height:18px"></i></button>
+      </div> -->
       <button class="icon-btn" onclick="showPage('wishlist')" title="Wishlist">
         <i data-lucide="heart" style="width:18px;height:18px"></i><span class="icon-badge" id="wish-count">0</span>
       </button>
@@ -63,8 +75,9 @@
       </div>
       <button id="theme-toggle" onclick="toggleTheme()" title="Dark/Light Mode"><i data-lucide="moon"
           style="width:16px;height:16px"></i></button>
-      <button class="hamburger" onclick="toggleMenu()"><i data-lucide="menu"
-          style="width:20px;height:20px"></i></button>
+      <button type="button" id="bnav-menu" onclick="openMenuDrawer()">
+        <i data-lucide="menu"></i>
+      </button>
     </div>
   </nav>
 
@@ -75,19 +88,66 @@
       Back</button>
     <span id="back-btn-label"></span>
   </div>
-  <!-- MOBILE MENU -->
-  <div id="mobile-menu">
-    <a onclick="showPage('home');toggleMenu()">Home</a>
-    <a onclick="showPage('shop');toggleMenu()">Shop</a>
-    <a onclick="showPage('wishlist');toggleMenu()">Wishlist <i data-lucide="heart"
-        style="width:14px;height:14px;vertical-align:middle"></i></a>
-    <a onclick="requireLogin('orders');toggleMenu()">My Orders</a>
-    <a onclick="requireLogin('account');toggleMenu()"><i data-lucide="user"
-        style="width:14px;height:14px;vertical-align:middle"></i> My Account</a>
-    <a id="mob-admin-li" style="display:none" onclick="showAdmin();toggleMenu()">⚙️ Admin Panel</a>
-    <a onclick="openSearch();toggleMenu()"><i data-lucide="search"
-        style="width:14px;height:14px;vertical-align:middle"></i> Search</a>
-    <a id="mob-auth-btn" onclick="openAuth('login');toggleMenu()">Login / Signup</a>
+
+  <!-- SLIDE-IN MENU DRAWER -->
+  <div id="menu-overlay" onclick="closeMenuDrawer()"></div>
+  <div id="menu-drawer">
+    <div class="menu-drawer-header">
+      <div class="menu-drawer-logo">SUR<span>VAN</span></div>
+      <button class="menu-drawer-close" onclick="closeMenuDrawer()"><i data-lucide="x"
+          style="width:20px;height:20px"></i></button>
+    </div>
+    <div class="menu-drawer-user" id="menu-drawer-user">
+      <div class="menu-drawer-avatar" id="menu-drawer-avatar">?</div>
+      <div>
+        <div class="menu-drawer-username" id="menu-drawer-username">Guest</div>
+        <div class="menu-drawer-useremail" id="menu-drawer-useremail">Sign in to your account</div>
+      </div>
+    </div>
+    <div class="menu-drawer-divider"></div>
+    <div class="menu-drawer-items">
+      <button class="menu-drawer-item" onclick="showPage('home');closeMenuDrawer()">
+        <span class="mdi-icon"><i data-lucide="home" style="width:18px;height:18px"></i></span> Home
+      </button>
+      <button class="menu-drawer-item" onclick="showPage('shop');closeMenuDrawer()">
+        <span class="mdi-icon"><i data-lucide="layout-grid" style="width:18px;height:18px"></i></span> Shop
+      </button>
+      <button class="menu-drawer-item" onclick="openSearch();closeMenuDrawer()">
+        <span class="mdi-icon"><i data-lucide="search" style="width:18px;height:18px"></i></span> Search
+      </button>
+      <button class="menu-drawer-item" onclick="showPage('cart');closeMenuDrawer()">
+        <span class="mdi-icon"><i data-lucide="shopping-bag" style="width:18px;height:18px"></i></span>
+        Cart
+        <span class="menu-badge" id="menu-cart-count">0</span>
+      </button>
+      <button class="menu-drawer-item" onclick="showPage('wishlist');closeMenuDrawer()">
+        <span class="mdi-icon"><i data-lucide="heart" style="width:18px;height:18px"></i></span>
+        Wishlist
+        <span class="menu-badge" id="menu-wish-count">0</span>
+      </button>
+      <button class="menu-drawer-item" onclick="handleBottomNavAccount();closeMenuDrawer()">
+        <span class="mdi-icon"><i data-lucide="user" style="width:18px;height:18px"></i></span> Account
+      </button>
+      <button class="menu-drawer-item" onclick="showPage('orders');closeMenuDrawer()">
+        <span class="mdi-icon"><i data-lucide="package" style="width:18px;height:18px"></i></span> My Orders
+      </button>
+    </div>
+    <div class="menu-drawer-divider"></div>
+    <div class="menu-drawer-items">
+      <button class="menu-drawer-item" onclick="toggleTheme();updateMenuThemeLabel()">
+        <span class="mdi-icon" id="menu-theme-icon"><i data-lucide="moon" style="width:18px;height:18px"></i></span>
+        <span id="menu-theme-label">Dark Mode</span>
+      </button>
+      <button class="menu-drawer-item"
+        onclick="showToast('SURVAN — Premium Streetwear. Built for those who move different.');closeMenuDrawer()">
+        <span class="mdi-icon"><i data-lucide="info" style="width:18px;height:18px"></i></span> About SURVAN
+      </button>
+      <button class="menu-drawer-item menu-logout-btn" id="menu-logout-btn" style="display:none"
+        onclick="doLogout();closeMenuDrawer()">
+        <span class="mdi-icon"><i data-lucide="log-out" style="width:18px;height:18px"></i></span> Logout
+      </button>
+    </div>
+    <div class="menu-drawer-footer">© 2025 SURVAN — Premium Streetwear</div>
   </div>
 
   <!-- AUTH MODAL -->
@@ -476,7 +536,9 @@
       <h2 class="section-title">The Collection</h2>
     </div>
     <div class="filter-bar">
-      <input type="text" id="shop-search-input" placeholder="Search this collection..." oninput="onShopSearchInput(this.value)" style="flex:1;min-width:180px;padding:.6rem .9rem;border:1px solid var(--border);border-radius:6px;background:var(--card-bg);color:var(--white);font-family:var(--fd)">
+      <input type="text" id="shop-search-input" placeholder="Search this collection..."
+        oninput="onShopSearchInput(this.value)"
+        style="flex:1;min-width:180px;padding:.6rem .9rem;border:1px solid var(--border);border-radius:6px;background:var(--card-bg);color:var(--white);font-family:var(--fd)">
       <button class="filter-btn active" onclick="filterProducts('All',this)">All</button>
       <button class="filter-btn" onclick="filterProducts('Oversized',this)">Oversized</button>
       <button class="filter-btn" onclick="filterProducts('Hoodie',this)">Hoodie</button>
@@ -492,7 +554,8 @@
       </select>
     </div>
     <div class="products-grid" id="shop-products"></div>
-    <div id="shop-pagination" style="display:flex;justify-content:center;align-items:center;gap:.5rem;margin-top:2rem;flex-wrap:wrap"></div>
+    <div id="shop-pagination"
+      style="display:flex;justify-content:center;align-items:center;gap:.5rem;margin-top:2rem;flex-wrap:wrap"></div>
   </div>
 
   <!-- ═══ PRODUCT DETAIL ═══ -->
@@ -579,7 +642,8 @@
               style="color:var(--neon);cursor:pointer">Privacy Policy</span>
           </label>
         </div>
-        <button class="btn-primary" id="place-order-btn" style="width:100%;font-size:1.15rem;padding:1.1rem" onclick="placeOrder()">
+        <button class="btn-primary" id="place-order-btn" style="width:100%;font-size:1.15rem;padding:1.1rem"
+          onclick="placeOrder()">
           Place Order →
         </button>
       </div>
@@ -621,7 +685,8 @@
         <div
           style="font-family:var(--fd);font-size:1.1rem;font-weight:900;text-transform:uppercase;margin-bottom:1rem;color:var(--neon)">
           <i data-lucide="package-search"
-            style="width:18px;height:18px;vertical-align:middle;margin-right:6px"></i>Track Your Order</div>
+            style="width:18px;height:18px;vertical-align:middle;margin-right:6px"></i>Track Your Order
+        </div>
         <div style="display:flex;gap:.8rem;flex-wrap:wrap">
           <input id="track-input" type="text" placeholder="Order ID likhein (e.g. SURVAN-1234)"
             style="flex:1;min-width:200px;background:var(--dark3);border:1px solid #333;color:var(--white);padding:.7rem 1rem;border-radius:4px;font-size:.9rem;outline:none"
@@ -855,7 +920,8 @@
         <div
           style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:.5rem">
           <div style="font-family:var(--fd);font-size:1.5rem;font-weight:900;text-transform:uppercase"><i
-              data-lucide="ticket-percent" style="width:20px;height:20px;vertical-align:middle;margin-right:8px"></i>Coupons</div>
+              data-lucide="ticket-percent"
+              style="width:20px;height:20px;vertical-align:middle;margin-right:8px"></i>Coupons</div>
           <button onclick="openAddCouponModal()"
             style="background:var(--neon);color:var(--dark);padding:.5rem 1.2rem;border-radius:4px;cursor:pointer;font-family:var(--fd);font-size:.85rem;font-weight:900;text-transform:uppercase;border:none;letter-spacing:.05em">+
             Add Coupon</button>
@@ -1045,17 +1111,18 @@
         Add New Coupon</div>
       <input type="hidden" id="coupon-edit-id">
 
-      <div class="form-group"><label>Coupon Code *</label><input type="text" id="cp-code"
-          placeholder="SURVAN10" style="text-transform:uppercase"></div>
+      <div class="form-group"><label>Coupon Code *</label><input type="text" id="cp-code" placeholder="SURVAN10"
+          style="text-transform:uppercase"></div>
       <div class="form-row">
         <div class="form-group"><label>Discount Type *</label>
-          <select id="cp-type" onchange="document.getElementById('cp-value-label').textContent = this.value === 'flat' ? 'Discount Amount (Rs.) *' : 'Discount Percent (%) *'">
+          <select id="cp-type"
+            onchange="document.getElementById('cp-value-label').textContent = this.value === 'flat' ? 'Discount Amount (Rs.) *' : 'Discount Percent (%) *'">
             <option value="percent">Percent (%)</option>
             <option value="flat">Flat Amount (Rs.)</option>
           </select>
         </div>
-        <div class="form-group"><label id="cp-value-label">Discount Percent (%) *</label><input type="number" id="cp-value"
-            placeholder="10"></div>
+        <div class="form-group"><label id="cp-value-label">Discount Percent (%) *</label><input type="number"
+            id="cp-value" placeholder="10"></div>
       </div>
       <div class="form-row">
         <div class="form-group"><label>Min Order Value (Rs.)</label><input type="number" id="cp-min"
@@ -1086,7 +1153,8 @@
         style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--gray);font-size:1.3rem;cursor:pointer">✕</button>
       <div style="font-family:var(--fd);font-size:1.3rem;font-weight:900;text-transform:uppercase;margin-bottom:1.5rem">
         <i data-lucide="rotate-ccw" style="width:18px;height:18px;vertical-align:middle;margin-right:6px"></i>Return
-        Request</div>
+        Request
+      </div>
       <input id="return-order-id" type="text" readonly
         style="width:100%;background:var(--dark3);border:1px solid #333;color:var(--gray);padding:.7rem 1rem;border-radius:4px;margin-bottom:1rem;font-size:.85rem">
       <div style="margin-bottom:.5rem;font-size:.82rem;color:var(--gray);text-transform:uppercase;letter-spacing:.05em">
@@ -1118,7 +1186,8 @@
         style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:var(--gray);font-size:1.3rem;cursor:pointer">✕</button>
       <div style="font-family:var(--fd);font-size:1.3rem;font-weight:900;text-transform:uppercase;margin-bottom:1.5rem">
         <i data-lucide="repeat" style="width:18px;height:18px;vertical-align:middle;margin-right:6px"></i>Exchange
-        Request</div>
+        Request
+      </div>
       <input id="exchange-order-id" type="text" readonly
         style="width:100%;background:var(--dark3);border:1px solid #333;color:var(--gray);padding:.7rem 1rem;border-radius:4px;margin-bottom:1rem;font-size:.85rem">
       <div style="margin-bottom:.5rem;font-size:.82rem;color:var(--gray);text-transform:uppercase;letter-spacing:.05em">
@@ -1180,6 +1249,32 @@
       <button class="btn-primary" style="width:100%" onclick="submitReview()">Submit Review</button>
     </div>
   </div>
+  <!-- BOTTOM TAB BAR -->
+  <nav id="bottom-nav">
+    <button type="button" class="bnav-item active" id="bnav-home" onclick="showPage('home')">
+      <i data-lucide="home"></i>
+      <span class="bnav-label">Home</span>
+    </button>
+    <button type="button" class="bnav-item" id="bnav-shop" onclick="showPage('shop')">
+      <i data-lucide="layout-grid"></i>
+      <span class="bnav-label">Shop</span>
+    </button>
+    <button type="button" class="bnav-item" id="bnav-shop" onclick="openSearch()">
+      <i data-lucide="search"></i>
+      <span class="bnav-label">search</span>
+    </button>
+    <button type="button" class="bnav-item" id="bnav-cart" onclick="showPage('cart')">
+      <span class="bnav-icon-wrap">
+        <i data-lucide="shopping-bag"></i>
+        <span class="bnav-badge" id="bnav-cart-count">0</span>
+      </span>
+      <span class="bnav-label">Cart</span>
+    </button>
+    <button type="button" class="bnav-item" id="bnav-account" onclick="handleBottomNavAccount()">
+      <i data-lucide="user"></i>
+      <span class="bnav-label">Account</span>
+    </button>
+  </nav>
 
 
   <script src="js/api.js"></script>
