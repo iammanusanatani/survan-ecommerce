@@ -354,10 +354,10 @@
     })();
 
     // 4. Prevent double-tap zoom on buttons
-    document.addEventListener('touchend', e => {
-      if (e.target.closest('button, .btn-primary, .btn-outline, .product-card, .cat-card'))
-        e.preventDefault();
-    }, { passive: false });
+    // document.addEventListener('touchend', e => {
+    //   if (e.target.closest('button, .btn-primary, .btn-outline, .product-card, .cat-card'))
+    //     e.preventDefault();
+    // }, { passive: false });
 
     // 5. Add haptic-like press animation to product cards & buttons via CSS class
     document.addEventListener('touchstart', e => {
