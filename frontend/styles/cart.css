@@ -431,7 +431,7 @@
 
     /* ORDERS */
     .orders-wrap {
-      padding: 1rem 2.5rem 4rem
+      padding: 1rem 2.5rem 4rem;
     }
 
     .order-card {
@@ -439,9 +439,10 @@
       border: 1px solid var(--bg4);
       box-shadow: var(--shadow-sm);
       padding: 1.4rem 1.8rem;
-      margin-bottom: 1px;
+      margin-bottom: 12px;
       cursor: pointer;
-      transition: border-color .2s
+      transition: border-color .2s;
+      margin-top: 12px;
     }
 
     .order-card:hover {
@@ -492,7 +493,7 @@
       font-size: .72rem;
       font-weight: 700;
       letter-spacing: .1em;
-      text-transform: uppercase
+      text-transform: uppercase;
     }
 
     .s-processing {

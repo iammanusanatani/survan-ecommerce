@@ -69,7 +69,7 @@
         updateNavUser();
         if (data.user.isAdmin) {
           sessionStorage.setItem('survan_admin_auth', '1');
-          showToast('🔐 Admin Panel mein khush aamdeed!');
+          showToast('🔐 Welcome Back Admin Sir!');
           showPage('admin');
           showAdminDashboard();
         } else {
@@ -90,7 +90,7 @@
       const cpass = document.getElementById('su-cpass').value;
       const agree = document.getElementById('su-agree').checked;
       if (!fname || !lname || !email || !phone || !pass) { showToast('Fill all required fields'); return; }
-      if (pass.length < 6) { showToast('Password must be 6+ characters'); return; }
+      if (pass.length < 8) { showToast('Password must be 8+ characters'); return; }
       if (pass !== cpass) { showToast('Passwords do not match'); return; }
       if (!agree) { showToast('Please agree to Terms & Conditions'); return; }
       try {
@@ -359,7 +359,7 @@
 
     async function renderAccOrders() {
       const el = document.getElementById('acc-orders-list');
-      el.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--gray)">Loading...</div>`;
+      el.innerHTML = `<div class="loader" style="text-align:center;padding:2rem;color:var(--gray)">Loading...</div>`;
       let userOrders = [];
       try {
         const token = localStorage.getItem('survan_token');
@@ -461,7 +461,7 @@
       const users = JSON.parse(localStorage.getItem('survan_users') || '[]');
       const idx = users.findIndex(u => u.id === currentUser.id);
       if (users[idx].password !== btoa(old)) { showToast('Current password is wrong'); return; }
-      if (newp.length < 6) { showToast('New password must be 6+ chars'); return; }
+      if (newp.length < 8) { showToast('New password must be 8+ chars'); return; }
       if (newp !== cnew) { showToast('Passwords do not match'); return; }
       users[idx].password = btoa(newp);
       localStorage.setItem('survan_users', JSON.stringify(users));

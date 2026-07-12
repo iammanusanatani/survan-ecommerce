@@ -144,7 +144,7 @@
     body.light-mode .nav-logo span {
       color: var(--accent);
     }
-    body.light .nav-center-logo img{
+    body.light-mode .nav-center-logo img{
     filter: brightness(0) invert(1);
 }
 
@@ -321,7 +321,241 @@
     font-size: 22px;
 }
 
+    /* Accessible focus states */
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible,
+    [tabindex]:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 3px;
+    }
+
+    /* Selection color */
+    ::selection {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    /* Slim custom scrollbar (desktop) */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+      background: var(--bg4);
+      border-radius: 8px;
+    }
+    ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+    img { max-width: 100%; display: block; }
+
+    button { font-family: inherit; }
+
     /* ═══════════════════════════════
        RESPONSIVE — ALL DEVICES
     ═══════════════════════════════ */
 
+    /* Fluid section rhythm so spacing scales smoothly instead of jumping at breakpoints */
+    .section-header { padding: clamp(1.6rem, 4vw, 3rem) clamp(1rem, 4vw, 2.5rem) clamp(1rem, 2.5vw, 1.6rem); }
+
+    /* Ultra-wide desktop — keep line lengths & grids readable, avoid an overly stretched layout */
+    @media (min-width: 1600px) {
+      nav,
+      #hero,
+      .section-header,
+      .products-grid,
+      .cat-grid,
+      .newsletter,
+      footer,
+      .cart-layout,
+      .checkout-layout,
+      .detail-layout,
+      .account-layout,
+      .admin-wrap,
+      .orders-wrap,
+      .wishlist-wrap,
+      .filter-bar {
+        max-width: 1600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+
+    /* Small laptop / large tablet fine-tuning */
+    @media (min-width: 1025px) and (max-width: 1280px) {
+      .section-header { padding-left: 1.8rem; padding-right: 1.8rem; }
+      .products-grid,
+      .cat-grid { padding-left: 1.8rem; padding-right: 1.8rem; }
+    }
+
+    /* Landscape phones — reclaim vertical space */
+    @media (max-width: 900px) and (max-height: 480px) and (orientation: landscape) {
+      #hero { min-height: auto; padding: 1.6rem 2rem; }
+      .hero-stats { margin-top: 1.2rem; }
+      #bottom-nav { height: 52px; }
+    }
+
+    /* Respect reduced-motion preference */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* ═══ LOADING SPINNER (inline data-fetch states) ═══ */
+    .loader {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 90px;
+      font-size: 0;
+    }
+    .loader::before {
+      content: '';
+      width: 30px;
+      height: 30px;
+      border: 3px solid var(--bg4);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: survan-spin .7s linear infinite;
+    }
+    @keyframes survan-spin {
+      to { transform: rotate(360deg); }
+    }
+    @media (max-width: 768px) {
+      .loader { min-height: 70px; }
+      .loader::before { width: 24px; height: 24px; border-width: 2.5px; }
+    }
+
+    /* ═══ FULL-PAGE SKELETON LOADER (slow-connection first load) ═══ */
+    #site-loader {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: var(--bg);
+      overflow-y: auto;
+      overflow-x: hidden;
+      opacity: 1;
+      transition: opacity .4s ease;
+    }
+    #site-loader.site-loader-hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .skel-shimmer {
+      position: relative;
+      background: linear-gradient(
+        100deg,
+        var(--bg3) 30%,
+        var(--bg4) 45%,
+        color-mix(in srgb, var(--accent) 30%, var(--bg4)) 55%,
+        var(--bg3) 70%
+      );
+      background-size: 300% 100%;
+      background-position: 100% 0;
+      border-radius: 6px;
+      overflow: hidden;
+      animation: skel-sweep 1.5s ease-in-out infinite;
+    }
+    @keyframes skel-sweep {
+      0%   { background-position: 100% 0; }
+      100% { background-position: -100% 0; }
+    }
+
+    /* NAV */
+    .skel-nav {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--bg4);
+      padding: 0 2.5rem;
+    }
+    .skel-logo { width: 110px; height: 28px; }
+    .skel-navlinks { width: 220px; height: 20px; }
+
+    /* HERO — mirrors #hero / .hero-eyebrow / .hero-headline / .hero-sub / .hero-cta / .hero-stats */
+    .skel-hero {
+      padding: 3rem 2.5rem;
+      min-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .skel-eyebrow { width: 170px; height: 13px; margin-bottom: 1.1rem; }
+    .skel-eyebrow.small { width: 140px; height: 12px; margin-bottom: .5rem; }
+    .skel-headline-1 { width: min(500px, 70%); height: clamp(2.6rem, 6vw, 4.2rem); margin-bottom: .6rem; }
+    .skel-headline-2 { width: min(320px, 45%); height: clamp(2.6rem, 6vw, 4.2rem); margin-bottom: 1.3rem; }
+    .skel-sub { width: min(420px, 60%); height: 14px; margin-bottom: .55rem; }
+    .skel-sub.short { width: min(260px, 38%); margin-bottom: 2rem; }
+    .skel-cta-row { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .skel-btn { width: 150px; height: 44px; border-radius: 4px; }
+    .skel-stats-row { display: flex; gap: 2.2rem; margin-top: 2.8rem; flex-wrap: wrap; }
+    .skel-stat { width: 80px; height: 38px; }
+
+    /* MARQUEE */
+    .skel-marquee {
+      height: 38px;
+      border-radius: 0;
+      border-top: 1px solid var(--bg4);
+      border-bottom: 1px solid var(--bg4);
+    }
+
+    /* SECTION HEADER — mirrors .section-header */
+    .skel-section-header { padding: clamp(1.6rem, 4vw, 3rem) clamp(1rem, 4vw, 2.5rem) clamp(1rem, 2.5vw, 1.6rem); }
+    .skel-sectitle { width: 200px; height: 28px; }
+
+    /* PRODUCTS GRID — mirrors .products-grid */
+    .skel-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 1.2rem 1rem;
+      padding: 0 2.5rem 2.5rem;
+    }
+    .skel-card { display: flex; flex-direction: column; gap: .5rem; }
+    .skel-img  { aspect-ratio: 3/4; border-radius: 8px; }
+    .skel-line { height: 12px; width: 80%; }
+    .skel-line.short { width: 45%; }
+
+    /* CATEGORIES GRID — mirrors .cat-grid */
+    .skel-cat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 1rem;
+      padding: 0 2.5rem 2.5rem;
+    }
+    .skel-cat { height: 108px; border-radius: 6px; }
+
+    /* NEWSLETTER */
+    .skel-newsletter {
+      height: 220px;
+      margin: 0 2.5rem 2.5rem;
+      border-radius: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .skel-nav { padding: 0 1rem; height: 52px; }
+      .skel-navlinks { display: none; }
+      .skel-hero { padding: 2.4rem 1.2rem 2rem; min-height: auto; }
+      .skel-headline-1, .skel-headline-2 { height: clamp(2rem, 9vw, 2.8rem); }
+      .skel-cta-row { flex-direction: column; align-items: stretch; }
+      .skel-btn { width: 100%; }
+      .skel-stats-row { gap: 1.4rem; margin-top: 2rem; }
+      .skel-section-header { padding: 1.8rem 1rem 1rem; }
+      .skel-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: .75rem .6rem;
+        padding: 0 1rem 2rem;
+      }
+      .skel-cat-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: .65rem;
+        padding: 0 1rem 2rem;
+      }
+      .skel-newsletter { margin: 0 1rem 2rem; height: 190px; }
+    }

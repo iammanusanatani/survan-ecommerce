@@ -287,7 +287,7 @@
 
     async function loadAdminProducts() {
       const el = document.getElementById('admin-products-list');
-      el.innerHTML = '<div style="color:var(--gray);text-align:center;padding:2rem;grid-column:1/-1">Loading...</div>';
+      el.innerHTML = '<div class="loader" style="color:var(--gray);text-align:center;padding:2rem;grid-column:1/-1">Loading...</div>';
       try {
         const res = await fetch(`${API}/products`);
         const data = await res.json();
@@ -564,7 +564,7 @@
     // ── ADMIN RETURNS ──
     async function loadAdminReturns() {
       const el = document.getElementById('admin-returns-list');
-      el.innerHTML = '<div style="color:var(--gray);text-align:center;padding:2rem">Loading...</div>';
+      el.innerHTML = '<div class="loader" style="color:var(--gray);text-align:center;padding:2rem">Loading...</div>';
       try {
         const token = localStorage.getItem('survan_token');
         const res = await fetch(`${API}/returns/all`, { headers: { 'Authorization': 'Bearer ' + token } });

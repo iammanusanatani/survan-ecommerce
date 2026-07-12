@@ -438,3 +438,12 @@
         }
       }, { passive: true });
     })();
+
+    // Hide full-page skeleton once EVERYTHING (CSS/JS/images) has finished loading
+window.addEventListener('load', function () {
+  const l = document.getElementById('site-loader');
+  if (l) {
+    l.classList.add('site-loader-hide');
+    setTimeout(() => l.remove(), 400);
+  }
+});

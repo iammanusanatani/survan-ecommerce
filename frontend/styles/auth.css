@@ -232,7 +232,9 @@
       font-weight: 900;
       text-transform: uppercase;
       margin-bottom: 2rem;
-      color: var(--white)
+      color: var(--white);
+      text-align: center;
+      
     }
 
     /* ADDRESS CARD */
@@ -319,15 +321,16 @@
 
     /* PROFILE STATS */
     .profile-stats {
+      padding: .76rem;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 1px;
+      gap: 2px;
       margin-bottom: 2rem
     }
 
     .profile-stat {
       background: var(--dark2);
-      border: 1px solid #1a1a1a;
+      border-radius: 8px;
       padding: 1.4rem;
       text-align: center
     }

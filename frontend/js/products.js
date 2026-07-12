@@ -300,7 +300,7 @@
       </div>
       <!-- THUMBNAILS STRIP (like Flipkart left rail — shown as bottom strip on mobile) -->
       <div style="display:flex;gap:8px;margin-top:10px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin;scrollbar-color:var(--dark3) transparent" id="detail-thumbs">
-        ${p.imgs.map((src, i) => `<div class="det-thumb" id="dt-${i}" onclick="detailGoTo(${i})" style="flex-shrink:0;width:64px;height:64px;border-radius:4px;overflow:hidden;cursor:pointer;border:2px solid ${i === 0 ? 'var(--neon)' : '#2a2a2a'};transition:border-color .2s"><img src="${src}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover" loading="lazy"></div>`).join('')}
+        ${p.imgs.map((src, i) => `<div class="det-thumb" id="dt-${i}" onclick="detailGoTo(${i})" style="flex-shrink:0;width:px;height:64px;border-radius:4px;overflow:hidden;cursor:pointer;border:2px solid ${i === 0 ? 'var(--neon)' : '#2a2a2a'};transition:border-color .2s"><img src="${src}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover" loading="lazy"></div>`).join('')}
       </div>
     </div>
     <div class="detail-info">
@@ -336,7 +336,7 @@
     <div style="margin-top:2.5rem;padding:0 2rem 2rem">
       <div style="font-family:var(--fd);font-size:1.4rem;font-weight:900;text-transform:uppercase;margin-bottom:1.2rem;border-top:1px solid var(--dark3);padding-top:1.5rem"><i data-lucide="star" style="width:18px;height:18px;vertical-align:middle;margin-right:6px"></i>Customer Reviews</div>
       <div id="product-reviews-list">
-        <div style="color:var(--gray);text-align:center;padding:1.5rem">Loading reviews...</div>
+        <div class="loader" style="color:var(--gray);text-align:center;padding:1.5rem">Loading reviews...</div>
       </div>
     </div>`;
 

@@ -26,9 +26,60 @@
   <link rel="stylesheet" href="styles/footer.css">
   <link rel="stylesheet" href="styles/responsive.css">
   <link rel="stylesheet" href="styles/menu.css">
+  <link rel="stylesheet" href="styles/account.css">
 </head>
 
 <body>
+  <!-- SITE LOADER — full-page skeleton shown until everything finishes loading -->
+<div id="site-loader">
+  <div class="skel-nav">
+    <div class="skel-shimmer skel-logo"></div>
+    <div class="skel-shimmer skel-navlinks"></div>
+  </div>
+
+  <div class="skel-hero">
+    <div class="skel-shimmer skel-eyebrow"></div>
+    <div class="skel-shimmer skel-headline-1"></div>
+    <div class="skel-shimmer skel-headline-2"></div>
+    <div class="skel-shimmer skel-sub"></div>
+    <div class="skel-shimmer skel-sub short"></div>
+    <div class="skel-cta-row">
+      <div class="skel-shimmer skel-btn"></div>
+      <div class="skel-shimmer skel-btn"></div>
+    </div>
+    <div class="skel-stats-row">
+      <div class="skel-shimmer skel-stat"></div>
+      <div class="skel-shimmer skel-stat"></div>
+      <div class="skel-shimmer skel-stat"></div>
+    </div>
+  </div>
+
+  <div class="skel-shimmer skel-marquee"></div>
+
+  <div class="skel-section-header">
+    <div class="skel-shimmer skel-eyebrow small"></div>
+    <div class="skel-shimmer skel-sectitle"></div>
+  </div>
+  <div class="skel-grid">
+    <div class="skel-card"><div class="skel-shimmer skel-img"></div><div class="skel-shimmer skel-line"></div><div class="skel-shimmer skel-line short"></div></div>
+    <div class="skel-card"><div class="skel-shimmer skel-img"></div><div class="skel-shimmer skel-line"></div><div class="skel-shimmer skel-line short"></div></div>
+    <div class="skel-card"><div class="skel-shimmer skel-img"></div><div class="skel-shimmer skel-line"></div><div class="skel-shimmer skel-line short"></div></div>
+    <div class="skel-card"><div class="skel-shimmer skel-img"></div><div class="skel-shimmer skel-line"></div><div class="skel-shimmer skel-line short"></div></div>
+  </div>
+
+  <div class="skel-section-header">
+    <div class="skel-shimmer skel-eyebrow small"></div>
+    <div class="skel-shimmer skel-sectitle"></div>
+  </div>
+  <div class="skel-cat-grid">
+    <div class="skel-shimmer skel-cat"></div>
+    <div class="skel-shimmer skel-cat"></div>
+    <div class="skel-shimmer skel-cat"></div>
+    <div class="skel-shimmer skel-cat"></div>
+  </div>
+
+  <div class="skel-shimmer skel-newsletter"></div>
+</div>
   <div id="toast"></div>
   <button id="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
@@ -47,8 +98,8 @@
     <div class="nav-logo" onclick="showPage('home')">SUR<span>VAN</span></div>
     <!-- Center Logo -->
     <div class="nav-center-logo" onclick="showPage('home')">
-    <img id="site-logo" src="assets/images/SV_logo.png" alt="SURVAN Logo">
-</div>
+      <img id="site-logo" src="assets/images/SV_logo.png" alt="SURVAN Logo">
+    </div>
     <ul class="nav-links" id="nav-links">
       <li><a id="nav-home" class="active" onclick="showPage('home')">Home</a></li>
       <li><a id="nav-shop" onclick="showPage('shop')">Shop</a></li>
@@ -147,7 +198,7 @@
         <span class="mdi-icon"><i data-lucide="log-out" style="width:18px;height:18px"></i></span> Logout
       </button>
     </div>
-    <div class="menu-drawer-footer">© 2025 SURVAN — Premium Streetwear</div>
+    <div class="menu-drawer-footer">© 2026 SURVAN — Premium Streetwear</div>
   </div>
 
   <!-- AUTH MODAL -->
@@ -164,12 +215,12 @@
         <!-- LOGIN FORM -->
         <div id="form-login">
           <div class="form-group"><label>Email Address</label><input type="email" id="li-email"
-              placeholder="ali@email.com"></div>
+              placeholder="Enter your email address"></div>
           <div class="form-group">
             <label>Password</label>
             <div style="position:relative">
-              <input type="password" id="li-pass" placeholder="••••••••" style="width:100%;padding-right:3rem"
-                onkeydown="if(event.key==='Enter')doLogin()">
+              <input type="password" id="li-pass" placeholder="Enter your password"
+                style="width:100%;padding-right:3rem" onkeydown="if(event.key==='Enter')doLogin()">
               <button onclick="togglePassVis('li-pass',this)"
                 style="position:absolute;right:.7rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--gray);cursor:pointer;font-size:.9rem">👁</button>
             </div>
@@ -190,17 +241,21 @@
         <!-- SIGNUP FORM -->
         <div id="form-signup" style="display:none">
           <div class="form-row">
-            <div class="form-group"><label>First Name</label><input type="text" id="su-fname" placeholder="Ali"></div>
-            <div class="form-group"><label>Last Name</label><input type="text" id="su-lname" placeholder="Hassan"></div>
+            <div class="form-group"><label>First Name</label><input type="text" id="su-fname"
+                placeholder="Enter your full name"></div>
+            <div class="form-group"><label>Last Name</label><input type="text" id="su-lname"
+                placeholder="Choose a username"></div>
           </div>
           <div class="form-group"><label>Email Address</label><input type="email" id="su-email"
-              placeholder="ali@email.com"></div>
-          <div class="form-group"><label>Phone Number</label><input type="tel" id="su-phone"
-              placeholder="+92 300 1234567"></div>
+              placeholder="Enter your email address"></div>
           <div class="form-group">
-            <label>Password</label>
+            <label for="su-phone">Phone Number (With Country code +91)</label>
+            <input type="tel" id="su-phone" placeholder="Enter your phone number" />
+          </div>
+          <div class="form-group">
+            <label>Password (Create a strong password)</label>
             <div style="position:relative">
-              <input type="password" id="su-pass" placeholder="Min 6 characters" style="width:100%;padding-right:3rem">
+              <input type="password" id="su-pass" placeholder="Min 8 characters" style="width:100%;padding-right:3rem">
               <button onclick="togglePassVis('su-pass',this)"
                 style="position:absolute;right:.7rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--gray);cursor:pointer;font-size:.9rem">👁</button>
             </div>
@@ -261,18 +316,17 @@
         <div id="acc-avatar" class="account-avatar">A</div>
         <div id="acc-name" class="account-name">User Name</div>
         <div id="acc-email" class="account-email">user@email.com</div>
-        <div style="margin-top:.5rem;font-size:.75rem;color:var(--gray)" id="acc-member-since">Member since Jun 2025
-        </div>
-        <div class="account-nav" style="margin-top:1.5rem">
+        <div class="acc-member-since" id="acc-member-since">Member since Jun 2025</div>
+        <div class="account-nav account-nav-spacing">
           <div class="account-nav-item active" onclick="switchAccSection('profile',this)"><i data-lucide="user"
-              style="width:14px;height:14px;vertical-align:middle;margin-right:4px"></i>My Profile</div>
+              class="account-nav-icon"></i>My Profile</div>
           <div class="account-nav-item" onclick="switchAccSection('addresses',this)"><i data-lucide="map-pin"
-              style="width:14px;height:14px;vertical-align:middle;margin-right:4px"></i>Saved Addresses</div>
+              class="account-nav-icon"></i>Saved Addresses</div>
           <div class="account-nav-item" onclick="switchAccSection('orders-acc',this)">🧾 My Orders</div>
           <div class="account-nav-item" onclick="switchAccSection('wishlist-acc',this)"><i data-lucide="heart"
-              style="width:14px;height:14px;vertical-align:middle;margin-right:4px"></i>Wishlist</div>
+              class="account-nav-icon"></i>Wishlist</div>
           <div class="account-nav-item" onclick="switchAccSection('security',this)">🔒 Security</div>
-          <div class="account-nav-item" style="margin-top:1rem;color:var(--neon2)" onclick="doLogout()">⏻ Logout</div>
+          <div class="account-nav-item account-nav-logout" onclick="doLogout()">⏻ Logout</div>
         </div>
       </div>
 
@@ -283,72 +337,59 @@
         <div class="account-section active" id="acc-profile">
           <div class="account-section-title">My Profile</div>
           <div class="profile-stats" id="acc-stats"></div>
-          <div style="background:var(--dark2);border:1px solid #1a1a1a;padding:2rem;margin-bottom:1px">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem">
-              <div class="form-section-title" style="margin:0">Personal Information</div>
-              <button id="profile-edit-btn" onclick="toggleProfileEdit()"
-                style="background:none;border:1px solid #333;color:var(--gray);padding:.35rem .9rem;border-radius:4px;cursor:pointer;font-family:var(--fd);font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;transition:all .2s"
-                onmouseover="this.style.borderColor='var(--neon)';this.style.color='var(--neon)'"
-                onmouseout="this.style.borderColor='#333';this.style.color='var(--gray)'"><i data-lucide="pencil"
-                  style="width:13px;height:13px;vertical-align:middle;margin-right:3px"></i>Edit</button>
+          <div class="profile-card">
+            <div class="profile-card-header">
+              <div class="form-section-title profile-card-title">Personal Information</div>
+              <button id="profile-edit-btn" onclick="toggleProfileEdit()" class="profile-edit-btn"><i
+                  data-lucide="pencil" class="profile-edit-icon"></i>Edit</button>
             </div>
 
             <!-- VIEW MODE -->
             <div id="profile-view-mode">
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+              <div class="profile-grid-2col">
                 <div>
-                  <div
-                    style="font-size:.72rem;color:var(--gray);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">
-                    First Name</div>
-                  <div id="view-fname" style="font-family:var(--fd);font-weight:700;font-size:1rem">—</div>
+                  <div class="profile-field-label">First Name</div>
+                  <div id="view-fname" class="profile-field-value">—</div>
                 </div>
                 <div>
-                  <div
-                    style="font-size:.72rem;color:var(--gray);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">
-                    Last Name</div>
-                  <div id="view-lname" style="font-family:var(--fd);font-weight:700;font-size:1rem">—</div>
+                  <div class="profile-field-label">Last Name</div>
+                  <div id="view-lname" class="profile-field-value">—</div>
                 </div>
               </div>
-              <div style="margin-bottom:1rem">
-                <div
-                  style="font-size:.72rem;color:var(--gray);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">
-                  Email</div>
-                <div id="view-email" style="font-size:.9rem">—</div>
+              <div class="profile-field">
+                <div class="profile-field-label">Email</div>
+                <div id="view-email" class="profile-field-value-plain">—</div>
               </div>
-              <div style="margin-bottom:1rem">
-                <div
-                  style="font-size:.72rem;color:var(--gray);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">
-                  Phone</div>
-                <div id="view-phone" style="font-size:.9rem">—</div>
+              <div class="profile-field">
+                <div class="profile-field-label">Phone</div>
+                <div id="view-phone" class="profile-field-value-plain">—</div>
               </div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+              <div class="profile-grid-2col">
                 <div>
-                  <div
-                    style="font-size:.72rem;color:var(--gray);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">
-                    Date of Birth</div>
-                  <div id="view-dob" style="font-size:.9rem">—</div>
+                  <div class="profile-field-label">Date of Birth</div>
+                  <div id="view-dob" class="profile-field-value-plain">—</div>
                 </div>
                 <div>
-                  <div
-                    style="font-size:.72rem;color:var(--gray);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">
-                    Gender</div>
-                  <div id="view-gender" style="font-size:.9rem">—</div>
+                  <div class="profile-field-label">Gender</div>
+                  <div id="view-gender" class="profile-field-value-plain">—</div>
                 </div>
               </div>
             </div>
 
             <!-- EDIT MODE -->
-            <div id="profile-edit-mode" style="display:none">
+            <div id="profile-edit-mode" class="profile-edit-mode">
               <div class="form-row">
-                <div class="form-group"><label>First Name</label><input type="text" id="acc-fname" placeholder="Ali">
+                <div class="form-group"><label>First Name</label><input type="text" id="acc-fname"
+                    placeholder="Enter your first name">
                 </div>
-                <div class="form-group"><label>Last Name</label><input type="text" id="acc-lname" placeholder="Hassan">
+                <div class="form-group"><label>Last Name</label><input type="text" id="acc-lname"
+                    placeholder="Enter your last name">
                 </div>
               </div>
               <div class="form-group"><label>Email Address</label><input type="email" id="acc-femail"
-                  placeholder="ali@email.com" readonly style="opacity:.6;cursor:not-allowed"></div>
+                  placeholder="yourname@example.com" readonly class="profile-field-readonly"></div>
               <div class="form-group"><label>Phone Number</label><input type="tel" id="acc-fphone"
-                  placeholder="+92 300 1234567"></div>
+                  placeholder="+91 98765 43210"></div>
               <div class="form-group"><label>Date of Birth (Optional)</label><input type="date" id="acc-dob"></div>
               <div class="form-group"><label>Gender (Optional)</label>
                 <select id="acc-gender">
@@ -358,10 +399,9 @@
                   <option>Non-binary</option>
                 </select>
               </div>
-              <div style="display:flex;gap:.8rem;margin-top:.5rem">
+              <div class="form-actions">
                 <button class="btn-primary" onclick="saveProfile()">Save Changes ✓</button>
-                <button onclick="toggleProfileEdit()"
-                  style="background:none;border:1px solid #333;color:var(--gray);padding:.5rem 1.2rem;border-radius:4px;cursor:pointer;font-family:var(--fd);font-size:.85rem;font-weight:700;text-transform:uppercase">Cancel</button>
+                <button onclick="toggleProfileEdit()" class="btn-cancel">Cancel</button>
               </div>
             </div>
           </div>
@@ -372,35 +412,70 @@
           <div class="account-section-title">Saved Addresses</div>
           <div class="address-grid" id="address-grid"></div>
           <button class="btn-outline" onclick="showAddAddressForm()">+ Add New Address</button>
-          <div id="add-address-form"
-            style="display:none;background:var(--dark2);border:1px solid #1a1a1a;padding:2rem;margin-top:1rem">
+          <div id="add-address-form" class="add-address-form">
             <div class="form-section-title">New Address</div>
             <div class="form-group"><label>Full Name</label><input type="text" id="new-addr-name"
-                placeholder="Ali Hassan"></div>
+                placeholder="Enter your full name"></div>
             <div class="form-group"><label>Phone</label><input type="tel" id="new-addr-phone"
-                placeholder="+92 300 0000000"></div>
+                placeholder="10-digit mobile number with +91"></div>
             <div class="form-group"><label>Street Address</label><input type="text" id="new-addr-street"
-                placeholder="House #12, Street 4, Block B"></div>
+                placeholder="House No., Building, Street, Area"></div>
             <div class="form-row">
-              <div class="form-group"><label>City</label><input type="text" id="new-addr-city" placeholder="Karachi">
+              <div class="form-group"><label>City</label><input type="text" id="new-addr-city" placeholder="Enter City">
               </div>
-              <div class="form-group"><label>Province</label>
+              <div class="form-group">
+                <label>State / Union Territory</label>
                 <select id="new-addr-prov">
-                  <option>Sindh</option>
+                  <option value="">Select State / Union Territory</option>
+
+                  <!-- States -->
+                  <option>Andhra Pradesh</option>
+                  <option>Arunachal Pradesh</option>
+                  <option>Assam</option>
+                  <option>Bihar</option>
+                  <option>Chhattisgarh</option>
+                  <option>Goa</option>
+                  <option>Gujarat</option>
+                  <option>Haryana</option>
+                  <option>Himachal Pradesh</option>
+                  <option>Jharkhand</option>
+                  <option>Karnataka</option>
+                  <option>Kerala</option>
+                  <option>Madhya Pradesh</option>
+                  <option>Maharashtra</option>
+                  <option>Manipur</option>
+                  <option>Meghalaya</option>
+                  <option>Mizoram</option>
+                  <option>Nagaland</option>
+                  <option>Odisha</option>
                   <option>Punjab</option>
-                  <option>KPK</option>
-                  <option>Balochistan</option>
-                  <option>Islamabad (ICT)</option>
+                  <option>Rajasthan</option>
+                  <option>Sikkim</option>
+                  <option>Tamil Nadu</option>
+                  <option>Telangana</option>
+                  <option>Tripura</option>
+                  <option>Uttar Pradesh</option>
+                  <option>Uttarakhand</option>
+                  <option>West Bengal</option>
+
+                  <!-- Union Territories -->
+                  <option>Andaman and Nicobar Islands</option>
+                  <option>Chandigarh</option>
+                  <option>Dadra and Nagar Haveli and Daman and Diu</option>
+                  <option>Delhi (NCT)</option>
+                  <option>Jammu and Kashmir</option>
+                  <option>Ladakh</option>
+                  <option>Lakshadweep</option>
+                  <option>Puducherry</option>
                 </select>
               </div>
             </div>
-            <div class="form-group"><label>Postal Code</label><input type="text" id="new-addr-postal"
-                placeholder="74000"></div>
-            <label
-              style="display:flex;align-items:center;gap:.6rem;cursor:pointer;font-size:.83rem;color:var(--gray);margin-bottom:1.2rem">
-              <input type="checkbox" id="new-addr-default" style="accent-color:var(--neon)"> Set as default address
+            <div class="form-group"><label>PIN Code</label><input type="text" id="new-addr-postal"
+                placeholder="6-digit PIN code"></div>
+            <label class="addr-default-label">
+              <input type="checkbox" id="new-addr-default" class="addr-default-checkbox"> Set as default address
             </label>
-            <div style="display:flex;gap:.8rem">
+            <div class="form-actions-addr">
               <button class="btn-primary" onclick="saveNewAddress()">Save Address</button>
               <button class="btn-outline"
                 onclick="document.getElementById('add-address-form').style.display='none'">Cancel</button>
@@ -417,35 +492,33 @@
         <!-- WISHLIST (inside account) -->
         <div class="account-section" id="acc-wishlist-acc">
           <div class="account-section-title">Wishlist</div>
-          <div class="products-grid" id="acc-wishlist-grid" style="padding:0 0 2rem"></div>
+          <div class="products-grid wishlist-grid" id="acc-wishlist-grid"></div>
         </div>
 
         <!-- SECURITY -->
         <div class="account-section" id="acc-security">
           <div class="account-section-title">Security</div>
-          <div style="background:var(--dark2);border:1px solid #1a1a1a;padding:2rem;margin-bottom:1px">
+          <div class="profile-card">
             <div class="form-section-title">Change Password</div>
             <div class="form-group"><label>Current Password</label><input type="password" id="sec-old"
                 placeholder="••••••••"></div>
             <div class="form-group"><label>New Password</label><input type="password" id="sec-new"
-                placeholder="Min 6 characters"></div>
+                placeholder="Min 8+ characters"></div>
             <div class="form-group"><label>Confirm New Password</label><input type="password" id="sec-cnew"
                 placeholder="Re-enter new password"></div>
             <button class="btn-primary" onclick="changeUserPass()">Update Password</button>
           </div>
-          <div style="background:var(--dark2);border:1px solid #1a1a1a;padding:2rem;margin-top:1px">
-            <div class="form-section-title" style="color:var(--neon2)">Danger Zone</div>
-            <p style="color:var(--gray);font-size:.85rem;margin-bottom:1rem">Delete your account permanently. This
+          <div class="profile-card profile-card-spacing">
+            <div class="form-section-title danger-zone-title">Danger Zone</div>
+            <p class="danger-zone-text">Delete your account permanently. This
               cannot be undone.</p>
-            <button
-              style="background:none;border:1px solid var(--neon2);color:var(--neon2);font-family:var(--fd);font-size:.9rem;font-weight:700;padding:.7rem 1.5rem;border-radius:4px;cursor:pointer;transition:all .2s"
-              onmouseover="this.style.background='rgba(255,45,120,.1)'" onmouseout="this.style.background='none'"
-              onclick="deleteAccount()">Delete My Account</button>
+            <button class="btn-delete-account" onclick="deleteAccount()">Delete My Account</button>
           </div>
         </div>
       </div>
     </div>
   </div>
+
 
   <!-- ═══ HOME ═══ -->
   <div id="page-home" class="page active">
@@ -594,35 +667,75 @@
         <div class="form-block">
           <div class="form-section-title">Contact Info</div>
           <div class="form-row">
-            <div class="form-group"><label>First Name *</label><input type="text" id="fname" placeholder="Ali"></div>
-            <div class="form-group"><label>Last Name *</label><input type="text" id="lname" placeholder="Hassan"></div>
+            <div class="form-group"><label>First Name *</label><input type="text" id="fname" placeholder="Enter first name"></div>
+            <div class="form-group"><label>Last Name *</label><input type="text" id="lname" placeholder="Enter last name"></div>
           </div>
           <div class="form-group"><label>Email Address *</label><input type="email" id="email"
-              placeholder="ali@email.com"></div>
+              placeholder="Enter your email address"></div>
           <div class="form-group"><label>Phone Number *</label><input type="tel" id="phone"
-              placeholder="+92 300 1234567"></div>
+              placeholder="10-digit mobile number with +91"></div>
         </div>
         <div class="form-block" style="margin-top:1px">
           <div class="form-section-title">Shipping Address</div>
           <div class="form-group"><label>Street Address *</label><input type="text" id="address"
-              placeholder="House #12, Street 4, Block B"></div>
+              placeholder="House No., Building, Street, Area"></div>
           <div class="form-row">
-            <div class="form-group"><label>City *</label><input type="text" id="city" placeholder="Karachi"></div>
-            <div class="form-group"><label>Province</label>
-              <select id="province">
-                <option>Sindh</option>
+            <div class="form-group">
+              <label>City *</label>
+              <input type="text" id="city" placeholder="Enter city" autocomplete="address-level2">
+            </div>
+
+            <div class="form-group">
+              <label>State / Union Territory *</label>
+              <select id="province" autocomplete="address-level1">
+                <option value="" selected disabled>Select State / Union Territory</option>
+
+                <!-- States -->
+                <option>Andhra Pradesh</option>
+                <option>Arunachal Pradesh</option>
+                <option>Assam</option>
+                <option>Bihar</option>
+                <option>Chhattisgarh</option>
+                <option>Goa</option>
+                <option>Gujarat</option>
+                <option>Haryana</option>
+                <option>Himachal Pradesh</option>
+                <option>Jharkhand</option>
+                <option>Karnataka</option>
+                <option>Kerala</option>
+                <option>Madhya Pradesh</option>
+                <option>Maharashtra</option>
+                <option>Manipur</option>
+                <option>Meghalaya</option>
+                <option>Mizoram</option>
+                <option>Nagaland</option>
+                <option>Odisha</option>
                 <option>Punjab</option>
-                <option>KPK</option>
-                <option>Balochistan</option>
-                <option>Azad Kashmir</option>
-                <option>Islamabad (ICT)</option>
+                <option>Rajasthan</option>
+                <option>Sikkim</option>
+                <option>Tamil Nadu</option>
+                <option>Telangana</option>
+                <option>Tripura</option>
+                <option>Uttar Pradesh</option>
+                <option>Uttarakhand</option>
+                <option>West Bengal</option>
+
+                <!-- Union Territories -->
+                <option>Andaman and Nicobar Islands</option>
+                <option>Chandigarh</option>
+                <option>Dadra and Nagar Haveli and Daman and Diu</option>
+                <option>Delhi (NCT)</option>
+                <option>Jammu and Kashmir</option>
+                <option>Ladakh</option>
+                <option>Lakshadweep</option>
+                <option>Puducherry</option>
               </select>
             </div>
           </div>
-          <div class="form-group"><label>Postal Code</label><input type="text" id="postal" placeholder="74000"></div>
+          <div class="form-group"><label>PIN Code</label><input type="text" id="postal" placeholder="6-digit PIN code"></div>
           <div class="form-group">
             <label>Delivery Instructions (Optional)</label>
-            <input type="text" id="instructions" placeholder="e.g. Ring bell twice, leave at door">
+            <input type="text" id="instructions" placeholder="e.g. Leave at the doorstep or call on arrival">
           </div>
         </div>
         <div class="form-block" style="margin-top:1px">
@@ -630,8 +743,8 @@
           <div class="pm-grid">
             <button class="pm-btn active" id="pm-cod" onclick="selectPM('cod')">💵 Cash on Delivery</button>
             <button class="pm-btn" id="pm-card" onclick="selectPM('card')">💳 Debit / Credit Card</button>
-            <button class="pm-btn" id="pm-easypaisa" onclick="selectPM('easypaisa')">📱 Easypaisa</button>
-            <button class="pm-btn" id="pm-jazzcash" onclick="selectPM('jazzcash')">💚 JazzCash</button>
+            <!-- <button class="pm-btn" id="pm-easypaisa" onclick="selectPM('easypaisa')">📱 Easypaisa</button>
+            <button class="pm-btn" id="pm-jazzcash" onclick="selectPM('jazzcash')">💚 JazzCash</button> -->
           </div>
           <div id="pm-detail"></div>
         </div>
