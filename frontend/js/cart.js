@@ -1,4 +1,4 @@
-    // ════ CART ════
+// ════ CART ════
     function addToCart(id, size) {
       const p = PRODUCTS.find(x => String(x.id) === String(id));
       if (Number(p.stock) === 0) { showToast('Sorry, this item is sold out'); return; }
@@ -120,7 +120,19 @@
       selectPM('cod');
     }
 
-    function placeOrder() {
+    async function placeOrder() {
+      // Hard guard, independent of the showPage() gate — placeOrder is only
+      // reachable from the checkout page, but checking again here means a
+      // stale page/expired session can never slip an order through without
+      // a valid token attached.
+      const token = localStorage.getItem('survan_token');
+      if (!currentUser || !token) {
+        showToast('Please log in to checkout');
+        showPage('cart');
+        openAuth('login');
+        return;
+      }
+
       const fname = document.getElementById('fname').value.trim();
       const email = document.getElementById('email').value.trim();
       const phone = document.getElementById('phone').value.trim();
@@ -140,29 +152,19 @@
         return;
       }
 
-      // COD / Easypaisa / JazzCash → same trusted flow as before.
+      // COD / Easypaisa / JazzCash — saved on the backend first; the
+      // success page/local order list only get updated once that's
+      // confirmed, so a failed save (bad stock, validation, network) never
+      // shows a fake "order placed" screen.
       const sub = cartTotal();
       const ship = sub >= 3000 ? 0 : 200;
       const oid = 'SURVAN-' + Math.floor(1000 + Math.random() * 9000);
-      const order = {
-        id: oid,
-        date: new Date().toLocaleDateString('en-PK', { day: 'numeric', month: 'short', year: 'numeric' }),
-        time: new Date().toLocaleTimeString('en-PK', { hour: '2-digit', minute: '2-digit' }),
-        items: [...cart],
-        sub: sub, ship: ship, discount: promoDiscount,
-        total: sub + ship - promoDiscount,
-        payment: selectedPM.toUpperCase(),
-        status: 'Processing',
-        address: `${address}, ${city}`,
-        name: fname, phone: phone, email: email,
-        userEmail: currentUser ? currentUser.email : email,
-        isNew: true
-      };
 
-      // Backend mein bhi save karo
-      const token = localStorage.getItem('survan_token');
-      if (token) {
-        fetch(`${API}/orders`, {
+      const btn = document.getElementById('place-order-btn');
+      if (btn) { btn.disabled = true; btn.textContent = 'Placing order…'; }
+
+      try {
+        const res = await fetch(`${API}/orders`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
           body: JSON.stringify({
@@ -172,10 +174,33 @@
             promoCode: appliedPromoCode || undefined,
             payment: selectedPM.toUpperCase()
           })
-        }).catch(() => { });
-      }
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          showToast(data.message || 'Could not place order. Please try again.');
+          return;
+        }
 
-      finalizeOrderSuccess(order);
+        const order = {
+          id: oid,
+          date: new Date().toLocaleDateString('en-PK', { day: 'numeric', month: 'short', year: 'numeric' }),
+          time: new Date().toLocaleTimeString('en-PK', { hour: '2-digit', minute: '2-digit' }),
+          items: [...cart],
+          sub: data.sub, ship: data.ship, discount: data.discount,
+          total: data.total,
+          payment: selectedPM.toUpperCase(),
+          status: 'Processing',
+          address: `${address}, ${city}`,
+          name: fname, phone: phone, email: email,
+          userEmail: currentUser.email,
+          isNew: true
+        };
+        finalizeOrderSuccess(order);
+      } catch {
+        showToast('Server se connect nahi ho saka. Please try again.');
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = 'Place Order →'; }
+      }
     }
 
     // Shared "order successful" tail — used by both COD/manual and Razorpay flows.
@@ -190,4 +215,3 @@
       updateBadges();
       document.getElementById('success-oid').textContent = 'Order #' + order.id;
     }
-

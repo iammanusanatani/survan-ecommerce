@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const crypto = require('crypto');
 const Razorpay = require('razorpay');
-const jwt = require('jsonwebtoken');
 const Order = require('../models/Order');
 const { isValidEmail, isValidPhone, isNonEmptyString, sanitizeText } = require('../middleware/validate');
 const { sendOrderEmails } = require('../utils/mailer');
@@ -26,24 +25,14 @@ function getRazorpay() {
   return razorpay;
 }
 
-// ── Optional auth ──
-// Checkout is allowed for guests in this store, so we don't hard-require a
-// token here — but if one is sent, we use it to attach the order to the user.
-function optionalAuth(req, res, next) {
-  const token = req.headers['authorization']?.split(' ')[1];
-  if (token) {
-    try {
-      req.user = jwt.verify(token, process.env.JWT_SECRET);
-    } catch {
-      // invalid/expired token on a guest-allowed route — just proceed as guest
-      req.user = null;
-    }
-  }
-  next();
-}
+// ── Auth required ──
+// Guest checkout is intentionally disabled — every order (COD or online)
+// must be tied to a logged-in account, so a valid token is mandatory here,
+// same as the regular /api/orders route.
+const authMiddleware = require('../middleware/auth');
 
 // ═══ 1. Create a Razorpay order (called when user selects Card/Online payment) ═══
-router.post('/create-order', optionalAuth, async (req, res) => {
+router.post('/create-order', authMiddleware, async (req, res) => {
   try {
     const { items, promoCode } = req.body;
 
@@ -104,7 +93,7 @@ router.post('/create-order', optionalAuth, async (req, res) => {
 });
 
 // ═══ 2. Verify payment signature + create the Order (called after checkout success) ═══
-router.post('/verify', optionalAuth, async (req, res) => {
+router.post('/verify', authMiddleware, async (req, res) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderData } = req.body;
 
@@ -196,7 +185,7 @@ router.post('/verify', optionalAuth, async (req, res) => {
       razorpayOrderId: razorpay_order_id,
       razorpayPaymentId: razorpay_payment_id,
       razorpaySignature: razorpay_signature,
-      userEmail: req.user ? req.user.email : orderData.email.trim().toLowerCase()
+      userEmail: req.user.email
     });
 
     res.json({ message: 'Payment verified successfully', order });

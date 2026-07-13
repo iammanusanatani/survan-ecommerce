@@ -1,4 +1,4 @@
-    // ════ DATA ════
+// ════ DATA ════
     let PRODUCTS = [
       { id: 1, name: "VOLT OVERSIZED TEE", cat: "Oversized", price: 1799, old: 2200, tag: "Best Seller", emoji: "👕", img: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&q=80", imgs: ["https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&q=80", "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&q=80", "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80", "https://images.unsplash.com/photo-1503341504253-dff4815485f1?w=600&q=80"], badge: "sale", sizes: ["XS", "S", "M", "L", "XL"], desc: "Our signature oversized tee in heavyweight 280gsm cotton. Drop-shoulder cut, screen-printed SURVAN graphic on the back. Made to live in.", rating: 4.9, reviews: 142 },
       { id: 2, name: "NEON STRIKE HOODIE", cat: "Hoodie", price: 3499, old: null, tag: "New Drop", emoji: "🧥", img: "https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=600&q=80", imgs: ["https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=600&q=80", "https://images.unsplash.com/photo-1509942774463-acf339cf87d5?w=600&q=80", "https://images.unsplash.com/photo-1614495800597-27ba9f4ce6f3?w=600&q=80", "https://images.unsplash.com/photo-1572307480813-ceb0e59d8325?w=600&q=80"], badge: "new", sizes: ["S", "M", "L", "XL", "XXL"], desc: "Premium fleece-lined hoodie with a bold neon strike graphic. Kangaroo pocket, drawstring hood, ribbed cuffs. The warmth hits different.", rating: 4.8, reviews: 87 },
@@ -50,6 +50,15 @@
     };
 
     function showPage(name) {
+      // Checkout requires a logged-in account — guest checkout used to
+      // silently skip saving the order to the backend entirely (see
+      // placeOrder()), so it's blocked here at the single place all
+      // navigation into checkout goes through.
+      if (name === 'checkout' && !currentUser) {
+        showToast('Please log in to checkout');
+        openAuth('login');
+        return;
+      }
       const currentActive = document.querySelector('.page.active');
       const currentName = currentActive ? currentActive.id.replace('page-', '') : null;
       // Push to history (don't push same page or home repeatedly)
@@ -81,6 +90,7 @@
     function goBack() {
       if (!pageHistory.length) { showPage('home'); return; }
       const prev = pageHistory.pop();
+      if (prev === 'checkout' && !currentUser) { showPage('cart'); return; }
       // Direct navigate without pushing to history again
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
       document.getElementById('page-' + prev).classList.add('active');
