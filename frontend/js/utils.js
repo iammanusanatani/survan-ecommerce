@@ -1,4 +1,4 @@
-    // ════ WHATSAPP NOTIFICATIONS ════
+// ════ WHATSAPP NOTIFICATIONS ════
     function saveWAConfig() {
       const num = document.getElementById('wa-number').value.trim().replace(/[^0-9]/g, '');
       if (!num || num.length < 10) { showToast('Enter valid WhatsApp number'); return; }
@@ -34,6 +34,10 @@
 
     // ════ UTILS ════
     function updateBadges() {
+      // Cart is kept in memory only otherwise, so it'd empty out on every
+      // page refresh — this saves it wherever updateBadges() already runs
+      // (add/remove/qty-change/checkout), same as wishlist/orders do.
+      localStorage.setItem('survan_cart', JSON.stringify(cart));
       const cartCount = cart.reduce((s, c) => s + c.qty, 0);
       document.getElementById('cart-count').textContent = cartCount;
       document.getElementById('wish-count').textContent = wishlist.length;
@@ -67,6 +71,3 @@
       if (window.scrollY > 400) btn.classList.add('show');
       else btn.classList.remove('show');
     });
-
-
-

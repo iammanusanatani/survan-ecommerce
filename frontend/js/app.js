@@ -24,7 +24,7 @@
     ];
 
     // ════ STATE ════
-    let cart = [];
+    let cart = JSON.parse(localStorage.getItem('survan_cart') || '[]');
     let productsLoaded = false;
     let wishlist = JSON.parse(localStorage.getItem('survan_wish') || '[]');
     let orders = JSON.parse(localStorage.getItem('survan_orders') || '[]');
