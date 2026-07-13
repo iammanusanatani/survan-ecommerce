@@ -1,11 +1,11 @@
 const Product = require('../models/Product');
 const { isValidObjectId } = require('../middleware/validate');
 
-// Flat shipping rule used across checkout: free above Rs. 3000, else Rs. 200.
-// Kept in one place so the server's idea of shipping always matches what
-// the frontend shows, instead of trusting a `ship` value from the client.
+// Shipping is currently free for everyone (temporary site-wide promo).
+// Kept as a function (not inlined) so this is the one place to flip back to
+// a real rate later — e.g. `return sub >= 3000 ? 0 : 200;`
 function computeShipping(sub) {
-  return sub >= 3000 ? 0 : 200;
+  return 0;
 }
 
 // Re-prices every cart item from the database instead of trusting whatever

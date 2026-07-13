@@ -34,8 +34,7 @@
         return;
       }
       const sub = cartTotal();
-      const ship = sub >= 3000 ? 0 : 200;
-      const pct = Math.min(100, Math.round(sub / 3000 * 100));
+      const ship = 0; // Shipping is free for everyone right now.
       el.innerHTML = `
     <div class="cart-layout">
       <div class="cart-items">
@@ -59,11 +58,7 @@
       <div class="cart-summary">
         <div class="summary-title">Summary</div>
         <div class="summary-row"><span>Items (${cart.reduce((s, c) => s + c.qty, 0)})</span><span>Rs.${sub.toLocaleString()}</span></div>
-        <div class="summary-row"><span>Shipping</span><span>${ship === 0 ? '<span style="color:var(--neon)">FREE ✓</span>' : 'Rs.' + ship}</span></div>
-        ${sub < 3000 ? `<div style="margin-top:-.4rem;margin-bottom:.8rem">
-          <div style="font-size:.74rem;color:var(--gray);margin-bottom:.4rem">Rs.${(3000 - sub).toLocaleString()} more for free delivery</div>
-          <div class="free-del-bar"><div class="free-del-fill" style="width:${pct}%"></div></div>
-        </div>`: ''}
+        <div class="summary-row"><span>Shipping</span><span style="color:var(--neon)">FREE ✓</span></div>
         <div class="promo-row">
           <input type="text" id="promo-input" placeholder="Promo code (SURVAN10)">
           <button onclick="applyPromo()">Apply</button>
@@ -102,10 +97,10 @@
 
     function renderCheckout() {
       const sub = cartTotal();
-      const ship = sub >= 3000 ? 0 : 200;
+      const ship = 0; // Shipping is free for everyone right now.
       const total = sub + ship - promoDiscount;
       document.getElementById('co-sub').textContent = 'Rs.' + sub.toLocaleString();
-      document.getElementById('co-ship').textContent = ship === 0 ? 'FREE' : 'Rs.' + ship;
+      document.getElementById('co-ship').textContent = 'FREE';
       document.getElementById('co-total').textContent = 'Rs.' + total.toLocaleString();
       if (promoDiscount > 0) {
         document.getElementById('co-discount-row').style.display = 'flex';
@@ -157,7 +152,7 @@
       // confirmed, so a failed save (bad stock, validation, network) never
       // shows a fake "order placed" screen.
       const sub = cartTotal();
-      const ship = sub >= 3000 ? 0 : 200;
+      const ship = 0; // Shipping is free for everyone right now.
       const oid = 'SURVAN-' + Math.floor(1000 + Math.random() * 9000);
 
       const btn = document.getElementById('place-order-btn');

@@ -1,8 +1,8 @@
-    // ════ RAZORPAY (Online Card / UPI / NetBanking payment) ════
+// ════ RAZORPAY (Online Card / UPI / NetBanking payment) ════
     async function payWithRazorpay(details) {
       const { fname, email, phone, address, city } = details;
       const sub = cartTotal();
-      const ship = sub >= 3000 ? 0 : 200;
+      const ship = 0; // Shipping is free for everyone right now.
       const total = sub + ship - promoDiscount;
       const oid = 'SURVAN-' + Math.floor(1000 + Math.random() * 9000);
 
@@ -97,4 +97,3 @@
         setBtnLoading(false);
       }
     }
-
