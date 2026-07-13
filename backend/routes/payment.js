@@ -7,6 +7,7 @@ const { isValidEmail, isValidPhone, isNonEmptyString, sanitizeText } = require('
 const { sendOrderEmails } = require('../utils/mailer');
 const { decrementStock, checkStockAvailable } = require('../utils/stock');
 const { validateAndComputeDiscount, incrementCouponUsage } = require('../utils/coupon');
+const { priceItemsFromDB, computeSubtotal, computeShipping } = require('../utils/pricing');
 
 // ── Razorpay client ──
 // Requires RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in .env (get these from
@@ -44,35 +45,45 @@ function optionalAuth(req, res, next) {
 // ═══ 1. Create a Razorpay order (called when user selects Card/Online payment) ═══
 router.post('/create-order', optionalAuth, async (req, res) => {
   try {
-    const { amount, items, promoCode, sub } = req.body;
+    const { items, promoCode } = req.body;
 
-    if (amount === undefined || amount === null || typeof amount !== 'number' || isNaN(amount) || amount <= 0) {
-      return res.status(400).json({ message: 'A valid numeric amount is required' });
-    }
-    if (amount > 1000000) {
-      return res.status(400).json({ message: 'Amount exceeds allowed limit' });
-    }
-
-    if (Array.isArray(items) && items.length) {
-      const stockProblems = await checkStockAvailable(items);
-      if (stockProblems.length) {
-        const detail = stockProblems.map(p => `${p.name} (only ${p.available} left, requested ${p.requested})`).join(', ');
-        return res.status(400).json({ message: `Not enough stock: ${detail}` });
-      }
+    // The amount is never trusted from the client — it's rebuilt here from
+    // real product prices, so editing `amount`/prices in devtools can no
+    // longer get you a Razorpay order for less than the cart is worth.
+    let pricedItems;
+    try {
+      pricedItems = await priceItemsFromDB(items);
+    } catch (err) {
+      return res.status(400).json({ message: err.message });
     }
 
-    // Check the coupon is still valid *before* charging the customer — the
-    // final amount itself is still trusted from the client here (same as
-    // before), but we don't want to take payment against a code that's
-    // expired, disabled, or over its usage limit.
-    if (promoCode && typeof sub === 'number') {
+    const stockProblems = await checkStockAvailable(pricedItems);
+    if (stockProblems.length) {
+      const detail = stockProblems.map(p => `${p.name} (only ${p.available} left, requested ${p.requested})`).join(', ');
+      return res.status(400).json({ message: `Not enough stock: ${detail}` });
+    }
+
+    const sub = computeSubtotal(pricedItems);
+    const ship = computeShipping(sub);
+
+    let discount = 0;
+    if (promoCode) {
       const result = await validateAndComputeDiscount(promoCode, sub);
       if (!result.valid) return res.status(400).json({ message: result.message });
+      discount = result.discount;
+    }
+
+    const total = Math.max(0, sub + ship - discount);
+    if (total <= 0) {
+      return res.status(400).json({ message: 'Order total must be greater than zero' });
+    }
+    if (total > 1000000) {
+      return res.status(400).json({ message: 'Amount exceeds allowed limit' });
     }
 
     const client = getRazorpay();
     const razorpayOrder = await client.orders.create({
-      amount: Math.round(amount * 100), // Razorpay expects paise (smallest currency unit)
+      amount: Math.round(total * 100), // Razorpay expects paise (smallest currency unit)
       currency: 'INR',
       receipt: 'rcpt_' + Date.now(),
     });
@@ -81,7 +92,10 @@ router.post('/create-order', optionalAuth, async (req, res) => {
       razorpayOrderId: razorpayOrder.id,
       amount: razorpayOrder.amount,
       currency: razorpayOrder.currency,
-      keyId: process.env.RAZORPAY_KEY_ID
+      keyId: process.env.RAZORPAY_KEY_ID,
+      // Sent back so the frontend can show the real total if it ever
+      // drifts from what the client thought it was (e.g. stale cart price).
+      sub, ship, discount, total
     });
   } catch (err) {
     console.error('Razorpay create-order error:', err.message);
@@ -134,17 +148,49 @@ router.post('/verify', optionalAuth, async (req, res) => {
       return res.status(409).json({ message: 'This payment has already been recorded', order: alreadyUsed });
     }
 
+    // Recompute the order total the exact same way create-order did — never
+    // trust orderData.sub/ship/discount/total from the client. This is what
+    // stops someone from paying for a cheap item via create-order and then
+    // recording a fake, more expensive order here.
+    let pricedItems, sub, ship, discount, total;
+    try {
+      pricedItems = await priceItemsFromDB(orderData.items);
+      sub = computeSubtotal(pricedItems);
+      ship = computeShipping(sub);
+      discount = 0;
+      if (orderData.promoCode) {
+        const result = await validateAndComputeDiscount(orderData.promoCode, sub);
+        if (!result.valid) return res.status(400).json({ message: result.message });
+        discount = result.discount;
+      }
+      total = Math.max(0, sub + ship - discount);
+    } catch (err) {
+      return res.status(400).json({ message: err.message });
+    }
+
+    // Cross-check our recomputed total against what was actually captured
+    // by Razorpay for this order — this closes the loop with create-order
+    // rebuilding the amount server-side, so a mismatched/tampered order
+    // can never be recorded as "Paid" even if someone bypasses the frontend.
+    const client = getRazorpay();
+    const razorpayOrderInfo = await client.orders.fetch(razorpay_order_id);
+    const expectedPaise = Math.round(total * 100);
+    if (razorpayOrderInfo.amount !== expectedPaise) {
+      console.error(`Payment amount mismatch: Razorpay order ${razorpay_order_id} was for ${razorpayOrderInfo.amount} paise, recomputed order total is ${expectedPaise} paise.`);
+      return res.status(400).json({ message: 'Order total does not match the amount paid. Please contact support.' });
+    }
+
     const order = await Order.create({
       orderId: sanitizeText(String(orderData.orderId || '')).slice(0, 30),
       name: sanitizeText(orderData.name),
       phone: orderData.phone.trim(),
       email: orderData.email.trim().toLowerCase(),
       address: sanitizeText(orderData.address),
-      items: orderData.items,
-      sub: orderData.sub,
-      ship: orderData.ship,
-      discount: orderData.discount || 0,
-      total: orderData.total,
+      items: pricedItems,
+      sub,
+      ship,
+      discount,
+      total,
       payment: 'Razorpay',
       paymentStatus: 'Paid',
       razorpayOrderId: razorpay_order_id,
