@@ -1,4 +1,4 @@
-    // ════ ADMIN ════
+// ════ ADMIN ════
     const ADMIN_PASS_KEY = 'survan_admin_pass';
     const ADMIN_EMAIL = 'admin@survan.com';
 
@@ -571,6 +571,13 @@
         const data = await res.json();
         if (!data.length) { el.innerHTML = '<div style="color:var(--gray);text-align:center;padding:2rem;font-family:var(--fd)">Koi request nahi hai</div>'; return; }
         const scls = { 'Pending': '#f59e0b', 'Approved': '#10b981', 'Rejected': '#ef4444' };
+        const refundBadge = (r) => {
+          if (r.refundStatus === 'Processed') return `<span style="background:#10b98122;color:#10b981;padding:.2rem .6rem;border-radius:20px;font-size:.72rem;font-weight:700">💳 Refunded Rs.${r.refundAmount.toLocaleString()} (Razorpay)</span>`;
+          if (r.refundStatus === 'Failed') return `<span style="background:#ef444422;color:#ef4444;padding:.2rem .6rem;border-radius:20px;font-size:.72rem;font-weight:700">⚠ Refund Failed — check Razorpay dashboard</span>`;
+          if (r.refundStatus === 'Pending') return `<span style="background:#f59e0b22;color:#f59e0b;padding:.2rem .6rem;border-radius:20px;font-size:.72rem;font-weight:700">Refund Pending</span>`;
+          if (r.paymentMethod === 'COD') return `<span style="background:var(--dark3);color:var(--gray);padding:.2rem .6rem;border-radius:20px;font-size:.72rem">COD — settle manually</span>`;
+          return '';
+        };
         el.innerHTML = data.map(r => `
           <div style="background:var(--dark2);border:1px solid var(--dark3);border-radius:6px;padding:1.2rem;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem">
             <div>
@@ -578,6 +585,8 @@
                 <span style="font-family:var(--fd);font-weight:900;color:var(--neon)">#${r.orderId}</span>
                 <span style="background:${scls[r.status]}22;color:${scls[r.status]};padding:.2rem .6rem;border-radius:20px;font-size:.75rem;font-weight:700;border:1px solid ${scls[r.status]}44">${r.status}</span>
                 <span style="background:var(--dark3);color:var(--gray);padding:.2rem .6rem;border-radius:20px;font-size:.72rem">${r.type}</span>
+                ${r.paymentMethod ? `<span style="background:var(--dark3);color:var(--gray);padding:.2rem .6rem;border-radius:20px;font-size:.72rem">${r.paymentMethod} · Rs.${(r.orderTotal || 0).toLocaleString()}</span>` : ''}
+                ${r.type === 'Return' && r.status === 'Approved' ? refundBadge(r) : ''}
               </div>
               <div style="color:var(--white);font-size:.85rem;margin-bottom:.3rem"><strong>${r.userName}</strong></div>
               <div style="color:var(--gray);font-size:.8rem">Reason: ${r.reason}</div>
@@ -655,5 +664,3 @@
         loadAdminReviews();
       } catch { showToast('Server error'); }
     }
-
-

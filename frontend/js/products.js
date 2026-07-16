@@ -1,4 +1,4 @@
-    // ════ SEARCH ════
+// ════ SEARCH ════
     function openSearch() {
       document.getElementById('search-overlay').classList.add('open');
       setTimeout(() => document.getElementById('search-input').focus(), 100);
@@ -57,6 +57,19 @@
     }
 
     // ════ PRODUCTS ════
+    // Grid "Add to Cart" has no size picker of its own — for products that
+    // actually have a size choice, jump to the detail page so they can pick
+    // one, instead of silently defaulting or failing with just a toast.
+    function quickAdd(id, from) {
+      const p = PRODUCTS.find(x => String(x.id) === String(id));
+      if (p && p.sizes && p.sizes.length > 1) {
+        showToast('Please select a size');
+        openDetail(id, from);
+        return;
+      }
+      addToCart(id);
+    }
+
     function productCard(p, from = 'shop') {
       const pid = String(p.id);
       const inWish = wishlist.map(String).includes(pid);
@@ -81,7 +94,7 @@
       <div class="product-overlay">
         ${soldOut
           ? `<button class="quick-add" disabled style="opacity:.5;cursor:not-allowed">Sold Out</button>`
-          : `<button class="quick-add" onclick="event.stopPropagation();addToCart('${pid}')">Add to Cart</button>`}
+          : `<button class="quick-add" onclick="event.stopPropagation();quickAdd('${pid}','${from}')">Add to Cart</button>`}
         <button class="quick-wish ${inWish ? 'wishlisted' : ''}" onclick="event.stopPropagation();toggleWish('${pid}',this)" title="Wishlist">${inWish ? `<i data-lucide="heart" style="width:16px;height:16px;fill:currentColor"></i>` : `<i data-lucide="heart" style="width:16px;height:16px"></i>`}</button>
       </div>
     </div>
@@ -133,6 +146,22 @@
       delete _cTouchData[pid];
       if (Math.abs(dx) > 35) cardSlide(String(pid), dx < 0 ? 1 : -1, null);
     }, { passive: true });
+
+    // Placeholder cards shown immediately, before the real catalog has
+    // loaded — keeps the grid from sitting empty during a slow/cold-start
+    // backend fetch. Swapped out by renderHomeProducts()/renderShopProducts()
+    // once real data arrives.
+    function skeletonCard() {
+      return `<div class="skeleton-card">
+    <div class="skeleton-img"></div>
+    <div class="skeleton-line w-60"></div>
+    <div class="skeleton-line w-40"></div>
+  </div>`;
+    }
+    function renderProductSkeletons(containerId, count = 4) {
+      const el = document.getElementById(containerId);
+      if (el) el.innerHTML = Array(count).fill(skeletonCard()).join('');
+    }
 
     function renderHomeProducts() {
       document.getElementById('home-featured').innerHTML = PRODUCTS.slice(0, 4).map(p => productCard(p, 'home')).join('');
@@ -322,6 +351,7 @@
       <div class="detail-actions">
         <button class="btn-primary" ${soldOut ? 'disabled style="opacity:.5;cursor:not-allowed"' : ''} onclick="${soldOut ? '' : `addToCartFromDetail('${p.id}')`}">${soldOut ? 'Sold Out' : 'Add to Cart'}</button>
         <button class="wish-btn ${inWish ? 'active' : ''}" id="detail-wish" onclick="toggleWishDetail('${p.id}')">${inWish ? `<i data-lucide="heart" style="width:16px;height:16px;fill:currentColor"></i>` : `<i data-lucide="heart" style="width:16px;height:16px"></i>`}</button>
+        <button class="btn-outline" style="width:100%" ${soldOut ? 'disabled style="opacity:.5;cursor:not-allowed;width:100%"' : ''} onclick="${soldOut ? '' : `buyNowFromDetail('${p.id}')`}">${soldOut ? 'Sold Out' : 'Buy Now →'}</button>
       </div>
       <div class="detail-meta">
         <div class="detail-meta-row"><span>Category</span>${p.cat}</div>
@@ -398,3 +428,10 @@
       addToCart(id, detailSelected.size);
     }
 
+    // "Checkout Now" — same size validation as Add to Cart (addToCart
+    // returns false and shows its own toast if a size is required but
+    // missing), and only proceeds to checkout if the item actually got in.
+    // function buyNowFromDetail(id) {
+    //   const added = addToCart(id, detailSelected.size);
+    //   if (added) showPage('');
+    // }

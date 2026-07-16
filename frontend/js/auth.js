@@ -1,4 +1,4 @@
-    // ════ AUTH SYSTEM ════
+// ════ AUTH SYSTEM ════
     // ── BACKEND API ──
 
     let currentUser = JSON.parse(localStorage.getItem('survan_user') || 'null');
@@ -372,6 +372,7 @@
             userOrders = data.map(o => ({
               id: o.orderId,
               date: new Date(o.createdAt).toLocaleDateString('en-PK', { day: 'numeric', month: 'short', year: 'numeric' }),
+              createdAt: o.createdAt,
               items: o.items, total: o.total, status: o.status, _id: o._id
             }));
           }
@@ -382,11 +383,15 @@
         el.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--gray)"><div style="font-family:var(--fd);font-size:2rem;font-weight:900;color:#1a1a1a;text-transform:uppercase">No Orders Yet</div><p style="margin:1rem 0 1.5rem">Start shopping!</p><button class="btn-primary" onclick="showPage('shop')">Shop Now →</button></div>`;
         return;
       }
-      const scls = { 'Processing': 's-processing', 'Shipped': 's-shipped', 'Delivered': 's-delivered', 'Cancelled': 's-cancelled' };
+      const scls = { 'Processing': 's-processing', 'Shipped': 's-shipped', 'Delivered': 's-delivered', 'Cancelled': 's-cancelled', 'Returned': 's-returned' };
+      const RETURN_WINDOW_DAYS = 5;
       const steps = ['Placed', 'Processing', 'Packed', 'Shipped', 'Delivered'];
       el.innerHTML = userOrders.map((o, i) => {
         const isCancelled = o.status === 'Cancelled';
-        const stepIdx = isCancelled ? -1 : ({ 'Processing': 1, 'Packed': 2, 'Shipped': 3, 'Delivered': 4 }[o.status] || 1);
+        const isReturned = o.status === 'Returned';
+        const daysSincePlaced = (Date.now() - new Date(o.createdAt).getTime()) / 86400000;
+        const withinReturnWindow = daysSincePlaced <= RETURN_WINDOW_DAYS;
+        const stepIdx = isCancelled ? -1 : ({ 'Processing': 1, 'Packed': 2, 'Shipped': 3, 'Delivered': 4, 'Returned': 4 }[o.status] || 1);
         const stepsHtml = isCancelled ? `
           <div class="track-step">
             <div class="track-dot done">✓</div>
@@ -395,6 +400,16 @@
           <div class="track-step">
             <div class="track-dot" style="background:#ef4444;border-color:#ef4444;color:#fff">✕</div>
             <div class="track-label" style="color:#ef4444;font-weight:700">Cancelled</div>
+          </div>
+        ` : isReturned ? `
+          ${steps.map(s => `
+          <div class="track-step">
+            <div class="track-dot done">✓</div>
+            <div class="track-label done">${s}</div>
+          </div>`).join('')}
+          <div class="track-step">
+            <div class="track-dot" style="background:#a855f7;border-color:#a855f7;color:#fff">↩</div>
+            <div class="track-label" style="color:#a855f7;font-weight:700">Returned</div>
           </div>
         ` : steps.map((s, si) => `
           <div class="track-step">
@@ -422,10 +437,16 @@
       </div>
       <div style="margin-top:1rem;display:flex;justify-content:space-between;align-items:center">
         ${isCancelled ? `<span></span>` :
-            o.status === 'Delivered' ? `
+            isReturned ? `<span style="font-size:.78rem;color:#a855f7;font-family:var(--fd);font-weight:700"><i data-lucide="rotate-ccw" style="width:13px;height:13px;vertical-align:middle;margin-right:3px"></i>Item Returned</span>` :
+            o.status === 'Delivered' && withinReturnWindow ? `
             <div style="display:flex;gap:.5rem;flex-wrap:wrap">
               <button onclick="openReturnModal('${o.id}')" style="background:none;border:1px solid #3b82f666;color:#3b82f6;cursor:pointer;font-family:var(--fd);font-size:.75rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.35rem .8rem;border-radius:4px;transition:all .2s" onmouseover="this.style.background='#3b82f622'" onmouseout="this.style.background='none'"><i data-lucide="rotate-ccw" style="width:13px;height:13px;vertical-align:middle;margin-right:3px"></i>Return</button>
               <button onclick="openExchangeModal('${o.id}')" style="background:none;border:1px solid #f59e0b66;color:#f59e0b;cursor:pointer;font-family:var(--fd);font-size:.75rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.35rem .8rem;border-radius:4px;transition:all .2s" onmouseover="this.style.background='#f59e0b22'" onmouseout="this.style.background='none'"><i data-lucide="repeat" style="width:13px;height:13px;vertical-align:middle;margin-right:3px"></i>Exchange</button>
+              <button onclick="openReviewModal('${o.id}','${o.items[0]?.id || 0}','${o.items[0]?.name || ''}')" style="background:none;border:1px solid #a855f766;color:#a855f7;cursor:pointer;font-family:var(--fd);font-size:.75rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.35rem .8rem;border-radius:4px;transition:all .2s" onmouseover="this.style.background='#a855f722'" onmouseout="this.style.background='none'"><i data-lucide="star" style="width:13px;height:13px;vertical-align:middle;margin-right:3px"></i>Review</button>
+            </div>` :
+              o.status === 'Delivered' ? `
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center">
+              <span style="font-size:.75rem;color:var(--gray);font-family:var(--fd)">Return window expired (5 days)</span>
               <button onclick="openReviewModal('${o.id}','${o.items[0]?.id || 0}','${o.items[0]?.name || ''}')" style="background:none;border:1px solid #a855f766;color:#a855f7;cursor:pointer;font-family:var(--fd);font-size:.75rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.35rem .8rem;border-radius:4px;transition:all .2s" onmouseover="this.style.background='#a855f722'" onmouseout="this.style.background='none'"><i data-lucide="star" style="width:13px;height:13px;vertical-align:middle;margin-right:3px"></i>Review</button>
             </div>` :
               o.status === 'Shipped' ? `
@@ -477,4 +498,3 @@
       doLogout();
       showToast('Account deleted. Goodbye! 👋');
     }
-

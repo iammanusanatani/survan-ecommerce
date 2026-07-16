@@ -1,29 +1,12 @@
 const router = require('express').Router();
 const crypto = require('crypto');
-const Razorpay = require('razorpay');
 const Order = require('../models/Order');
 const { isValidEmail, isValidPhone, isNonEmptyString, sanitizeText } = require('../middleware/validate');
 const { sendOrderEmails } = require('../utils/mailer');
 const { decrementStock, checkStockAvailable } = require('../utils/stock');
 const { validateAndComputeDiscount, incrementCouponUsage } = require('../utils/coupon');
 const { priceItemsFromDB, computeSubtotal, computeShipping } = require('../utils/pricing');
-
-// ── Razorpay client ──
-// Requires RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in .env (get these from
-// https://dashboard.razorpay.com/app/keys — use Test Mode keys while developing).
-let razorpay = null;
-function getRazorpay() {
-  if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
-    throw new Error('Razorpay keys missing. Set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET in .env');
-  }
-  if (!razorpay) {
-    razorpay = new Razorpay({
-      key_id: process.env.RAZORPAY_KEY_ID,
-      key_secret: process.env.RAZORPAY_KEY_SECRET
-    });
-  }
-  return razorpay;
-}
+const { getRazorpay } = require('../utils/razorpay');
 
 // ── Auth required ──
 // Guest checkout is intentionally disabled — every order (COD or online)

@@ -321,6 +321,9 @@
       } catch (e) { console.log('Wishlist fetch error:', e); }
     }
 
+    // Skeletons appear instantly (no network wait) — loadProductsFromBackend()
+    // replaces them with real cards once the fetch resolves either way.
+    renderProductSkeletons('home-featured', 4);
     loadProductsFromBackend();
     loadSiteConfig();
     syncWishlistFromBackend();

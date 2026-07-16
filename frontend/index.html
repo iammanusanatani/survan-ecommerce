@@ -611,14 +611,16 @@
     <div class="filter-bar">
       <input type="text" id="shop-search-input" placeholder="Search this collection..."
         oninput="onShopSearchInput(this.value)"
-        style="flex:1;min-width:180px;padding:.6rem .9rem;border:1px solid var(--border);border-radius:6px;background:var(--card-bg);color:var(--white);font-family:var(--fd)">
-      <button class="filter-btn active" onclick="filterProducts('All',this)">All</button>
-      <button class="filter-btn" onclick="filterProducts('Oversized',this)">Oversized</button>
-      <button class="filter-btn" onclick="filterProducts('Hoodie',this)">Hoodie</button>
-      <button class="filter-btn" onclick="filterProducts('Cargo',this)">Cargo</button>
-      <button class="filter-btn" onclick="filterProducts('Jacket',this)">Jacket</button>
-      <button class="filter-btn" onclick="filterProducts('Shorts',this)">Shorts</button>
-      <button class="filter-btn" onclick="filterProducts('Cap',this)">Caps</button>
+        style="flex:1;min-width:180px;padding:.6rem .9rem;border:1px solid var(--bg4);border-radius:6px;background:var(--bg2);color:var(--white);font-family:var(--fd)">
+      <div class="filter-chips">
+        <button class="filter-btn active" onclick="filterProducts('All',this)">All</button>
+        <button class="filter-btn" onclick="filterProducts('Oversized',this)">Oversized</button>
+        <button class="filter-btn" onclick="filterProducts('Hoodie',this)">Hoodie</button>
+        <button class="filter-btn" onclick="filterProducts('Cargo',this)">Cargo</button>
+        <button class="filter-btn" onclick="filterProducts('Jacket',this)">Jacket</button>
+        <button class="filter-btn" onclick="filterProducts('Shorts',this)">Shorts</button>
+        <button class="filter-btn" onclick="filterProducts('Cap',this)">Caps</button>
+      </div>
       <select class="sort-select" onchange="sortProducts(this.value)">
         <option value="default">Sort: Featured</option>
         <option value="low">Price: Low to High</option>

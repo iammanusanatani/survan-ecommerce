@@ -1,4 +1,4 @@
-    // ── ATTACH USER EMAIL TO ORDER ──
+// ── ATTACH USER EMAIL TO ORDER ──
     // (override placeOrder to tag email)
     function saveEmailConfig() {
       const cfg = {
@@ -67,6 +67,7 @@
               id: o.orderId,
               date: new Date(o.createdAt).toLocaleDateString('en-PK', { day: 'numeric', month: 'short', year: 'numeric' }),
               time: new Date(o.createdAt).toLocaleTimeString('en-PK', { hour: '2-digit', minute: '2-digit' }),
+              createdAt: o.createdAt,
               items: o.items, sub: o.sub, ship: o.ship, discount: o.discount,
               total: o.total, payment: o.payment, status: o.status,
               address: o.address, name: o.name, phone: o.phone, email: o.email,
@@ -81,10 +82,14 @@
         return;
       }
       el.innerHTML = userOrders.map((o, i) => {
-        const scls = { 'Processing': 's-processing', 'Shipped': 's-shipped', 'Delivered': 's-delivered', 'Cancelled': 's-cancelled' };
+        const scls = { 'Processing': 's-processing', 'Shipped': 's-shipped', 'Delivered': 's-delivered', 'Cancelled': 's-cancelled', 'Returned': 's-returned' };
+        const RETURN_WINDOW_DAYS = 5;
         const steps = ['Placed', 'Processing', 'Packed', 'Shipped', 'Delivered'];
-        const stepIdx = o.status === 'Cancelled' ? -1 : ({ 'Processing': 1, 'Packed': 2, 'Shipped': 3, 'Delivered': 4 }[o.status] || 1);
+        const stepIdx = o.status === 'Cancelled' ? -1 : ({ 'Processing': 1, 'Packed': 2, 'Shipped': 3, 'Delivered': 4, 'Returned': 4 }[o.status] || 1);
         const isCancelled = o.status === 'Cancelled';
+        const isReturned = o.status === 'Returned';
+        const daysSincePlaced = (Date.now() - new Date(o.createdAt).getTime()) / 86400000;
+        const withinReturnWindow = daysSincePlaced <= RETURN_WINDOW_DAYS;
         return `<div class="order-card">
       <div class="order-card-top">
         <div><div class="order-id">#${o.id}</div><div class="order-date">${o.date} · ${o.time || ''}</div></div>
@@ -103,6 +108,16 @@
               <div class="track-dot" style="background:#ef4444;border-color:#ef4444;color:#fff">✕</div>
               <div class="track-label" style="color:#ef4444">Cancelled</div>
             </div>
+          ` : isReturned ? `
+            ${steps.map(s => `
+            <div class="track-step">
+              <div class="track-dot done">✓</div>
+              <div class="track-label done">${s}</div>
+            </div>`).join('')}
+            <div class="track-step">
+              <div class="track-dot" style="background:#a855f7;border-color:#a855f7;color:#fff">↩</div>
+              <div class="track-label" style="color:#a855f7">Returned</div>
+            </div>
           ` : steps.map((s, si) => `
             <div class="track-step">
               <div class="track-dot ${si < stepIdx ? 'done' : si === stepIdx ? 'current' : ''}">${si < stepIdx ? '✓' : si + 1}</div>
@@ -119,7 +134,15 @@
         <div style="margin-top:1rem;font-size:.83rem;color:var(--gray)">Shipping to: <strong style="color:var(--light)">${o.address}</strong> · ${o.phone || ''}</div>
       </div>
       <div style="margin-top:1rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem">
-        ${o.status === 'Processing' ? `<button onclick="cancelOrder('${o.id}', '${o._id || ''}')" style="background:none;border:1px solid #ef444466;color:#ef4444;cursor:pointer;font-family:var(--fd);font-size:.8rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.4rem .9rem;border-radius:4px;transition:all .2s" onmouseover="this.style.background='#ef444422'" onmouseout="this.style.background='none'">✕ Cancel Order</button>` : `<span></span>`}
+        ${o.status === 'Processing' ? `<button onclick="cancelOrder('${o.id}', '${o._id || ''}')" style="background:none;border:1px solid #ef444466;color:#ef4444;cursor:pointer;font-family:var(--fd);font-size:.8rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.4rem .9rem;border-radius:4px;transition:all .2s" onmouseover="this.style.background='#ef444422'" onmouseout="this.style.background='none'">✕ Cancel Order</button>` :
+          isReturned ? `<span style="font-size:.78rem;color:#a855f7;font-family:var(--fd);font-weight:700">Item Returned</span>` :
+          o.status === 'Delivered' && withinReturnWindow ? `
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+            <button onclick="openReturnModal('${o.id}')" style="background:none;border:1px solid #3b82f666;color:#3b82f6;cursor:pointer;font-family:var(--fd);font-size:.78rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.4rem .9rem;border-radius:4px;transition:all .2s" onmouseover="this.style.background='#3b82f622'" onmouseout="this.style.background='none'">↩ Return</button>
+            <button onclick="openExchangeModal('${o.id}')" style="background:none;border:1px solid #f59e0b66;color:#f59e0b;cursor:pointer;font-family:var(--fd);font-size:.78rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.4rem .9rem;border-radius:4px;transition:all .2s" onmouseover="this.style.background='#f59e0b22'" onmouseout="this.style.background='none'">⇄ Exchange</button>
+          </div>` :
+          o.status === 'Delivered' ? `<span style="font-size:.75rem;color:var(--gray);font-family:var(--fd)">Return window expired (5 days)</span>` :
+          `<span></span>`}
         <button onclick="toggleExpand(${i})" style="background:none;border:none;color:var(--gray);cursor:pointer;font-family:var(--fd);font-size:.85rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;transition:color .2s" onmouseover="this.style.color='var(--neon)'" onmouseout="this.style.color='var(--gray)'" id="exp-btn-${i}">View Details ↓</button>
       </div>
     </div>`;
@@ -317,4 +340,3 @@ Chahiye: ${details}`;
         }
       } catch { showToast('Server se connect nahi ho saka'); }
     }
-

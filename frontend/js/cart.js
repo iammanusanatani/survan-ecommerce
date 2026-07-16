@@ -1,13 +1,24 @@
 // ════ CART ════
+    // Returns true if the item was actually added, false if it was blocked
+    // (e.g. no size chosen) — callers that need to know before moving on,
+    // like a "Buy Now" button, check this instead of assuming success.
     function addToCart(id, size) {
       const p = PRODUCTS.find(x => String(x.id) === String(id));
-      if (Number(p.stock) === 0) { showToast('Sorry, this item is sold out'); return; }
+      if (Number(p.stock) === 0) { showToast('Sorry, this item is sold out'); return false; }
+      // Products with a real size choice (more than one option) must have
+      // one explicitly picked — silently defaulting to the first size let
+      // people place orders in the wrong size without realizing it.
+      if (p.sizes && p.sizes.length > 1 && !size) {
+        showToast('Please select a size first');
+        return false;
+      }
       const key = id + ':' + (size || '');
       const ex = cart.find(c => c._key === key);
       if (ex) ex.qty++;
-      else cart.push({ ...p, qty: 1, size: size || p.sizes[0], _key: key });
+      else cart.push({ ...p, qty: 1, size: size || (p.sizes && p.sizes[0]) || '', _key: key });
       updateBadges();
       showToast(p.emoji + ' Added to cart!');
+      return true;
     }
 
     function removeFromCart(key) {

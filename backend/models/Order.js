@@ -24,7 +24,7 @@ const orderSchema = new mongoose.Schema({
   status: { 
     type: String, 
     default: 'Processing',
-    enum: ['Processing', 'Packed', 'Shipped', 'Delivered', 'Cancelled']
+    enum: ['Processing', 'Packed', 'Shipped', 'Delivered', 'Cancelled', 'Returned']
   },
   stockRestored: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now }
