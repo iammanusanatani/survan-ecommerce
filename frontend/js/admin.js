@@ -50,6 +50,9 @@
               id: o.orderId,
               date: new Date(o.createdAt).toLocaleDateString('en-PK', { day: 'numeric', month: 'short', year: 'numeric' }),
               time: new Date(o.createdAt).toLocaleTimeString('en-PK', { hour: '2-digit', minute: '2-digit' }),
+              deliveredAt: o.deliveredAt,
+              shiprocketShipmentId: o.shiprocketShipmentId,
+              awbCode: o.awbCode, courierName: o.courierName, shiprocketStatus: o.shiprocketStatus,
               items: o.items, sub: o.sub, ship: o.ship, discount: o.discount,
               total: o.total, payment: o.payment, status: o.status,
               address: o.address, name: o.name, phone: o.phone, email: o.email,
@@ -92,7 +95,7 @@
       tbody.innerHTML = list.map((o, i) => `
     <tr style="${o.isNew ? 'background:rgba(200,255,0,.03)' : ''};${o.status === 'Cancelled' ? 'opacity:0.7' : ''}">
       <td><span style="font-family:var(--fd);font-weight:900;color:var(--neon)">${o.id}</span>${o.isNew ? '<span class="notification-badge" style="margin-left:.4rem">New</span>' : ''}</td>
-      <td style="color:var(--gray);white-space:nowrap">${o.date}<br><span style="font-size:.72rem">${o.time || ''}</span></td>
+      <td style="color:var(--gray);white-space:nowrap">${o.date}<br><span style="font-size:.72rem">${o.time || ''}</span>${o.deliveredAt ? `<br><span style="font-size:.72rem;color:var(--neon)">Delivered: ${new Date(o.deliveredAt).toLocaleDateString('en-PK', { day: 'numeric', month: 'short' })}</span>` : ''}</td>
       <td><strong style="color:var(--white)">${o.name}</strong><br><span style="color:var(--gray);font-size:.75rem">${o.email || ''}</span></td>
       <td style="color:var(--gray)">${o.phone || ''}<br><span style="font-size:.75rem">${o.address}</span></td>
       <td style="font-size:.8rem">${o.items.map(x => `${x.emoji} ${x.name} ×${x.qty}`).join('<br>')}</td>
@@ -101,15 +104,45 @@
       <td>
         ${o.status === 'Cancelled'
           ? `<span class="order-status s-cancelled">Cancelled</span>`
-          : `<select class="status-select" onchange="updateOrderStatus('${o._id}','${o.id}',this.value)">
+          : o.status === 'Returned'
+            ? `<span class="order-status s-returned">Returned</span>`
+            : `<select class="status-select" onchange="updateOrderStatus('${o._id}','${o.id}',this.value)">
               ${['Processing', 'Packed', 'Shipped', 'Delivered'].map(s => `<option ${o.status === s ? 'selected' : ''}>${s}</option>`).join('')}
             </select>`
         }
       </td>
       <td>
-        <button onclick="markSeen(${orders.indexOf(o)})" style="background:none;border:1px solid #2a2a2a;color:var(--gray);padding:.3rem .6rem;border-radius:4px;cursor:pointer;font-size:.75rem;transition:all .2s" onmouseover="this.style.borderColor='var(--neon)';this.style.color='var(--neon)'" onmouseout="this.style.borderColor='#2a2a2a';this.style.color='var(--gray)'">✓ Seen</button>
+        <div style="display:flex;flex-direction:column;gap:.4rem;align-items:flex-start">
+          <button onclick="markSeen(${orders.indexOf(o)})" style="background:none;border:1px solid #2a2a2a;color:var(--gray);padding:.3rem .6rem;border-radius:4px;cursor:pointer;font-size:.75rem;transition:all .2s" onmouseover="this.style.borderColor='var(--neon)';this.style.color='var(--neon)'" onmouseout="this.style.borderColor='#2a2a2a';this.style.color='var(--gray)'">✓ Seen</button>
+          ${o.status === 'Cancelled' || o.status === 'Returned' ? '' :
+            o.awbCode
+              ? `<div style="font-size:.72rem;color:var(--neon);white-space:nowrap"><i data-lucide="truck" style="width:12px;height:12px;vertical-align:middle;margin-right:2px"></i>${o.awbCode}<br><span style="color:var(--gray)">${o.courierName || ''}</span></div>`
+              : o.shiprocketShipmentId
+                ? `<span style="font-size:.72rem;color:var(--gray)">Shipment created — assign courier on Shiprocket</span>`
+                : `<button onclick="createShipment('${o._id}')" id="shp-btn-${o._id}" style="background:none;border:1px solid #3b82f666;color:#3b82f6;padding:.3rem .6rem;border-radius:4px;cursor:pointer;font-size:.75rem;white-space:nowrap" onmouseover="this.style.background='#3b82f622'" onmouseout="this.style.background='none'">📦 Create Shipment</button>`
+          }
+        </div>
       </td>
     </tr>`).join('');
+    }
+
+    async function createShipment(mongoId) {
+      const btn = document.getElementById('shp-btn-' + mongoId);
+      if (btn) { btn.disabled = true; btn.textContent = 'Creating…'; }
+      try {
+        const token = localStorage.getItem('survan_token');
+        const res = await fetch(`${API}/shiprocket/create/${mongoId}`, {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        const data = await res.json();
+        if (!res.ok) { showToast(data.message || 'Could not create shipment'); if (btn) { btn.disabled = false; btn.textContent = '📦 Create Shipment'; } return; }
+        showToast(data.message || 'Shipment created');
+        showAdminDashboard();
+      } catch {
+        showToast('Server se connect nahi ho saka');
+        if (btn) { btn.disabled = false; btn.textContent = '📦 Create Shipment'; }
+      }
     }
 
     async function updateOrderStatus(mongoId, orderId, status) {

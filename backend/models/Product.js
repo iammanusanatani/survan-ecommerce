@@ -15,6 +15,11 @@ const productSchema = new mongoose.Schema({
   images: { type: Array, default: [] },
   rating: { type: Number, default: 0 },
   reviewCount: { type: Number, default: 0 },
+  // Shiprocket needs a weight (kg) per shipment to calculate courier rates.
+  // Default is a reasonable guess for a folded clothing item — edit per
+  // product from the admin panel for accuracy (heavier items like jackets
+  // should be set higher).
+  weight: { type: Number, default: 0.3 },
   createdAt: { type: Date, default: Date.now }
 });
 

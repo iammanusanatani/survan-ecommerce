@@ -4,9 +4,14 @@
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_RE = /^[+\d][\d\s-]{6,18}$/; // digits, spaces, dashes, optional leading +
 const OBJECT_ID_RE = /^[0-9a-fA-F]{24}$/;
+const PINCODE_RE = /^[1-9][0-9]{5}$/; // Indian PIN codes: 6 digits, doesn't start with 0
 
 function isValidEmail(str) {
   return typeof str === "string" && str.trim().length <= 254 && EMAIL_RE.test(str.trim());
+}
+
+function isValidPincode(str) {
+  return typeof str === "string" && PINCODE_RE.test(str.trim());
 }
 
 function isValidPhone(str) {
@@ -49,6 +54,7 @@ function requireValidId(paramName = "id") {
 module.exports = {
   isValidEmail,
   isValidPhone,
+  isValidPincode,
   isValidObjectId,
   isNonEmptyString,
   isFiniteNumber,

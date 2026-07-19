@@ -2,7 +2,7 @@ const router = require("express").Router();
 const Order = require("../models/Order");
 const authMiddleware = require("../middleware/auth");
 const { isAdmin } = require("../middleware/auth");
-const { isValidEmail, isValidPhone, isNonEmptyString, sanitizeText, requireValidId } = require("../middleware/validate");
+const { isValidEmail, isValidPhone, isValidPincode, isNonEmptyString, sanitizeText, requireValidId } = require("../middleware/validate");
 const { sendOrderEmails } = require("../utils/mailer");
 const { decrementStock, restoreStock, checkStockAvailable } = require("../utils/stock");
 const { validateAndComputeDiscount, incrementCouponUsage } = require("../utils/coupon");
@@ -16,6 +16,9 @@ function validateOrderBody(body) {
   if (!isValidPhone(body.phone)) errors.push("a valid phone number is required");
   if (!isValidEmail(body.email)) errors.push("a valid email is required");
   if (!isNonEmptyString(body.address, { min: 5, max: 500 })) errors.push("address is required (5-500 characters)");
+  if (!isNonEmptyString(body.city, { min: 2, max: 100 })) errors.push("city is required");
+  if (!isNonEmptyString(body.state, { min: 2, max: 100 })) errors.push("state is required");
+  if (!isValidPincode(body.pincode)) errors.push("a valid 6-digit pincode is required");
   if (!Array.isArray(body.items) || !body.items.length) errors.push("order must contain at least one item");
   else {
     const badItem = body.items.some(it =>
@@ -67,6 +70,9 @@ router.post("/", authMiddleware, async (req, res) => {
       phone: req.body.phone.trim(),
       email: req.body.email.trim().toLowerCase(),
       address: sanitizeText(req.body.address),
+      city: sanitizeText(req.body.city),
+      state: sanitizeText(req.body.state),
+      pincode: String(req.body.pincode).trim(),
       items: req.body.items,
       sub: req.body.sub,
       ship: req.body.ship,
@@ -136,8 +142,13 @@ router.patch("/:id/status", authMiddleware, isAdmin, requireValidId(), async (re
 
     const wasCancelled = order.status === "Cancelled";
     const willBeCancelled = req.body.status === "Cancelled";
+    const becomingDelivered = req.body.status === "Delivered" && order.status !== "Delivered";
 
     order.status = req.body.status;
+
+    if (becomingDelivered && !order.deliveredAt) {
+      order.deliveredAt = new Date();
+    }
 
     if (!wasCancelled && willBeCancelled && !order.stockRestored) {
       await restoreStock(order.items);

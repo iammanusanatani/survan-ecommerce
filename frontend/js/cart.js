@@ -144,12 +144,15 @@
       const phone = document.getElementById('phone').value.trim();
       const address = document.getElementById('address').value.trim();
       const city = document.getElementById('city').value.trim();
+      const state = document.getElementById('province').value.trim();
+      const pincode = document.getElementById('postal').value.trim();
       const agree = document.getElementById('agree-terms').checked;
-      if (!fname || !email || !phone || !address || !city) { showToast('Please fill all required fields'); return; }
+      if (!fname || !email || !phone || !address || !city || !state || !pincode) { showToast('Please fill all required fields'); return; }
+      if (!/^[1-9][0-9]{5}$/.test(pincode)) { showToast('Please enter a valid 6-digit PIN code'); return; }
       if (!agree) { showToast('Please agree to Terms & Conditions'); return; }
       if (!cart.length) { showToast('Your cart is empty!'); return; }
 
-      const details = { fname, email, phone, address, city };
+      const details = { fname, email, phone, address, city, state, pincode };
 
       // Online card/UPI payment → go through Razorpay's secure checkout.
       // The order is only created on the backend after payment is verified.
@@ -175,7 +178,7 @@
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
           body: JSON.stringify({
             orderId: oid, name: fname, phone, email,
-            address: `${address}, ${city}`,
+            address, city, state, pincode,
             items: [...cart], sub, ship,
             promoCode: appliedPromoCode || undefined,
             payment: selectedPM.toUpperCase()
@@ -196,7 +199,7 @@
           total: data.total,
           payment: selectedPM.toUpperCase(),
           status: 'Processing',
-          address: `${address}, ${city}`,
+          address: `${address}, ${city}, ${state} - ${pincode}`,
           name: fname, phone: phone, email: email,
           userEmail: currentUser.email,
           isNew: true

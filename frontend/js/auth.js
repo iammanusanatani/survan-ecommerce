@@ -373,6 +373,8 @@
               id: o.orderId,
               date: new Date(o.createdAt).toLocaleDateString('en-PK', { day: 'numeric', month: 'short', year: 'numeric' }),
               createdAt: o.createdAt,
+              deliveredAt: o.deliveredAt,
+              awbCode: o.awbCode, courierName: o.courierName,
               items: o.items, total: o.total, status: o.status, _id: o._id
             }));
           }
@@ -419,13 +421,14 @@
         return `
     <div class="order-card" style="margin-bottom:1px">
       <div class="order-card-top">
-        <div><div class="order-id">#${o.id}</div><div class="order-date">${o.date}</div></div>
+        <div><div class="order-id">#${o.id}</div><div class="order-date">${o.date}</div>${o.deliveredAt ? `<div class="order-date" style="color:var(--neon)">Delivered: ${new Date(o.deliveredAt).toLocaleDateString('en-PK', { day: 'numeric', month: 'short', year: 'numeric' })}</div>` : ''}</div>
         <div><div class="order-emojis">${o.items.map(x => x.emoji).slice(0, 4).join('')}</div><div class="order-count">${o.items.reduce((s, x) => s + x.qty, 0)} item(s)</div></div>
         <div class="order-total">Rs.${o.total.toLocaleString()}</div>
         <span class="order-status ${scls[o.status] || 's-processing'}">${o.status}</span>
       </div>
       <div class="order-expand" id="acc-exp-${i}">
         <div class="track-steps" style="margin:1rem 0">${stepsHtml}</div>
+        ${o.awbCode ? `<div style="font-size:.83rem;color:#3b82f6;margin-bottom:.8rem"><i data-lucide="truck" style="width:14px;height:14px;vertical-align:middle;margin-right:4px"></i>Tracking: <strong>${o.awbCode}</strong>${o.courierName ? ` via ${o.courierName}` : ''}</div>` : ''}
         <div style="display:flex;flex-direction:column;gap:.6rem">
           ${o.items.map(item => `
             <div style="display:flex;align-items:center;gap:1rem;background:var(--dark3);padding:.7rem 1rem;border-radius:4px">

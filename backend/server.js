@@ -51,6 +51,7 @@ app.use('/api/upload', require('./routes/upload'));
 app.use('/api/payment', paymentRoutes.router);
 app.use('/api/config', require('./routes/config'));
 app.use('/api/coupons', require('./routes/coupons'));
+app.use('/api/shiprocket', require('./routes/shiprocket'));
 
 app.get("/", (req, res) => {
   res.json({

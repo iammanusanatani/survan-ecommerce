@@ -7,6 +7,9 @@ const orderSchema = new mongoose.Schema({
   phone: String,
   email: String,
   address: String,
+  city: { type: String, default: '' },
+  state: { type: String, default: '' },
+  pincode: { type: String, default: '' },
   items: Array,
   sub: Number,
   ship: Number,
@@ -27,6 +30,19 @@ const orderSchema = new mongoose.Schema({
     enum: ['Processing', 'Packed', 'Shipped', 'Delivered', 'Cancelled', 'Returned']
   },
   stockRestored: { type: Boolean, default: false },
+  // Set automatically the moment admin changes status to 'Delivered' —
+  // this is the actual delivery date shown to customers, separate from
+  // createdAt (order placement date, which is what the 5-day return
+  // window is measured from).
+  deliveredAt: { type: Date, default: null },
+
+  // ── Shiprocket ──
+  shiprocketOrderId: { type: String, default: '' },
+  shiprocketShipmentId: { type: String, default: '' },
+  awbCode: { type: String, default: '' },       // tracking number
+  courierName: { type: String, default: '' },
+  shiprocketStatus: { type: String, default: '' }, // raw status string from Shiprocket, kept as-is for reference
+
   createdAt: { type: Date, default: Date.now }
 });
 

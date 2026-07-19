@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const crypto = require('crypto');
 const Order = require('../models/Order');
-const { isValidEmail, isValidPhone, isNonEmptyString, sanitizeText } = require('../middleware/validate');
+const { isValidEmail, isValidPhone, isValidPincode, isNonEmptyString, sanitizeText } = require('../middleware/validate');
 const { sendOrderEmails } = require('../utils/mailer');
 const { decrementStock, checkStockAvailable } = require('../utils/stock');
 const { validateAndComputeDiscount, incrementCouponUsage } = require('../utils/coupon');
@@ -98,6 +98,15 @@ router.post('/verify', authMiddleware, async (req, res) => {
     if (!isNonEmptyString(orderData.address, { min: 5, max: 500 })) {
       return res.status(400).json({ message: 'Invalid address in order' });
     }
+    if (!isNonEmptyString(orderData.city, { min: 2, max: 100 })) {
+      return res.status(400).json({ message: 'City is required' });
+    }
+    if (!isNonEmptyString(orderData.state, { min: 2, max: 100 })) {
+      return res.status(400).json({ message: 'State is required' });
+    }
+    if (!isValidPincode(orderData.pincode)) {
+      return res.status(400).json({ message: 'A valid 6-digit pincode is required' });
+    }
     if (!process.env.RAZORPAY_KEY_SECRET) {
       return res.status(500).json({ message: 'Payment verification is not configured on the server' });
     }
@@ -158,6 +167,9 @@ router.post('/verify', authMiddleware, async (req, res) => {
       phone: orderData.phone.trim(),
       email: orderData.email.trim().toLowerCase(),
       address: sanitizeText(orderData.address),
+      city: sanitizeText(orderData.city),
+      state: sanitizeText(orderData.state),
+      pincode: String(orderData.pincode).trim(),
       items: pricedItems,
       sub,
       ship,

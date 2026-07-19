@@ -68,6 +68,8 @@
               date: new Date(o.createdAt).toLocaleDateString('en-PK', { day: 'numeric', month: 'short', year: 'numeric' }),
               time: new Date(o.createdAt).toLocaleTimeString('en-PK', { hour: '2-digit', minute: '2-digit' }),
               createdAt: o.createdAt,
+              deliveredAt: o.deliveredAt,
+              awbCode: o.awbCode, courierName: o.courierName,
               items: o.items, sub: o.sub, ship: o.ship, discount: o.discount,
               total: o.total, payment: o.payment, status: o.status,
               address: o.address, name: o.name, phone: o.phone, email: o.email,
@@ -132,6 +134,8 @@
           </div>`).join('')}
         </div>
         <div style="margin-top:1rem;font-size:.83rem;color:var(--gray)">Shipping to: <strong style="color:var(--light)">${o.address}</strong> · ${o.phone || ''}</div>
+        ${o.deliveredAt ? `<div style="margin-top:.4rem;font-size:.83rem;color:var(--neon)">Delivered on: ${new Date(o.deliveredAt).toLocaleDateString('en-PK', { day: 'numeric', month: 'short', year: 'numeric' })}</div>` : ''}
+        ${o.awbCode ? `<div style="margin-top:.4rem;font-size:.83rem;color:#3b82f6"><i data-lucide="truck" style="width:14px;height:14px;vertical-align:middle;margin-right:4px"></i>Tracking: <strong>${o.awbCode}</strong>${o.courierName ? ` via ${o.courierName}` : ''}</div>` : ''}
       </div>
       <div style="margin-top:1rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem">
         ${o.status === 'Processing' ? `<button onclick="cancelOrder('${o.id}', '${o._id || ''}')" style="background:none;border:1px solid #ef444466;color:#ef4444;cursor:pointer;font-family:var(--fd);font-size:.8rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.4rem .9rem;border-radius:4px;transition:all .2s" onmouseover="this.style.background='#ef444422'" onmouseout="this.style.background='none'">✕ Cancel Order</button>` :
