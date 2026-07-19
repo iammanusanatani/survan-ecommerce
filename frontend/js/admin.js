@@ -119,7 +119,9 @@
               ? `<div style="font-size:.72rem;color:var(--neon);white-space:nowrap"><i data-lucide="truck" style="width:12px;height:12px;vertical-align:middle;margin-right:2px"></i>${o.awbCode}<br><span style="color:var(--gray)">${o.courierName || ''}</span></div>`
               : o.shiprocketShipmentId
                 ? `<span style="font-size:.72rem;color:var(--gray)">Shipment created — assign courier on Shiprocket</span>`
-                : `<button onclick="createShipment('${o._id}')" id="shp-btn-${o._id}" style="background:none;border:1px solid #3b82f666;color:#3b82f6;padding:.3rem .6rem;border-radius:4px;cursor:pointer;font-size:.75rem;white-space:nowrap" onmouseover="this.style.background='#3b82f622'" onmouseout="this.style.background='none'">📦 Create Shipment</button>`
+                : o.status === 'Processing'
+                  ? `<span style="font-size:.72rem;color:var(--gray)">Mark as Packed first</span>`
+                  : `<button onclick="createShipment('${o._id}')" id="shp-btn-${o._id}" style="background:none;border:1px solid #3b82f666;color:#3b82f6;padding:.3rem .6rem;border-radius:4px;cursor:pointer;font-size:.75rem;white-space:nowrap" onmouseover="this.style.background='#3b82f622'" onmouseout="this.style.background='none'">📦 Create Shipment</button>`
           }
         </div>
       </td>

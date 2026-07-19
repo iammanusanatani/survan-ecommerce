@@ -17,6 +17,9 @@ router.post("/create/:id", authMiddleware, isAdmin, requireValidId(), async (req
     if (order.shiprocketShipmentId) {
       return res.status(400).json({ message: "Shipment already created for this order" });
     }
+    if (order.status === "Processing") {
+      return res.status(400).json({ message: "Mark the order as Packed before creating a shipment" });
+    }
     if (!order.pincode || !order.state) {
       return res.status(400).json({ message: "Order is missing pincode/state — can't create a shipment (this order was placed before those fields were required)" });
     }
