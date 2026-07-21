@@ -32,6 +32,20 @@
       showToast('👋 Admin logout ho gaye');
     }
 
+    async function refreshAdminDashboard() {
+      const btn = document.getElementById('admin-refresh-btn');
+      const icon = btn ? btn.querySelector('svg, i') : null;
+      if (btn) btn.disabled = true;
+      if (icon) icon.style.animation = 'spin 0.7s linear infinite';
+      try {
+        await showAdminDashboard();
+        showToast('Dashboard refreshed');
+      } finally {
+        if (btn) btn.disabled = false;
+        if (icon) icon.style.animation = '';
+      }
+    }
+
     async function showAdminDashboard() {
       document.getElementById('admin-login-screen').style.display = 'none';
       document.getElementById('admin-dashboard').style.display = 'block';
