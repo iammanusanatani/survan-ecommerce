@@ -65,6 +65,41 @@
       showToast('Subscribed! Welcome to the SURVAN fam.');
     }
 
+    // ════ ORDER TIMELINE ════
+    // Renders a Flipkart-style vertical tracking timeline from an order's
+    // statusHistory array. Consecutive entries with the same status are
+    // grouped under one heading (matching how "Order Confirmed" groups
+    // several sub-events together on Flipkart's own tracking screen).
+    function renderOrderTimeline(history) {
+      if (!history || !history.length) return `<div style="color:var(--gray);font-size:.82rem">Tracking history abhi available nahi hai.</div>`;
+
+      const sorted = [...history].sort((a, b) => new Date(a.at) - new Date(b.at));
+      const groups = [];
+      sorted.forEach(entry => {
+        const last = groups[groups.length - 1];
+        if (last && last.status === entry.status) last.entries.push(entry);
+        else groups.push({ status: entry.status, entries: [entry] });
+      });
+
+      const fmtDate = d => new Date(d).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', year: '2-digit' });
+      const fmtTime = d => new Date(d).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase();
+
+      return `<div style="position:relative;padding-left:1.6rem">
+        <div style="position:absolute;left:5px;top:8px;bottom:8px;width:2px;background:var(--dark3)"></div>
+        ${groups.map((g, gi) => `
+          <div style="position:relative;margin-bottom:${gi === groups.length - 1 ? '0' : '1.4rem'}">
+            <div style="position:absolute;left:-1.6rem;top:2px;width:12px;height:12px;border-radius:50%;background:var(--neon)"></div>
+            <div style="font-weight:700;color:var(--white);font-size:.95rem">${g.status} <span style="color:var(--gray);font-weight:400;font-size:.78rem;margin-left:.4rem">${fmtDate(g.entries[0].at)}</span></div>
+            ${g.entries.map(e => `
+              <div style="margin-top:.5rem">
+                ${e.courierName && e.awbCode ? `<div style="color:var(--white);font-size:.85rem;font-weight:600">${e.courierName} - ${e.awbCode}</div>` : ''}
+                <div style="color:var(--white);font-size:.85rem">${e.note}</div>
+                <div style="color:var(--gray);font-size:.75rem">${fmtDate(e.at)} - ${fmtTime(e.at)}</div>
+              </div>`).join('')}
+          </div>`).join('')}
+      </div>`;
+    }
+
     // Scroll top button
     window.addEventListener('scroll', () => {
       const btn = document.getElementById('scroll-top');

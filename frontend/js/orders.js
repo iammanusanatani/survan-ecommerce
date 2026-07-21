@@ -69,6 +69,7 @@
               time: new Date(o.createdAt).toLocaleTimeString('en-PK', { hour: '2-digit', minute: '2-digit' }),
               createdAt: o.createdAt,
               deliveredAt: o.deliveredAt,
+              statusHistory: o.statusHistory || [],
               awbCode: o.awbCode, courierName: o.courierName,
               items: o.items, sub: o.sub, ship: o.ship, discount: o.discount,
               total: o.total, payment: o.payment, status: o.status,
@@ -100,32 +101,7 @@
         <span class="order-status ${scls[o.status] || 's-processing'}">${o.status}</span>
       </div>
       <div class="order-expand" id="exp-${i}">
-        <div class="track-steps">
-          ${isCancelled ? `
-            <div class="track-step">
-              <div class="track-dot done">✓</div>
-              <div class="track-label done">Placed</div>
-            </div>
-            <div class="track-step">
-              <div class="track-dot" style="background:#ef4444;border-color:#ef4444;color:#fff">✕</div>
-              <div class="track-label" style="color:#ef4444">Cancelled</div>
-            </div>
-          ` : isReturned ? `
-            ${steps.map(s => `
-            <div class="track-step">
-              <div class="track-dot done">✓</div>
-              <div class="track-label done">${s}</div>
-            </div>`).join('')}
-            <div class="track-step">
-              <div class="track-dot" style="background:#a855f7;border-color:#a855f7;color:#fff">↩</div>
-              <div class="track-label" style="color:#a855f7">Returned</div>
-            </div>
-          ` : steps.map((s, si) => `
-            <div class="track-step">
-              <div class="track-dot ${si < stepIdx ? 'done' : si === stepIdx ? 'current' : ''}">${si < stepIdx ? '✓' : si + 1}</div>
-              <div class="track-label ${si <= stepIdx ? 'done' : ''}">${s}</div>
-            </div>`).join('')}
-        </div>
+        <div style="margin-bottom:1.2rem">${renderOrderTimeline(o.statusHistory)}</div>
         <div style="display:flex;flex-direction:column;gap:.6rem">
           ${o.items.map(item => `<div style="display:flex;align-items:center;gap:1rem;background:var(--dark3);padding:.7rem 1rem;border-radius:4px">
             <div style="width:48px;height:48px;border-radius:4px;overflow:hidden;flex-shrink:0;background:var(--dark4)">${item.img ? `<img src="${item.img}" alt="${item.name}" style="width:100%;height:100%;object-fit:cover">` : `<span style="font-size:1.5rem;display:flex;align-items:center;justify-content:center;height:100%">${item.emoji}</span>`}</div>
@@ -170,27 +146,9 @@
           return;
         }
 
-        const steps = ['Placed', 'Processing', 'Packed', 'Shipped', 'Delivered'];
-        const isCancelledOrder = data.status === 'Cancelled';
-        const stepIdx = isCancelledOrder ? -1 : ({ 'Processing': 1, 'Packed': 2, 'Shipped': 3, 'Delivered': 4 }[data.status] || 1);
-        const scls = { 'Processing': '#f59e0b', 'Shipped': '#3b82f6', 'Delivered': '#10b981', 'Cancelled': '#ef4444' };
+        const scls = { 'Processing': '#f59e0b', 'Shipped': '#3b82f6', 'Delivered': '#10b981', 'Cancelled': '#ef4444', 'Returned': '#a855f7' };
         const color = scls[data.status] || '#f59e0b';
         const date = new Date(data.createdAt).toLocaleDateString('en-PK', { day: 'numeric', month: 'short', year: 'numeric' });
-
-        const stepsHtml = isCancelledOrder ? `
-          <div class="track-step">
-            <div class="track-dot done">✓</div>
-            <div class="track-label done">Placed</div>
-          </div>
-          <div class="track-step">
-            <div class="track-dot" style="background:#ef4444;border-color:#ef4444;color:#fff">✕</div>
-            <div class="track-label" style="color:#ef4444;font-weight:700">Cancelled</div>
-          </div>
-        ` : steps.map((s, si) => `
-          <div class="track-step">
-            <div class="track-dot ${si < stepIdx ? 'done' : si === stepIdx ? 'current' : ''}">${si < stepIdx ? '✓' : si + 1}</div>
-            <div class="track-label ${si <= stepIdx ? 'done' : ''}">${s}</div>
-          </div>`).join('');
 
         result.innerHTML = `
           <div style="border-top:1px solid var(--dark3);padding-top:1.2rem">
@@ -201,9 +159,7 @@
               </div>
               <span style="background:${color}22;color:${color};padding:.3rem .8rem;border-radius:20px;font-size:.8rem;font-weight:700;border:1px solid ${color}44">${data.status}</span>
             </div>
-            <div class="track-steps" style="margin-bottom:1.2rem">
-              ${stepsHtml}
-            </div>
+            <div style="margin-bottom:1.2rem">${renderOrderTimeline(data.statusHistory)}</div>
             <div style="font-size:.82rem;color:var(--gray)">
               ${data.items?.length ? `🛍️ ${data.items.length} item(s)` : ''}
             </div>

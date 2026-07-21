@@ -180,7 +180,11 @@ router.post('/verify', authMiddleware, async (req, res) => {
       razorpayOrderId: razorpay_order_id,
       razorpayPaymentId: razorpay_payment_id,
       razorpaySignature: razorpay_signature,
-      userEmail: req.user.email
+      userEmail: req.user.email,
+      statusHistory: [
+        { status: 'Processing', note: 'Payment received', at: new Date() },
+        { status: 'Processing', note: 'Your order has been placed', at: new Date() }
+      ]
     });
 
     res.json({ message: 'Payment verified successfully', order });

@@ -4,6 +4,7 @@ const authMiddleware = require("../middleware/auth");
 const { isAdmin } = require("../middleware/auth");
 const { requireValidId } = require("../middleware/validate");
 const { createShiprocketOrder, generateAWB } = require("../utils/shiprocket");
+const { pushHistory } = require("../utils/orderHistory");
 
 // ═══ Admin: create a Shiprocket shipment for an order ═══
 // Call this once an order is packed and ready to ship. Creates the order on
@@ -35,6 +36,7 @@ router.post("/create/:id", authMiddleware, isAdmin, requireValidId(), async (req
         order.awbCode = awbCode;
         order.courierName = courierName;
         awbMessage = `Shipment created — AWB ${awbCode} assigned via ${courierName}.`;
+        pushHistory(order, order.status, `Your item has been shipped`, { courierName, awbCode });
       }
     } catch (awbErr) {
       // Not fatal — the Shiprocket order itself exists either way.
@@ -91,15 +93,26 @@ router.post("/webhook", async (req, res) => {
     // the main status field, so an unmapped status can't silently regress
     // an order.
     const s = rawStatus.toLowerCase();
+    let mappedStatus = null;
     if (s.includes("delivered") && !s.includes("rto")) {
-      order.status = "Delivered";
-      if (!order.deliveredAt) order.deliveredAt = new Date();
+      mappedStatus = "Delivered";
     } else if (s.includes("cancel")) {
-      order.status = "Cancelled";
+      mappedStatus = "Cancelled";
     } else if (s.includes("out for delivery") || s.includes("in transit") || s.includes("shipped") || s.includes("picked up")) {
-      order.status = "Shipped";
+      mappedStatus = "Shipped";
     } else if (s.includes("pickup") || s.includes("ready to ship")) {
-      order.status = "Packed";
+      mappedStatus = "Packed";
+    }
+
+    if (mappedStatus) {
+      order.status = mappedStatus;
+      if (mappedStatus === "Delivered" && !order.deliveredAt) order.deliveredAt = new Date();
+      const lastNote = order.statusHistory && order.statusHistory.length
+        ? order.statusHistory[order.statusHistory.length - 1].note
+        : null;
+      if (rawStatus !== lastNote) {
+        pushHistory(order, mappedStatus, rawStatus, { courierName: order.courierName, awbCode: order.awbCode });
+      }
     }
 
     await order.save();

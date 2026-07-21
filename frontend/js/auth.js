@@ -374,6 +374,7 @@
               date: new Date(o.createdAt).toLocaleDateString('en-PK', { day: 'numeric', month: 'short', year: 'numeric' }),
               createdAt: o.createdAt,
               deliveredAt: o.deliveredAt,
+              statusHistory: o.statusHistory || [],
               awbCode: o.awbCode, courierName: o.courierName,
               items: o.items, total: o.total, status: o.status, _id: o._id
             }));
@@ -427,7 +428,7 @@
         <span class="order-status ${scls[o.status] || 's-processing'}">${o.status}</span>
       </div>
       <div class="order-expand" id="acc-exp-${i}">
-        <div class="track-steps" style="margin:1rem 0">${stepsHtml}</div>
+        <div style="margin:1rem 0">${renderOrderTimeline(o.statusHistory)}</div>
         ${o.awbCode ? `<div style="font-size:.83rem;color:#3b82f6;margin-bottom:.8rem"><i data-lucide="truck" style="width:14px;height:14px;vertical-align:middle;margin-right:4px"></i>Tracking: <strong>${o.awbCode}</strong>${o.courierName ? ` via ${o.courierName}` : ''}</div>` : ''}
         <div style="display:flex;flex-direction:column;gap:.6rem">
           ${o.items.map(item => `

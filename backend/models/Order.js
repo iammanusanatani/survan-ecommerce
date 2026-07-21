@@ -43,6 +43,18 @@ const orderSchema = new mongoose.Schema({
   courierName: { type: String, default: '' },
   shiprocketStatus: { type: String, default: '' }, // raw status string from Shiprocket, kept as-is for reference
 
+  // Full timeline log — every status change (placed, packed, shipped,
+  // delivered, etc.) gets its own timestamped entry here, so the customer
+  // sees the complete history (like Flipkart's tracking screen) instead of
+  // just the current status.
+  statusHistory: [{
+    status: String,      // e.g. 'Processing', 'Shipped', 'Delivered'
+    note: String,        // human-readable line, e.g. 'Your order has been placed'
+    courierName: String, // filled in for shipping-related entries, if known
+    awbCode: String,
+    at: { type: Date, default: Date.now }
+  }],
+
   createdAt: { type: Date, default: Date.now }
 });
 

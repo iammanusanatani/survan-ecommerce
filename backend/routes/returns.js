@@ -6,6 +6,7 @@ const { isAdmin } = require("../middleware/auth");
 const { isNonEmptyString, sanitizeText, requireValidId } = require("../middleware/validate");
 const { restoreStock } = require("../utils/stock");
 const { getRazorpay } = require("../utils/razorpay");
+const { pushHistory } = require("../utils/orderHistory");
 
 const ORDER_ID_RE = /^[A-Za-z0-9-]{5,30}$/;
 const TYPE_VALUES = ["Return", "Exchange"];
@@ -145,6 +146,7 @@ router.patch("/:id", authMiddleware, isAdmin, requireValidId(), async (req, res)
       // keep showing "Delivered" forever after the item actually came back.
       if (order) {
         order.status = "Returned";
+        pushHistory(order, "Returned", "Your return has been approved and processed");
         await order.save();
       }
     }

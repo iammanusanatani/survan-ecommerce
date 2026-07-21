@@ -6,6 +6,7 @@ const { isValidEmail, isValidPhone, isValidPincode, isNonEmptyString, sanitizeTe
 const { sendOrderEmails } = require("../utils/mailer");
 const { decrementStock, restoreStock, checkStockAvailable } = require("../utils/stock");
 const { validateAndComputeDiscount, incrementCouponUsage } = require("../utils/coupon");
+const { pushHistory } = require("../utils/orderHistory");
 
 const ORDER_ID_RE = /^[A-Za-z0-9-]{5,30}$/;
 const STATUS_VALUES = ["Processing", "Packed", "Shipped", "Delivered", "Cancelled"];
@@ -80,7 +81,8 @@ router.post("/", authMiddleware, async (req, res) => {
       total,
       payment: sanitizeText(req.body.payment).slice(0, 20),
       userEmail: req.user.email,
-      paymentStatus: "Pending"
+      paymentStatus: "Pending",
+      statusHistory: [{ status: "Processing", note: "Your order has been placed", at: new Date() }]
     });
     res.json(order);
     sendOrderEmails(order).catch(err => console.error("sendOrderEmails failed:", err.message));
@@ -143,8 +145,24 @@ router.patch("/:id/status", authMiddleware, isAdmin, requireValidId(), async (re
     const wasCancelled = order.status === "Cancelled";
     const willBeCancelled = req.body.status === "Cancelled";
     const becomingDelivered = req.body.status === "Delivered" && order.status !== "Delivered";
+    const statusChanged = order.status !== req.body.status;
+
+    const STATUS_NOTES = {
+      Processing: "Seller has processed your order",
+      Packed: "Your order has been packed and is ready for pickup",
+      Shipped: "Your item has been shipped",
+      Delivered: "Your item has been delivered",
+      Cancelled: "Your order has been cancelled"
+    };
 
     order.status = req.body.status;
+
+    if (statusChanged) {
+      pushHistory(order, req.body.status, STATUS_NOTES[req.body.status] || req.body.status, {
+        courierName: order.courierName,
+        awbCode: order.awbCode
+      });
+    }
 
     if (becomingDelivered && !order.deliveredAt) {
       order.deliveredAt = new Date();
@@ -176,6 +194,7 @@ router.patch("/:orderId/cancel", authMiddleware, async (req, res) => {
     if (!order) return res.status(404).json({ message: "Order nahi mila" });
     if (order.status !== "Processing") return res.status(400).json({ message: "Yeh order ab cancel nahi ho sakta" });
     order.status = "Cancelled";
+    pushHistory(order, "Cancelled", "You cancelled this order");
     if (!order.stockRestored) {
       await restoreStock(order.items);
       order.stockRestored = true;
