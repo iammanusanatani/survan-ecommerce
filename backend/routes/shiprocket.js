@@ -50,6 +50,14 @@ router.post("/create/:id", authMiddleware, isAdmin, requireValidId(), async (req
   }
 });
 
+// Some webhook-URL fields (including Shiprocket's dashboard, reportedly)
+// ping the URL with a GET/HEAD request first to verify it's reachable
+// before letting you save it. Without this, a POST-only route 404s on that
+// check and the URL gets rejected as "not allowed" even though the real
+// webhook POSTs would have worked fine.
+router.get("/webhook", (req, res) => res.status(200).json({ message: "Shiprocket webhook endpoint is live" }));
+router.head("/webhook", (req, res) => res.status(200).end());
+
 // ═══ Webhook: Shiprocket calls this automatically when courier status changes ═══
 // Configure this URL under Shiprocket dashboard → Settings → API → Webhooks,
 // along with the same token as SHIPROCKET_WEBHOOK_TOKEN in .env. This is
