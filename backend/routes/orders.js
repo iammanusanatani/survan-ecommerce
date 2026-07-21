@@ -133,6 +133,18 @@ router.get("/all", authMiddleware, isAdmin, async (req, res) => {
   }
 });
 
+// Which status can move to which — this is the single source of truth for
+// valid order progress. No skipping ahead, no going backward, and once an
+// order reaches a locked (terminal) status, nothing here can move it again.
+const ALLOWED_TRANSITIONS = {
+  Processing: ["Packed", "Cancelled"],
+  Packed: ["Shipped", "Cancelled"],
+  Shipped: ["Delivered"],
+  Delivered: [],   // locked — only the Returns flow can move it further, to "Returned"
+  Cancelled: [],   // locked
+  Returned: []     // locked
+};
+
 // Update order status (admin only)
 router.patch("/:id/status", authMiddleware, isAdmin, requireValidId(), async (req, res) => {
   try {
@@ -142,10 +154,17 @@ router.patch("/:id/status", authMiddleware, isAdmin, requireValidId(), async (re
     const order = await Order.findById(req.params.id);
     if (!order) return res.status(404).json({ message: "Order not found" });
 
+    const allowedNext = ALLOWED_TRANSITIONS[order.status] || [];
+    if (order.status === req.body.status) {
+      return res.status(400).json({ message: `Order is already ${order.status}` });
+    }
+    if (!allowedNext.includes(req.body.status)) {
+      return res.status(400).json({ message: `Order can't move from ${order.status} to ${req.body.status}` });
+    }
+
     const wasCancelled = order.status === "Cancelled";
     const willBeCancelled = req.body.status === "Cancelled";
     const becomingDelivered = req.body.status === "Delivered" && order.status !== "Delivered";
-    const statusChanged = order.status !== req.body.status;
 
     const STATUS_NOTES = {
       Processing: "Seller has processed your order",
@@ -157,12 +176,10 @@ router.patch("/:id/status", authMiddleware, isAdmin, requireValidId(), async (re
 
     order.status = req.body.status;
 
-    if (statusChanged) {
-      pushHistory(order, req.body.status, STATUS_NOTES[req.body.status] || req.body.status, {
-        courierName: order.courierName,
-        awbCode: order.awbCode
-      });
-    }
+    pushHistory(order, req.body.status, STATUS_NOTES[req.body.status] || req.body.status, {
+      courierName: order.courierName,
+      awbCode: order.awbCode
+    });
 
     if (becomingDelivered && !order.deliveredAt) {
       order.deliveredAt = new Date();

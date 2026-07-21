@@ -103,12 +103,22 @@
       <td><span class="order-status ${scls[o.payment] || ''}" style="background:var(--dark3);color:var(--gray)">${o.payment}</span></td>
       <td>
         ${o.status === 'Cancelled'
-          ? `<span class="order-status s-cancelled">Cancelled</span>`
+          ? `<span class="order-status s-cancelled">✕ Cancelled</span>`
           : o.status === 'Returned'
-            ? `<span class="order-status s-returned">Returned</span>`
-            : `<select class="status-select" onchange="updateOrderStatus('${o._id}','${o.id}',this.value)">
-              ${['Processing', 'Packed', 'Shipped', 'Delivered'].map(s => `<option ${o.status === s ? 'selected' : ''}>${s}</option>`).join('')}
-            </select>`
+            ? `<span class="order-status s-returned">↩ Returned</span>`
+            : o.status === 'Delivered'
+              ? `<span class="order-status s-delivered">✓ Delivered</span>`
+              : o.status === 'Shipped'
+                ? `<button onclick="updateOrderStatus('${o._id}','${o.id}','Delivered')" style="background:none;border:1px solid #22c55e66;color:#22c55e;padding:.35rem .7rem;border-radius:4px;cursor:pointer;font-size:.75rem;font-weight:700;white-space:nowrap" onmouseover="this.style.background='#22c55e22'" onmouseout="this.style.background='none'">✅ Mark Delivered</button>`
+                : o.status === 'Packed'
+                  ? `<div style="display:flex;flex-direction:column;gap:.3rem;align-items:flex-start">
+                      <button onclick="updateOrderStatus('${o._id}','${o.id}','Shipped')" style="background:none;border:1px solid #3b82f666;color:#3b82f6;padding:.35rem .7rem;border-radius:4px;cursor:pointer;font-size:.75rem;font-weight:700;white-space:nowrap" onmouseover="this.style.background='#3b82f622'" onmouseout="this.style.background='none'">🚚 Mark Shipped</button>
+                      <button onclick="if(confirm('Cancel this order?'))updateOrderStatus('${o._id}','${o.id}','Cancelled')" style="background:none;border:none;color:var(--gray);cursor:pointer;font-size:.7rem;text-decoration:underline">Cancel order</button>
+                    </div>`
+                  : `<div style="display:flex;flex-direction:column;gap:.3rem;align-items:flex-start">
+                      <button onclick="updateOrderStatus('${o._id}','${o.id}','Packed')" style="background:none;border:1px solid #f59e0b66;color:#f59e0b;padding:.35rem .7rem;border-radius:4px;cursor:pointer;font-size:.75rem;font-weight:700;white-space:nowrap" onmouseover="this.style.background='#f59e0b22'" onmouseout="this.style.background='none'">📦 Mark Packed</button>
+                      <button onclick="if(confirm('Cancel this order?'))updateOrderStatus('${o._id}','${o.id}','Cancelled')" style="background:none;border:none;color:var(--gray);cursor:pointer;font-size:.7rem;text-decoration:underline">Cancel order</button>
+                    </div>`
         }
       </td>
       <td>
@@ -155,7 +165,12 @@
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
           body: JSON.stringify({ status })
         });
-        if (!res.ok) { showToast('Status update failed'); return; }
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          showToast(data.message || 'Status update failed');
+          showAdminDashboard(); // re-sync in case our local view was stale
+          return;
+        }
         // Local update
         const order = orders.find(o => o._id === mongoId);
         if (order) order.status = status;

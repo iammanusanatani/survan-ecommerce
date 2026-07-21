@@ -101,6 +101,10 @@
         <span class="order-status ${scls[o.status] || 's-processing'}">${o.status}</span>
       </div>
       <div class="order-expand" id="exp-${i}">
+        ${o.status === 'Delivered' ? `<div style="background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:6px;padding:.9rem 1.1rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:.6rem">
+          <i data-lucide="check-circle" style="width:20px;height:20px;color:#22c55e;flex-shrink:0"></i>
+          <div><div style="color:#22c55e;font-weight:700;font-size:.9rem">Your order was delivered successfully!</div>${o.deliveredAt ? `<div style="color:var(--gray);font-size:.78rem">on ${new Date(o.deliveredAt).toLocaleDateString('en-PK', { day: 'numeric', month: 'short', year: 'numeric' })}</div>` : ''}</div>
+        </div>` : ''}
         <div style="margin-bottom:1.2rem">${renderOrderTimeline(o.statusHistory)}</div>
         <div style="display:flex;flex-direction:column;gap:.6rem">
           ${o.items.map(item => `<div style="display:flex;align-items:center;gap:1rem;background:var(--dark3);padding:.7rem 1rem;border-radius:4px">
