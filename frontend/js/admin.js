@@ -125,10 +125,15 @@
               : o.status === 'Shipped'
                 ? `<button onclick="updateOrderStatus('${o._id}','${o.id}','Delivered')" style="background:none;border:1px solid #22c55e66;color:#22c55e;padding:.35rem .7rem;border-radius:4px;cursor:pointer;font-size:.75rem;font-weight:700;white-space:nowrap" onmouseover="this.style.background='#22c55e22'" onmouseout="this.style.background='none'">✅ Mark Delivered</button>`
                 : o.status === 'Packed'
-                  ? `<div style="display:flex;flex-direction:column;gap:.3rem;align-items:flex-start">
-                      <button onclick="updateOrderStatus('${o._id}','${o.id}','Shipped')" style="background:none;border:1px solid #3b82f666;color:#3b82f6;padding:.35rem .7rem;border-radius:4px;cursor:pointer;font-size:.75rem;font-weight:700;white-space:nowrap" onmouseover="this.style.background='#3b82f622'" onmouseout="this.style.background='none'">🚚 Mark Shipped</button>
-                      <button onclick="if(confirm('Cancel this order?'))updateOrderStatus('${o._id}','${o.id}','Cancelled')" style="background:none;border:none;color:var(--gray);cursor:pointer;font-size:.7rem;text-decoration:underline">Cancel order</button>
-                    </div>`
+                  ? o.shiprocketShipmentId
+                    ? `<div style="display:flex;flex-direction:column;gap:.3rem;align-items:flex-start">
+                        <button onclick="updateOrderStatus('${o._id}','${o.id}','Shipped')" style="background:none;border:1px solid #3b82f666;color:#3b82f6;padding:.35rem .7rem;border-radius:4px;cursor:pointer;font-size:.75rem;font-weight:700;white-space:nowrap" onmouseover="this.style.background='#3b82f622'" onmouseout="this.style.background='none'">🚚 Mark Shipped</button>
+                        <button onclick="if(confirm('Cancel this order?'))updateOrderStatus('${o._id}','${o.id}','Cancelled')" style="background:none;border:none;color:var(--gray);cursor:pointer;font-size:.7rem;text-decoration:underline">Cancel order</button>
+                      </div>`
+                    : `<div style="display:flex;flex-direction:column;gap:.3rem;align-items:flex-start">
+                        <button onclick="createShipment('${o._id}')" id="shp-btn-${o._id}" style="background:none;border:1px solid #f59e0b66;color:#f59e0b;padding:.35rem .7rem;border-radius:4px;cursor:pointer;font-size:.75rem;font-weight:700;white-space:nowrap" onmouseover="this.style.background='#f59e0b22'" onmouseout="this.style.background='none'">🚀 Create Shipment</button>
+                        <button onclick="if(confirm('Cancel this order?'))updateOrderStatus('${o._id}','${o.id}','Cancelled')" style="background:none;border:none;color:var(--gray);cursor:pointer;font-size:.7rem;text-decoration:underline">Cancel order</button>
+                      </div>`
                   : `<div style="display:flex;flex-direction:column;gap:.3rem;align-items:flex-start">
                       <button onclick="updateOrderStatus('${o._id}','${o.id}','Packed')" style="background:none;border:1px solid #f59e0b66;color:#f59e0b;padding:.35rem .7rem;border-radius:4px;cursor:pointer;font-size:.75rem;font-weight:700;white-space:nowrap" onmouseover="this.style.background='#f59e0b22'" onmouseout="this.style.background='none'">📦 Mark Packed</button>
                       <button onclick="if(confirm('Cancel this order?'))updateOrderStatus('${o._id}','${o.id}','Cancelled')" style="background:none;border:none;color:var(--gray);cursor:pointer;font-size:.7rem;text-decoration:underline">Cancel order</button>
@@ -138,14 +143,11 @@
       <td>
         <div style="display:flex;flex-direction:column;gap:.4rem;align-items:flex-start">
           <button onclick="markSeen(${orders.indexOf(o)})" style="background:none;border:1px solid #2a2a2a;color:var(--gray);padding:.3rem .6rem;border-radius:4px;cursor:pointer;font-size:.75rem;transition:all .2s" onmouseover="this.style.borderColor='var(--neon)';this.style.color='var(--neon)'" onmouseout="this.style.borderColor='#2a2a2a';this.style.color='var(--gray)'">✓ Seen</button>
-          ${o.status === 'Cancelled' || o.status === 'Returned' ? '' :
-            o.awbCode
-              ? `<div style="font-size:.72rem;color:var(--neon);white-space:nowrap"><i data-lucide="truck" style="width:12px;height:12px;vertical-align:middle;margin-right:2px"></i>${o.awbCode}<br><span style="color:var(--gray)">${o.courierName || ''}</span></div>`
-              : o.shiprocketShipmentId
-                ? `<span style="font-size:.72rem;color:var(--gray)">Shipment created — assign courier on Shiprocket</span>`
-                : o.status === 'Processing'
-                  ? `<span style="font-size:.72rem;color:var(--gray)">Mark as Packed first</span>`
-                  : `<button onclick="createShipment('${o._id}')" id="shp-btn-${o._id}" style="background:none;border:1px solid #3b82f666;color:#3b82f6;padding:.3rem .6rem;border-radius:4px;cursor:pointer;font-size:.75rem;white-space:nowrap" onmouseover="this.style.background='#3b82f622'" onmouseout="this.style.background='none'">📦 Create Shipment</button>`
+          ${o.awbCode
+            ? `<div style="font-size:.72rem;color:var(--neon);white-space:nowrap"><i data-lucide="truck" style="width:12px;height:12px;vertical-align:middle;margin-right:2px"></i>${o.awbCode}<br><span style="color:var(--gray)">${o.courierName || ''}</span></div>`
+            : o.shiprocketShipmentId
+              ? `<span style="font-size:.72rem;color:var(--gray)">Shipment created — assign courier on Shiprocket</span>`
+              : ''
           }
         </div>
       </td>

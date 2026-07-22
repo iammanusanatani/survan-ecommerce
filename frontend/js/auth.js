@@ -287,7 +287,9 @@
       const prov = document.getElementById('new-addr-prov').value;
       const postal = document.getElementById('new-addr-postal').value.trim();
       const isDef = document.getElementById('new-addr-default').checked;
-      if (!name || !street || !city) { showToast('Fill required fields'); return; }
+      if (!name || !phone || !street || !city || !prov || !postal) { showToast('Please fill all required fields'); return; }
+      if (!/^[\d+][\d\s-]{6,18}$/.test(phone)) { showToast('Please enter a valid phone number'); return; }
+      if (!/^[1-9][0-9]{5}$/.test(postal)) { showToast('Please enter a valid 6-digit PIN code'); return; }
       const newAddr = { name, phone, street, city, province: prov, postal, isDefault: isDef };
       if (!currentUser.addresses) currentUser.addresses = [];
       if (isDef) currentUser.addresses.forEach(a => a.isDefault = false);

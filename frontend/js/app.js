@@ -227,7 +227,8 @@
       const phone = document.getElementById('acc-fphone').value.trim();
       const dob = document.getElementById('acc-dob').value;
       const gender = document.getElementById('acc-gender').value;
-      if (!fname) { showToast('First name required'); return; }
+      if (!fname || !lname || !phone || !dob || !gender) { showToast('Please fill all required fields'); return; }
+      if (!/^[\d+][\d\s-]{6,18}$/.test(phone)) { showToast('Please enter a valid phone number'); return; }
       try {
         const token = localStorage.getItem('survan_token');
         const res = await fetch(`${API}/users/profile`, {

@@ -18,6 +18,9 @@ router.post("/signup", async (req, res) => {
     if (!isNonEmptyString(fname, { min: 2, max: 50 })) {
       return res.status(400).json({ message: "Please enter a valid first name (2-50 characters)" });
     }
+    if (!isNonEmptyString(lname, { min: 1, max: 50 })) {
+      return res.status(400).json({ message: "Please enter a valid last name" });
+    }
     if (!isValidEmail(email)) {
       return res.status(400).json({ message: "Please enter a valid email address" });
     }
@@ -37,7 +40,7 @@ router.post("/signup", async (req, res) => {
     // an existing admin promoting a user directly in the database.
     const user = await User.create({ fname, lname, email, password: hashed, phone, isAdmin: false });
     const token = jwt.sign({ id: user._id, email, isAdmin: false }, process.env.JWT_SECRET, { expiresIn: "7d" });
-    res.json({ token, user: { fname, lname, email, phone, isAdmin: false } });
+    res.json({ token, user: { fname, lname, email, phone, dob: '', gender: '', addresses: [], isAdmin: false } });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -60,7 +63,7 @@ router.post("/login", async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
-    res.json({ token, user: { fname: user.fname, lname: user.lname, email: user.email, phone: user.phone, isAdmin: user.isAdmin, wishlist: user.wishlist || [] } });
+    res.json({ token, user: { fname: user.fname, lname: user.lname, email: user.email, phone: user.phone, dob: user.dob, gender: user.gender, addresses: user.addresses || [], isAdmin: user.isAdmin, wishlist: user.wishlist || [] } });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

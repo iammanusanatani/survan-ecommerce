@@ -379,24 +379,25 @@
             <!-- EDIT MODE -->
             <div id="profile-edit-mode" class="profile-edit-mode">
               <div class="form-row">
-                <div class="form-group"><label>First Name</label><input type="text" id="acc-fname"
+                <div class="form-group"><label>First Name *</label><input type="text" id="acc-fname"
                     placeholder="Enter your first name">
                 </div>
-                <div class="form-group"><label>Last Name</label><input type="text" id="acc-lname"
+                <div class="form-group"><label>Last Name *</label><input type="text" id="acc-lname"
                     placeholder="Enter your last name">
                 </div>
               </div>
               <div class="form-group"><label>Email Address</label><input type="email" id="acc-femail"
                   placeholder="yourname@example.com" readonly class="profile-field-readonly"></div>
-              <div class="form-group"><label>Phone Number</label><input type="tel" id="acc-fphone"
+              <div class="form-group"><label>Phone Number *</label><input type="tel" id="acc-fphone"
                   placeholder="+91 98765 43210"></div>
-              <div class="form-group"><label>Date of Birth (Optional)</label><input type="date" id="acc-dob"></div>
-              <div class="form-group"><label>Gender (Optional)</label>
+              <div class="form-group"><label>Date of Birth *</label><input type="date" id="acc-dob"></div>
+              <div class="form-group"><label>Gender *</label>
                 <select id="acc-gender">
-                  <option value="">Prefer not to say</option>
+                  <option value="" selected disabled>Select gender</option>
                   <option>Male</option>
                   <option>Female</option>
                   <option>Non-binary</option>
+                  <option>Prefer not to say</option>
                 </select>
               </div>
               <div class="form-actions">
@@ -414,17 +415,17 @@
           <button class="btn-outline" onclick="showAddAddressForm()">+ Add New Address</button>
           <div id="add-address-form" class="add-address-form">
             <div class="form-section-title">New Address</div>
-            <div class="form-group"><label>Full Name</label><input type="text" id="new-addr-name"
+            <div class="form-group"><label>Full Name *</label><input type="text" id="new-addr-name"
                 placeholder="Enter your full name"></div>
-            <div class="form-group"><label>Phone</label><input type="tel" id="new-addr-phone"
+            <div class="form-group"><label>Phone *</label><input type="tel" id="new-addr-phone"
                 placeholder="10-digit mobile number with +91"></div>
-            <div class="form-group"><label>Street Address</label><input type="text" id="new-addr-street"
+            <div class="form-group"><label>Street Address *</label><input type="text" id="new-addr-street"
                 placeholder="House No., Building, Street, Area"></div>
             <div class="form-row">
-              <div class="form-group"><label>City</label><input type="text" id="new-addr-city" placeholder="Enter City">
+              <div class="form-group"><label>City *</label><input type="text" id="new-addr-city" placeholder="Enter City">
               </div>
               <div class="form-group">
-                <label>State / Union Territory</label>
+                <label>State / Union Territory *</label>
                 <select id="new-addr-prov">
                   <option value="">Select State / Union Territory</option>
 
@@ -470,7 +471,7 @@
                 </select>
               </div>
             </div>
-            <div class="form-group"><label>PIN Code</label><input type="text" id="new-addr-postal"
+            <div class="form-group"><label>PIN Code *</label><input type="text" id="new-addr-postal" maxlength="6" inputmode="numeric"
                 placeholder="6-digit PIN code"></div>
             <label class="addr-default-label">
               <input type="checkbox" id="new-addr-default" class="addr-default-checkbox"> Set as default address

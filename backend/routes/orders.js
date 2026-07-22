@@ -161,6 +161,9 @@ router.patch("/:id/status", authMiddleware, isAdmin, requireValidId(), async (re
     if (!allowedNext.includes(req.body.status)) {
       return res.status(400).json({ message: `Order can't move from ${order.status} to ${req.body.status}` });
     }
+    if (req.body.status === "Shipped" && !order.shiprocketShipmentId) {
+      return res.status(400).json({ message: "Create a Shiprocket shipment before marking this order as Shipped" });
+    }
 
     const wasCancelled = order.status === "Cancelled";
     const willBeCancelled = req.body.status === "Cancelled";

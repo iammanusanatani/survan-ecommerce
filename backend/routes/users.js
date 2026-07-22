@@ -34,15 +34,19 @@ router.put("/addresses", authMiddleware, async (req, res) => {
     if (req.body.addresses.length > 20) {
       return res.status(400).json({ message: "Too many addresses (max 20)" });
     }
+    const PINCODE_RE = /^[1-9][0-9]{5}$/;
     for (const a of req.body.addresses) {
       if (!a || typeof a !== "object") {
         return res.status(400).json({ message: "Invalid address entry" });
       }
-      if (!a.name || !a.street || !a.city) {
-        return res.status(400).json({ message: "Each address needs a name, street and city" });
+      if (!a.name || !a.street || !a.city || !a.province || !a.postal) {
+        return res.status(400).json({ message: "Each address needs a name, phone, street, city, state and pincode" });
       }
-      if (a.phone && !isValidPhone(a.phone)) {
-        return res.status(400).json({ message: "Invalid phone number in address" });
+      if (!a.phone || !isValidPhone(a.phone)) {
+        return res.status(400).json({ message: "A valid phone number is required for each address" });
+      }
+      if (!PINCODE_RE.test(String(a.postal).trim())) {
+        return res.status(400).json({ message: "A valid 6-digit pincode is required for each address" });
       }
     }
     const clean = req.body.addresses.map(a => ({
@@ -76,15 +80,26 @@ router.put("/profile", authMiddleware, async (req, res) => {
       }
       update.fname = sanitizeText(String(req.body.fname)).slice(0, 50);
     }
-    if (req.body.lname !== undefined) update.lname = sanitizeText(String(req.body.lname)).slice(0, 50);
-    if (req.body.phone !== undefined) {
-      if (req.body.phone && !isValidPhone(req.body.phone)) {
-        return res.status(400).json({ message: "Invalid phone number" });
+    if (req.body.lname !== undefined) {
+      if (!req.body.lname || String(req.body.lname).trim().length < 1) {
+        return res.status(400).json({ message: "Last name is required" });
       }
-      update.phone = String(req.body.phone || "").trim().slice(0, 20);
+      update.lname = sanitizeText(String(req.body.lname)).slice(0, 50);
     }
-    if (req.body.dob !== undefined) update.dob = sanitizeText(String(req.body.dob)).slice(0, 20);
-    if (req.body.gender !== undefined) update.gender = sanitizeText(String(req.body.gender)).slice(0, 20);
+    if (req.body.phone !== undefined) {
+      if (!req.body.phone || !isValidPhone(req.body.phone)) {
+        return res.status(400).json({ message: "A valid phone number is required" });
+      }
+      update.phone = String(req.body.phone).trim().slice(0, 20);
+    }
+    if (req.body.dob !== undefined) {
+      if (!req.body.dob) return res.status(400).json({ message: "Date of birth is required" });
+      update.dob = sanitizeText(String(req.body.dob)).slice(0, 20);
+    }
+    if (req.body.gender !== undefined) {
+      if (!req.body.gender) return res.status(400).json({ message: "Gender is required" });
+      update.gender = sanitizeText(String(req.body.gender)).slice(0, 20);
+    }
 
     const user = await User.findByIdAndUpdate(req.user.id, update, { new: true }).select("-password");
     if (!user) return res.status(404).json({ message: "User not found" });
