@@ -660,14 +660,14 @@
       <h2 class="section-title">Checkout</h2>
     </div>
     <div class="checkout-steps" style="padding:0 2.5rem;margin-bottom:0">
-      <div class="step active">1. Contact</div>
-      <div class="step">2. Shipping</div>
-      <div class="step">3. Payment</div>
-      <div class="step">4. Confirm</div>
+      <div class="step active" id="ck-tab-1" onclick="goToCheckoutStep(1)">1. Contact</div>
+      <div class="step" id="ck-tab-2" onclick="goToCheckoutStep(2)">2. Shipping</div>
+      <div class="step" id="ck-tab-3" onclick="goToCheckoutStep(3)">3. Payment</div>
+      <div class="step" id="ck-tab-4" onclick="goToCheckoutStep(4)">4. Confirm</div>
     </div>
     <div class="checkout-layout">
       <div>
-        <div class="form-block">
+        <div class="form-block ck-panel" id="ck-panel-1">
           <div class="form-section-title">Contact Info</div>
           <div class="form-row">
             <div class="form-group"><label>First Name *</label><input type="text" id="fname" placeholder="Enter first name"></div>
@@ -677,8 +677,9 @@
               placeholder="Enter your email address"></div>
           <div class="form-group"><label>Phone Number *</label><input type="tel" id="phone"
               placeholder="10-digit mobile number with +91"></div>
+          <button class="btn-primary" style="width:100%;margin-top:.5rem" onclick="goToCheckoutStep(2)">Continue to Shipping →</button>
         </div>
-        <div class="form-block" style="margin-top:1px">
+        <div class="form-block ck-panel" id="ck-panel-2" style="display:none">
           <div class="form-section-title">Shipping Address</div>
           <div class="form-group"><label>Street Address *</label><input type="text" id="address"
               placeholder="House No., Building, Street, Area"></div>
@@ -740,8 +741,12 @@
             <label>Delivery Instructions (Optional)</label>
             <input type="text" id="instructions" placeholder="e.g. Leave at the doorstep or call on arrival">
           </div>
+          <div style="display:flex;gap:.8rem;margin-top:.5rem">
+            <button class="btn-outline" style="flex:1" onclick="goToCheckoutStep(1)">← Back</button>
+            <button class="btn-primary" style="flex:2" onclick="goToCheckoutStep(3)">Continue to Payment →</button>
+          </div>
         </div>
-        <div class="form-block" style="margin-top:1px">
+        <div class="form-block ck-panel" id="ck-panel-3" style="display:none">
           <div class="form-section-title">Payment Method</div>
           <div class="pm-grid">
             <button class="pm-btn active" id="pm-cod" onclick="selectPM('cod')">💵 Cash on Delivery</button>
@@ -750,18 +755,26 @@
             <button class="pm-btn" id="pm-jazzcash" onclick="selectPM('jazzcash')">💚 JazzCash</button> -->
           </div>
           <div id="pm-detail"></div>
+          <div style="display:flex;gap:.8rem;margin-top:1.5rem">
+            <button class="btn-outline" style="flex:1" onclick="goToCheckoutStep(2)">← Back</button>
+            <button class="btn-primary" style="flex:2" onclick="goToCheckoutStep(4)">Continue to Review →</button>
+          </div>
         </div>
-        <div style="padding:1.5rem 0">
-          <label style="display:flex;align-items:center;gap:.8rem;cursor:pointer;font-size:.85rem;color:var(--gray)">
-            <input type="checkbox" id="agree-terms" style="width:16px;height:16px;accent-color:var(--neon)">
-            I agree to the <span style="color:var(--neon);cursor:pointer">Terms & Conditions</span> and <span
-              style="color:var(--neon);cursor:pointer">Privacy Policy</span>
-          </label>
+        <div class="form-block ck-panel" id="ck-panel-4" style="display:none">
+          <div class="form-section-title">Review & Confirm</div>
+          <div id="ck-review-summary" style="font-size:.88rem;color:var(--gray);line-height:1.9"></div>
+          <div style="padding:1.5rem 0 0">
+            <label style="display:flex;align-items:center;gap:.8rem;cursor:pointer;font-size:.85rem;color:var(--gray)">
+              <input type="checkbox" id="agree-terms" style="width:16px;height:16px;accent-color:var(--neon)">
+              I agree to the <span style="color:var(--neon);cursor:pointer">Terms & Conditions</span> and <span
+                style="color:var(--neon);cursor:pointer">Privacy Policy</span>
+            </label>
+          </div>
+          <div style="display:flex;gap:.8rem;margin-top:.5rem">
+            <button class="btn-outline" style="flex:1" onclick="goToCheckoutStep(3)">← Back</button>
+            <button class="btn-primary" id="place-order-btn" style="flex:2;font-size:1.1rem" onclick="placeOrder()">Place Order →</button>
+          </div>
         </div>
-        <button class="btn-primary" id="place-order-btn" style="width:100%;font-size:1.15rem;padding:1.1rem"
-          onclick="placeOrder()">
-          Place Order →
-        </button>
       </div>
       <div class="order-side">
         <div class="summary-title">Order Summary</div>

@@ -231,7 +231,9 @@
       text-transform: uppercase;
       color: var(--gray);
       border-bottom: 2px solid #2a2a2a;
-      text-align: center
+      text-align: center;
+      cursor: pointer;
+      transition: color .2s, border-color .2s
     }
 
     .step.active {

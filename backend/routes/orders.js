@@ -74,6 +74,7 @@ router.post("/", authMiddleware, async (req, res) => {
       city: sanitizeText(req.body.city),
       state: sanitizeText(req.body.state),
       pincode: String(req.body.pincode).trim(),
+      instructions: sanitizeText(String(req.body.instructions || "")).slice(0, 300),
       items: req.body.items,
       sub: req.body.sub,
       ship: req.body.ship,

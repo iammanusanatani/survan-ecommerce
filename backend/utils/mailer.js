@@ -64,6 +64,15 @@ function formatRs(n) {
   return 'Rs. ' + Number(n || 0).toLocaleString('en-IN');
 }
 
+// Combines the separate street/city/state/pincode fields into one
+// readable line — order.address only holds the street portion now that
+// city/state/pincode are stored separately (needed for Shiprocket).
+function fullAddress(order) {
+  return [order.address, order.city, order.state, order.pincode]
+    .filter(Boolean)
+    .join(', ');
+}
+
 function itemsRowsHtml(items) {
   return (items || []).map(function (it) {
     return '<tr>' +
@@ -108,13 +117,13 @@ function buildCustomerEmail(order) {
     (order.discount ? '<tr><td>Discount</td><td style="text-align:right">-' + formatRs(order.discount) + '</td></tr>' : ''),
     '<tr style="font-weight:bold;font-size:1.1em"><td style="padding-top:8px">Total</td><td style="text-align:right;padding-top:8px">' + formatRs(order.total) + '</td></tr>',
     '</table>',
-    '<p style="margin-top:20px"><strong>Delivery address:</strong><br>' + escapeHtml(order.address) + '</p>',
+    '<p style="margin-top:20px"><strong>Delivery address:</strong><br>' + escapeHtml(fullAddress(order)) + '</p>',
     '<p style="color:#777;font-size:.9em;margin-top:24px">We will notify you once your order ships. Thank you for shopping with SURVAN!</p>',
     '</div></div>'
   ].join('');
   const text = 'Thank you ' + order.name + '! Your order ' + order.orderId + ' is confirmed.\n\n' +
     'Items:\n' + itemsTextLines(order.items) + '\n\n' +
-    'Total: ' + formatRs(order.total) + '\nPayment: ' + order.payment + '\nAddress: ' + order.address;
+    'Total: ' + formatRs(order.total) + '\nPayment: ' + order.payment + '\nAddress: ' + fullAddress(order);
   return { subject, html, text };
 }
 
@@ -128,7 +137,8 @@ function buildAdminEmail(order) {
     '<strong>Customer:</strong> ' + escapeHtml(order.name) + '<br>',
     '<strong>Phone:</strong> ' + escapeHtml(order.phone) + '<br>',
     '<strong>Email:</strong> ' + escapeHtml(order.email) + '<br>',
-    '<strong>Address:</strong> ' + escapeHtml(order.address) + '<br>',
+    '<strong>Address:</strong> ' + escapeHtml(fullAddress(order)) + '<br>',
+    (order.instructions ? '<strong>Delivery Instructions:</strong> ' + escapeHtml(order.instructions) + '<br>' : ''),
     '<strong>Payment:</strong> ' + escapeHtml(order.payment) + ' (' + escapeHtml(order.paymentStatus || 'Pending') + ')</p>',
     '<table style="width:100%;border-collapse:collapse;margin:16px 0">',
     '<thead><tr style="background:#f7f7f7">',
@@ -141,7 +151,7 @@ function buildAdminEmail(order) {
     '<p style="font-weight:bold;font-size:1.1em">Total: ' + formatRs(order.total) + '</p>',
     '</div>'
   ].join('');
-  const text = 'New order ' + order.orderId + ' from ' + order.name + ' (' + order.phone + '). Total: ' + formatRs(order.total) + '. Address: ' + order.address;
+  const text = 'New order ' + order.orderId + ' from ' + order.name + ' (' + order.phone + '). Total: ' + formatRs(order.total) + '. Address: ' + fullAddress(order) + (order.instructions ? '. Instructions: ' + order.instructions : '');
   return { subject, html, text };
 }
 

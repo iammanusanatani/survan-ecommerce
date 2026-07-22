@@ -69,7 +69,7 @@
               awbCode: o.awbCode, courierName: o.courierName, shiprocketStatus: o.shiprocketStatus,
               items: o.items, sub: o.sub, ship: o.ship, discount: o.discount,
               total: o.total, payment: o.payment, status: o.status,
-              address: o.address, name: o.name, phone: o.phone, email: o.email,
+              address: o.address, instructions: o.instructions, name: o.name, phone: o.phone, email: o.email,
               userEmail: o.userEmail, _id: o._id, isNew: o.isNew || false
             }));
           }
@@ -111,7 +111,7 @@
       <td><span style="font-family:var(--fd);font-weight:900;color:var(--neon)">${o.id}</span>${o.isNew ? '<span class="notification-badge" style="margin-left:.4rem">New</span>' : ''}</td>
       <td style="color:var(--gray);white-space:nowrap">${o.date}<br><span style="font-size:.72rem">${o.time || ''}</span>${o.deliveredAt ? `<br><span style="font-size:.72rem;color:var(--neon)">Delivered: ${new Date(o.deliveredAt).toLocaleDateString('en-PK', { day: 'numeric', month: 'short' })}</span>` : ''}</td>
       <td><strong style="color:var(--white)">${o.name}</strong><br><span style="color:var(--gray);font-size:.75rem">${o.email || ''}</span></td>
-      <td style="color:var(--gray)">${o.phone || ''}<br><span style="font-size:.75rem">${o.address}</span></td>
+      <td style="color:var(--gray)">${o.phone || ''}<br><span style="font-size:.75rem">${o.address}</span>${o.instructions ? `<br><span style="font-size:.72rem;color:#f59e0b">📝 ${o.instructions}</span>` : ''}</td>
       <td style="font-size:.8rem">${o.items.map(x => `${x.emoji} ${x.name} ×${x.qty}`).join('<br>')}</td>
       <td><span style="font-family:var(--fd);font-size:1.1rem;font-weight:900">Rs.${o.total.toLocaleString()}</span></td>
       <td><span class="order-status ${scls[o.payment] || ''}" style="background:var(--dark3);color:var(--gray)">${o.payment}</span></td>

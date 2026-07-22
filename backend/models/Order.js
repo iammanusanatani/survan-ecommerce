@@ -10,6 +10,7 @@ const orderSchema = new mongoose.Schema({
   city: { type: String, default: '' },
   state: { type: String, default: '' },
   pincode: { type: String, default: '' },
+  instructions: { type: String, default: '' }, // optional, e.g. "Leave at doorstep"
   items: Array,
   sub: Number,
   ship: Number,

@@ -80,7 +80,7 @@
       if (bn) bn.classList.add('active');
       window.scrollTo(0, 0);
       if (name === 'cart') renderCart();
-      if (name === 'checkout') { renderCheckout(); autoFillCheckout(); }
+      if (name === 'checkout') { renderCheckout(); autoFillCheckout(); resetCheckoutWizard(); }
       if (name === 'orders') renderOrders();
       if (name === 'wishlist') renderWishlist();
       if (name === 'account') renderAccountPage();

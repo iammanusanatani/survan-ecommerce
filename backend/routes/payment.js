@@ -170,6 +170,7 @@ router.post('/verify', authMiddleware, async (req, res) => {
       city: sanitizeText(orderData.city),
       state: sanitizeText(orderData.state),
       pincode: String(orderData.pincode).trim(),
+      instructions: sanitizeText(String(orderData.instructions || '')).slice(0, 300),
       items: pricedItems,
       sub,
       ship,

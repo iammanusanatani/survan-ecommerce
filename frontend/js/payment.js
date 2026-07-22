@@ -1,6 +1,6 @@
 // ════ RAZORPAY (Online Card / UPI / NetBanking payment) ════
     async function payWithRazorpay(details) {
-      const { fname, email, phone, address, city, state, pincode } = details;
+      const { fname, email, phone, address, city, state, pincode, instructions } = details;
       const sub = cartTotal();
       const ship = 0; // Shipping is free for everyone right now.
       const total = sub + ship - promoDiscount;
@@ -45,7 +45,7 @@
             try {
               const orderData = {
                 orderId: oid, name: fname, phone, email,
-                address, city, state, pincode,
+                address, city, state, pincode, instructions,
                 items: [...cart], sub, ship,
                 discount: promoDiscount, total,
                 promoCode: appliedPromoCode || undefined
