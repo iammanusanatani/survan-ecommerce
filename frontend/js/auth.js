@@ -186,6 +186,8 @@
     })();
 
     function doLogout() {
+      if (!confirm('Are you sure you want to log out?')) return;
+
       currentUser = null;
       localStorage.removeItem('survan_user');
       localStorage.removeItem('survan_token');
