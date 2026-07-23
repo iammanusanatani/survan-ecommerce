@@ -34,10 +34,10 @@
 
     // ════ UTILS ════
     function updateBadges() {
-      // Cart is kept in memory only otherwise, so it'd empty out on every
-      // page refresh — this saves it wherever updateBadges() already runs
-      // (add/remove/qty-change/checkout), same as wishlist/orders do.
-      localStorage.setItem('survan_cart', JSON.stringify(cart));
+      // Cart only lives in memory + the database now — this pushes
+      // whatever changed to the backend (no-ops for guests, who simply
+      // don't have anywhere to persist a cart until they log in).
+      syncCartToBackend();
       const cartCount = cart.reduce((s, c) => s + c.qty, 0);
       document.getElementById('cart-count').textContent = cartCount;
       document.getElementById('wish-count').textContent = wishlist.length;

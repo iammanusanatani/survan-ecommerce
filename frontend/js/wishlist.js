@@ -1,4 +1,4 @@
-    // ════ WISHLIST ════
+// ════ WISHLIST ════
     // Pushes the current wishlist to the backend for the logged-in user, so
     // it stays consistent across devices instead of being stuck in this
     // browser's localStorage. Silently does nothing for guests.
@@ -23,7 +23,6 @@
         if (btn) { btn.innerHTML = '<i data-lucide="heart" style="width:16px;height:16px;fill:currentColor"></i>'; btn.classList.add('wishlisted'); }
         showToast('Added to wishlist!');
       }
-      localStorage.setItem('survan_wish', JSON.stringify(wishlist));
       syncWishlistToBackend();
       updateBadges();
     }
@@ -45,4 +44,3 @@
       }
       el.innerHTML = items.map(p => productCard(p, 'wishlist')).join('');
     }
-

@@ -63,7 +63,7 @@ router.post("/login", async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
-    res.json({ token, user: { fname: user.fname, lname: user.lname, email: user.email, phone: user.phone, dob: user.dob, gender: user.gender, addresses: user.addresses || [], isAdmin: user.isAdmin, wishlist: user.wishlist || [] } });
+    res.json({ token, user: { fname: user.fname, lname: user.lname, email: user.email, phone: user.phone, dob: user.dob, gender: user.gender, addresses: user.addresses || [], isAdmin: user.isAdmin, wishlist: user.wishlist || [], cart: user.cart || [] } });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

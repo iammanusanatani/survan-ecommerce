@@ -141,4 +141,44 @@ router.put("/wishlist", authMiddleware, async (req, res) => {
   }
 });
 
+// Get cart (the logged-in user's own — same idea as wishlist, consistent across devices/refreshes)
+router.get("/cart", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("cart");
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json({ cart: user.cart || [] });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Replace cart (called whenever the user adds/removes/changes qty, and on login to merge)
+router.put("/cart", authMiddleware, async (req, res) => {
+  try {
+    if (!Array.isArray(req.body.cart)) {
+      return res.status(400).json({ message: "cart must be an array" });
+    }
+    if (req.body.cart.length > 200) {
+      return res.status(400).json({ message: "Cart is too large (max 200 items)" });
+    }
+    for (const item of req.body.cart) {
+      if (!item || typeof item !== "object" || !item.id) {
+        return res.status(400).json({ message: "Each cart item needs a product id" });
+      }
+      const qty = Number(item.qty);
+      if (!Number.isFinite(qty) || qty < 1 || qty > 99) {
+        return res.status(400).json({ message: "Each cart item needs a valid quantity (1-99)" });
+      }
+    }
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { cart: req.body.cart },
+      { new: true }
+    ).select("cart");
+    res.json({ cart: user.cart });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;

@@ -24,9 +24,9 @@
     ];
 
     // ════ STATE ════
-    let cart = JSON.parse(localStorage.getItem('survan_cart') || '[]');
+    let cart = [];
     let productsLoaded = false;
-    let wishlist = JSON.parse(localStorage.getItem('survan_wish') || '[]');
+    let wishlist = [];
     let orders = JSON.parse(localStorage.getItem('survan_orders') || '[]');
     let selectedPM = 'cod';
     let currentFilter = 'All';
@@ -303,9 +303,10 @@
       } catch (e) { console.log('Site config fetch error:', e); }
     }
 
-    // If already logged in (returning session), refresh the wishlist from
-    // the backend so a page reload/reopen always reflects the account's
-    // real cross-device state, not just whatever was last saved locally.
+    // If already logged in (returning session), refresh the wishlist/cart
+    // from the backend so a page reload/reopen always reflects the
+    // account's real cross-device state — nothing is cached in
+    // localStorage anymore, the database is the only source of truth.
     async function syncWishlistFromBackend() {
       const token = localStorage.getItem('survan_token');
       if (!token || !currentUser) return;
@@ -316,10 +317,24 @@
         if (res.ok) {
           const data = await res.json();
           wishlist = (data.wishlist || []).map(String);
-          localStorage.setItem('survan_wish', JSON.stringify(wishlist));
           updateBadges();
         }
       } catch (e) { console.log('Wishlist fetch error:', e); }
+    }
+
+    async function syncCartFromBackend() {
+      const token = localStorage.getItem('survan_token');
+      if (!token || !currentUser) return;
+      try {
+        const res = await fetch(`${API}/users/cart`, {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          cart = data.cart || [];
+          updateBadges();
+        }
+      } catch (e) { console.log('Cart fetch error:', e); }
     }
 
     // Skeletons appear instantly (no network wait) — loadProductsFromBackend()
@@ -328,6 +343,7 @@
     loadProductsFromBackend();
     loadSiteConfig();
     syncWishlistFromBackend();
+    syncCartFromBackend();
     updateBadges();
     updateNavUser();
 

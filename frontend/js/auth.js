@@ -58,12 +58,24 @@
         if (!currentUser.addresses) currentUser.addresses = [];
         localStorage.setItem('survan_user', JSON.stringify(currentUser));
 
-        // Merge whatever was wishlisted as a guest (this browser) with the
-        // account's saved wishlist, so nothing gets silently lost either way.
+        // Merge whatever was wishlisted/added-to-cart as a guest (this
+        // page session) with the account's saved data, so nothing gets
+        // silently lost either way. Same-item cart entries (matched by
+        // _key: product+size) have their quantities added together.
         const accountWishlist = (data.user.wishlist || []).map(String);
         wishlist = [...new Set([...wishlist.map(String), ...accountWishlist])];
-        localStorage.setItem('survan_wish', JSON.stringify(wishlist));
         syncWishlistToBackend();
+
+        const accountCart = data.user.cart || [];
+        const merged = [...accountCart];
+        cart.forEach(guestItem => {
+          const existing = merged.find(c => c._key === guestItem._key);
+          if (existing) existing.qty += guestItem.qty;
+          else merged.push(guestItem);
+        });
+        cart = merged;
+        syncCartToBackend();
+        updateBadges();
 
         closeAuth();
         updateNavUser();
@@ -178,6 +190,18 @@
       localStorage.removeItem('survan_user');
       localStorage.removeItem('survan_token');
       sessionStorage.removeItem('survan_admin_auth');
+
+      // Cart/wishlist are otherwise just plain localStorage, with no
+      // per-account scoping — without clearing them here, the next guest
+      // (or a different user logging in on this same browser) would see
+      // this account's leftover items, and login's "merge guest wishlist"
+      // step could even fold them into a different account by mistake.
+      cart = [];
+      wishlist = [];
+      localStorage.removeItem('survan_cart');
+      localStorage.removeItem('survan_wish');
+      updateBadges();
+
       updateNavUser();
       showToast('👋 Logged out successfully');
       showPage('home');

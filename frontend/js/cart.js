@@ -85,6 +85,22 @@
     }
 
     // ════ CART ════
+    // Pushes the current cart to the backend for the logged-in user, so it
+    // stays consistent across devices/refreshes instead of living only in
+    // this browser. Silently does nothing for guests — there's no account
+    // to save it against, so a guest's cart only lives for the current
+    // page session (this is intentional now that nothing is cached in
+    // localStorage; checkout already requires login anyway).
+    function syncCartToBackend() {
+      const token = localStorage.getItem('survan_token');
+      if (!token) return;
+      fetch(`${API}/users/cart`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ cart })
+      }).catch(() => { });
+    }
+
     // Returns true if the item was actually added, false if it was blocked
     // (e.g. no size chosen) — callers that need to know before moving on,
     // like a "Buy Now" button, check this instead of assuming success.
