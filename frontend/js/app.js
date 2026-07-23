@@ -152,7 +152,10 @@
       document.getElementById('acc-avatar').textContent = initials;
       document.getElementById('acc-name').textContent = currentUser.fname + ' ' + (currentUser.lname || '');
       document.getElementById('acc-email').textContent = currentUser.email;
-      document.getElementById('acc-member-since').textContent = 'Member since ' + currentUser.joinDate;
+      const memberSince = currentUser.createdAt
+        ? new Date(currentUser.createdAt).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })
+        : '—';
+      document.getElementById('acc-member-since').textContent = 'Member since ' + memberSince;
 
       // Fill profile form
       // Fill VIEW mode

@@ -40,7 +40,7 @@ router.post("/signup", async (req, res) => {
     // an existing admin promoting a user directly in the database.
     const user = await User.create({ fname, lname, email, password: hashed, phone, isAdmin: false });
     const token = jwt.sign({ id: user._id, email, isAdmin: false }, process.env.JWT_SECRET, { expiresIn: "7d" });
-    res.json({ token, user: { fname, lname, email, phone, dob: '', gender: '', addresses: [], isAdmin: false } });
+    res.json({ token, user: { fname, lname, email, phone, dob: '', gender: '', addresses: [], isAdmin: false, createdAt: user.createdAt } });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -63,7 +63,7 @@ router.post("/login", async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
-    res.json({ token, user: { fname: user.fname, lname: user.lname, email: user.email, phone: user.phone, dob: user.dob, gender: user.gender, addresses: user.addresses || [], isAdmin: user.isAdmin, wishlist: user.wishlist || [], cart: user.cart || [] } });
+    res.json({ token, user: { fname: user.fname, lname: user.lname, email: user.email, phone: user.phone, dob: user.dob, gender: user.gender, addresses: user.addresses || [], isAdmin: user.isAdmin, wishlist: user.wishlist || [], cart: user.cart || [], createdAt: user.createdAt } });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
