@@ -27,6 +27,7 @@
   <link rel="stylesheet" href="styles/responsive.css">
   <link rel="stylesheet" href="styles/menu.css">
   <link rel="stylesheet" href="styles/account.css">
+  <link rel="stylesheet" href="styles/about.css">
 </head>
 
 <body>
@@ -103,6 +104,7 @@
     <ul class="nav-links" id="nav-links">
       <li><a id="nav-home" class="active" onclick="showPage('home')">Home</a></li>
       <li><a id="nav-shop" onclick="showPage('shop')">Shop</a></li>
+      <li><a id="nav-about" onclick="showPage('about')">About</a></li>
       <li><a id="nav-wishlist" onclick="showPage('wishlist')">Wishlist</a></li>
 
       <li id="nav-admin-li" style="display:none"><a id="nav-admin" onclick="showAdmin()">⚙️ Admin</a></li>
@@ -189,8 +191,7 @@
         <span class="mdi-icon" id="menu-theme-icon"><i data-lucide="moon" style="width:18px;height:18px"></i></span>
         <span id="menu-theme-label">Dark Mode</span>
       </button>
-      <button class="menu-drawer-item"
-        onclick="showToast('SURVAN — Premium Streetwear. Built for those who move different.');closeMenuDrawer()">
+      <button class="menu-drawer-item" onclick="showPage('about');closeMenuDrawer()">
         <span class="mdi-icon"><i data-lucide="info" style="width:18px;height:18px"></i></span> About SURVAN
       </button>
       <button class="menu-drawer-item menu-logout-btn" id="menu-logout-btn" style="display:none"
@@ -801,6 +802,389 @@
     </div>
   </div>
 
+  <!-- ═══ ABOUT ═══ -->
+  <div id="page-about" class="page">
+
+    <!-- 1. HERO -->
+    <section class="ab-hero" aria-label="About SURVAN introduction">
+      <p class="ab-hero-eyebrow">The SURVAN Story</p>
+      <h1>About <span>SURVAN</span></h1>
+      <p>More than clothing. We create confidence, comfort, and timeless style.</p>
+      <button class="btn-primary ab-hero-cta" onclick="showPage('shop')">Explore Collection →</button>
+      <div class="ab-hero-scroll"><i data-lucide="chevron-down" style="width:18px;height:18px"></i>Scroll</div>
+    </section>
+
+    <!-- 2. OUR STORY -->
+    <section aria-labelledby="ab-story-title">
+      <div class="ab-story">
+        <div class="ab-story-img ab-reveal">
+          <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=900&q=80" alt="SURVAN premium fashion collection" loading="lazy">
+        </div>
+        <div class="ab-story-text ab-reveal d2">
+          <p class="ab-eyebrow">Who We Are</p>
+          <h2 class="ab-title" id="ab-story-title">Our Story</h2>
+          <p>SURVAN was created with one mission — to provide premium quality fashion at affordable prices. Every collection is designed with comfort, elegance, and confidence in mind. We believe fashion is not only about what you wear but also about how you feel.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. MISSION & VISION -->
+    <section aria-label="Mission and vision">
+      <div class="ab-mv-grid">
+        <div class="ab-glass-card ab-reveal">
+          <div class="ab-glass-icon"><i data-lucide="target" style="width:24px;height:24px"></i></div>
+          <h3>Our Mission</h3>
+          <p>Deliver premium fashion with exceptional quality, affordability, and customer satisfaction.</p>
+        </div>
+        <div class="ab-glass-card ab-reveal d2">
+          <div class="ab-glass-icon"><i data-lucide="telescope" style="width:24px;height:24px"></i></div>
+          <h3>Our Vision</h3>
+          <p>Become one of India's most trusted online fashion brands.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. WHY CHOOSE SURVAN -->
+    <section aria-labelledby="ab-why-title">
+      <div class="ab-center ab-reveal">
+        <p class="ab-eyebrow">The SURVAN Difference</p>
+        <h2 class="ab-title" id="ab-why-title">Why Choose SURVAN</h2>
+        <p class="ab-sub" style="margin:0 auto">Six reasons our customers keep coming back.</p>
+      </div>
+      <div class="ab-feature-grid">
+        <div class="ab-feature-card ab-reveal">
+          <div class="ab-feature-icon"><i data-lucide="gem" style="width:20px;height:20px"></i></div>
+          <h4>Premium Quality</h4>
+          <p>Every piece is crafted from carefully sourced, long-lasting fabrics.</p>
+        </div>
+        <div class="ab-feature-card ab-reveal d1">
+          <div class="ab-feature-icon"><i data-lucide="indian-rupee" style="width:20px;height:20px"></i></div>
+          <h4>Affordable Prices</h4>
+          <p>Luxury look and feel, priced for everyday wardrobes.</p>
+        </div>
+        <div class="ab-feature-card ab-reveal d2">
+          <div class="ab-feature-icon"><i data-lucide="truck" style="width:20px;height:20px"></i></div>
+          <h4>Fast Delivery</h4>
+          <p>Quick, reliable shipping straight to your doorstep.</p>
+        </div>
+        <div class="ab-feature-card ab-reveal d3">
+          <div class="ab-feature-icon"><i data-lucide="shield-check" style="width:20px;height:20px"></i></div>
+          <h4>Secure Payments</h4>
+          <p>100% encrypted checkout with trusted payment partners.</p>
+        </div>
+        <div class="ab-feature-card ab-reveal d4">
+          <div class="ab-feature-icon"><i data-lucide="rotate-ccw" style="width:20px;height:20px"></i></div>
+          <h4>Easy Returns</h4>
+          <p>Hassle-free 7-day returns, no awkward questions asked.</p>
+        </div>
+        <div class="ab-feature-card ab-reveal d5">
+          <div class="ab-feature-icon"><i data-lucide="headset" style="width:20px;height:20px"></i></div>
+          <h4>24/7 Support</h4>
+          <p>Our team is always on hand to help, day or night.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. OUR VALUES -->
+    <section aria-labelledby="ab-values-title">
+      <div class="ab-center ab-reveal">
+        <p class="ab-eyebrow">What Drives Us</p>
+        <h2 class="ab-title" id="ab-values-title">Our Values</h2>
+      </div>
+      <div class="ab-values-grid">
+        <div class="ab-value-card ab-reveal">
+          <div class="ab-value-icon"><i data-lucide="heart-handshake" style="width:22px;height:22px"></i></div>
+          <h4>Customer First</h4>
+          <p>Every decision starts with what's best for you.</p>
+        </div>
+        <div class="ab-value-card ab-reveal d1">
+          <div class="ab-value-icon"><i data-lucide="badge-check" style="width:22px;height:22px"></i></div>
+          <h4>Quality</h4>
+          <p>No shortcuts — only fabrics and finishes we're proud of.</p>
+        </div>
+        <div class="ab-value-card ab-reveal d2">
+          <div class="ab-value-icon"><i data-lucide="lightbulb" style="width:22px;height:22px"></i></div>
+          <h4>Innovation</h4>
+          <p>Constantly evolving our designs and experience.</p>
+        </div>
+        <div class="ab-value-card ab-reveal d3">
+          <div class="ab-value-icon"><i data-lucide="leaf" style="width:22px;height:22px"></i></div>
+          <h4>Sustainability</h4>
+          <p>Mindful sourcing for a lighter footprint, always improving.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. OUR JOURNEY TIMELINE -->
+    <section aria-labelledby="ab-journey-title">
+      <div class="ab-center ab-reveal">
+        <p class="ab-eyebrow">How Far We've Come</p>
+        <h2 class="ab-title" id="ab-journey-title">Our Journey</h2>
+      </div>
+      <div class="ab-timeline">
+        <div class="ab-tl-item ab-reveal">
+          <span class="ab-tl-dot"></span>
+          <div class="ab-tl-year">2026</div>
+          <h4>Brand Idea</h4>
+          <p>SURVAN was born from a simple idea — premium fashion shouldn't cost a fortune.</p>
+        </div>
+        <div class="ab-tl-item ab-reveal d1">
+          <span class="ab-tl-dot"></span>
+          <div class="ab-tl-year">Step 02</div>
+          <h4>Website Development</h4>
+          <p>Months of design and development to build a smooth, premium shopping experience.</p>
+        </div>
+        <div class="ab-tl-item ab-reveal d2">
+          <span class="ab-tl-dot"></span>
+          <div class="ab-tl-year">Step 03</div>
+          <h4>First Collection Launch</h4>
+          <p>Our debut drop hit the shelves — and the response blew us away.</p>
+        </div>
+        <div class="ab-tl-item ab-reveal d3">
+          <span class="ab-tl-dot"></span>
+          <div class="ab-tl-year">Step 04</div>
+          <h4>Growing Customer Community</h4>
+          <p>A fast-growing community of customers who trust SURVAN for everyday style.</p>
+        </div>
+        <div class="ab-tl-item ab-reveal d4">
+          <span class="ab-tl-dot"></span>
+          <div class="ab-tl-year">What's Next</div>
+          <h4>Future Expansion</h4>
+          <p>New categories, new collections, and new markets are on the way.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. STATISTICS -->
+    <section aria-label="SURVAN statistics">
+      <div class="ab-stats ab-reveal">
+        <div>
+          <div class="ab-stat-num"><span class="ab-counter" data-target="500" data-suffix="+">0</span></div>
+          <div class="ab-stat-label">Products</div>
+        </div>
+        <div>
+          <div class="ab-stat-num"><span class="ab-counter" data-target="100" data-suffix="+">0</span></div>
+          <div class="ab-stat-label">Happy Customers</div>
+        </div>
+        <div>
+          <div class="ab-stat-num"><span class="ab-counter" data-target="20" data-suffix="+">0</span></div>
+          <div class="ab-stat-label">Categories</div>
+        </div>
+        <div>
+          <div class="ab-stat-num"><span class="ab-counter" data-target="99" data-suffix="%">0</span></div>
+          <div class="ab-stat-label">Satisfaction</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. MEET THE FOUNDER -->
+    <section aria-labelledby="ab-founder-title">
+      <div class="ab-center ab-reveal">
+        <p class="ab-eyebrow">Behind The Brand</p>
+        <h2 class="ab-title" id="ab-founder-title">Meet the Founder</h2>
+      </div>
+      <div class="ab-founder-card ab-reveal">
+        <div class="ab-founder-avatar">
+          <img src="https://ui-avatars.com/api/?name=Manu+Suryavanshi&background=C49A4A&color=fff&size=200&bold=true" alt="Manu Suryavanshi, Founder of SURVAN" loading="lazy">
+        </div>
+        <h3>Manu Suryavanshi</h3>
+        <div class="ab-founder-role">Founder &amp; Developer</div>
+        <p class="ab-founder-desc">Passionate Full Stack Developer building SURVAN with the vision of creating a trusted premium fashion brand.</p>
+        <div class="ab-social-row">
+          <a href="#" aria-label="LinkedIn" onclick="return false"><i data-lucide="linkedin" style="width:17px;height:17px"></i></a>
+          <a href="#" aria-label="Instagram" onclick="return false"><i data-lucide="instagram" style="width:17px;height:17px"></i></a>
+          <a href="#" aria-label="GitHub" onclick="return false"><i data-lucide="github" style="width:17px;height:17px"></i></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. OUR PROCESS -->
+    <section aria-labelledby="ab-process-title">
+      <div class="ab-center ab-reveal">
+        <p class="ab-eyebrow">From Us To You</p>
+        <h2 class="ab-title" id="ab-process-title">Our Process</h2>
+      </div>
+      <div class="ab-process">
+        <div class="ab-process-card ab-reveal">
+          <div class="ab-process-num"><i data-lucide="pencil-ruler" style="width:18px;height:18px"></i></div>
+          <h4>Design</h4>
+        </div>
+        <div class="ab-process-card ab-reveal d1">
+          <div class="ab-process-num"><i data-lucide="search-check" style="width:18px;height:18px"></i></div>
+          <h4>Quality Check</h4>
+        </div>
+        <div class="ab-process-card ab-reveal d2">
+          <div class="ab-process-num"><i data-lucide="package" style="width:18px;height:18px"></i></div>
+          <h4>Packaging</h4>
+        </div>
+        <div class="ab-process-card ab-reveal d3">
+          <div class="ab-process-num"><i data-lucide="truck" style="width:18px;height:18px"></i></div>
+          <h4>Shipping</h4>
+        </div>
+        <div class="ab-process-card ab-reveal d4">
+          <div class="ab-process-num"><i data-lucide="smile" style="width:18px;height:18px"></i></div>
+          <h4>Happy Customer</h4>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. CUSTOMER PROMISE -->
+    <section aria-labelledby="ab-promise-title">
+      <div class="ab-promise ab-reveal">
+        <h2 id="ab-promise-title">Our Promise</h2>
+        <p>Every product is carefully selected, quality-checked, securely packed, and delivered with care. Customer satisfaction is always our highest priority.</p>
+      </div>
+    </section>
+
+    <!-- 11. TESTIMONIALS -->
+    <section aria-labelledby="ab-testi-title">
+      <div class="ab-center ab-reveal">
+        <p class="ab-eyebrow">Kind Words</p>
+        <h2 class="ab-title" id="ab-testi-title">Testimonials</h2>
+      </div>
+      <div class="ab-testi-grid">
+        <div class="ab-testi-card ab-reveal">
+          <div class="ab-testi-stars">★★★★★</div>
+          <p class="ab-testi-text">"Amazing quality. The fabric and finishing feel way above the price point."</p>
+          <div class="ab-testi-person">
+            <div class="ab-testi-avatar"><img src="https://ui-avatars.com/api/?name=Aditi+R&background=random" alt="" loading="lazy"></div>
+            <div>
+              <div class="ab-testi-name">Aditi R.</div>
+              <div class="ab-testi-loc">Verified Buyer</div>
+            </div>
+          </div>
+        </div>
+        <div class="ab-testi-card ab-reveal d1">
+          <div class="ab-testi-stars">★★★★★</div>
+          <p class="ab-testi-text">"Fast delivery, every single time. Ordered thrice and never disappointed."</p>
+          <div class="ab-testi-person">
+            <div class="ab-testi-avatar"><img src="https://ui-avatars.com/api/?name=Rohan+K&background=random" alt="" loading="lazy"></div>
+            <div>
+              <div class="ab-testi-name">Rohan K.</div>
+              <div class="ab-testi-loc">Verified Buyer</div>
+            </div>
+          </div>
+        </div>
+        <div class="ab-testi-card ab-reveal d2">
+          <div class="ab-testi-stars">★★★★★</div>
+          <p class="ab-testi-text">"Excellent customer support — they sorted a sizing issue within minutes."</p>
+          <div class="ab-testi-person">
+            <div class="ab-testi-avatar"><img src="https://ui-avatars.com/api/?name=Sneha+P&background=random" alt="" loading="lazy"></div>
+            <div>
+              <div class="ab-testi-name">Sneha P.</div>
+              <div class="ab-testi-loc">Verified Buyer</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12. FAQ -->
+    <section aria-labelledby="ab-faq-title">
+      <div class="ab-center ab-reveal">
+        <p class="ab-eyebrow">Got Questions?</p>
+        <h2 class="ab-title" id="ab-faq-title">Frequently Asked Questions</h2>
+      </div>
+      <div class="ab-faq ab-reveal">
+        <div class="ab-faq-item">
+          <button class="ab-faq-q" onclick="toggleAboutFaq(this)" aria-expanded="false">
+            How long does shipping take?
+            <span class="ab-faq-icon"><i data-lucide="plus" style="width:18px;height:18px"></i></span>
+          </button>
+          <div class="ab-faq-a"><p>Most orders are delivered within 3–7 business days, depending on your location.</p></div>
+        </div>
+        <div class="ab-faq-item">
+          <button class="ab-faq-q" onclick="toggleAboutFaq(this)" aria-expanded="false">
+            Can I return products?
+            <span class="ab-faq-icon"><i data-lucide="plus" style="width:18px;height:18px"></i></span>
+          </button>
+          <div class="ab-faq-a"><p>Yes — we offer easy 7-day returns on unused items in original packaging.</p></div>
+        </div>
+        <div class="ab-faq-item">
+          <button class="ab-faq-q" onclick="toggleAboutFaq(this)" aria-expanded="false">
+            Do you offer Cash on Delivery?
+            <span class="ab-faq-icon"><i data-lucide="plus" style="width:18px;height:18px"></i></span>
+          </button>
+          <div class="ab-faq-a"><p>Yes, Cash on Delivery is available across most serviceable pin codes.</p></div>
+        </div>
+        <div class="ab-faq-item">
+          <button class="ab-faq-q" onclick="toggleAboutFaq(this)" aria-expanded="false">
+            How can I contact support?
+            <span class="ab-faq-icon"><i data-lucide="plus" style="width:18px;height:18px"></i></span>
+          </button>
+          <div class="ab-faq-a"><p>Reach us anytime via email, phone, or WhatsApp — details are in the Contact section below.</p></div>
+        </div>
+        <div class="ab-faq-item">
+          <button class="ab-faq-q" onclick="toggleAboutFaq(this)" aria-expanded="false">
+            Are online payments secure?
+            <span class="ab-faq-icon"><i data-lucide="plus" style="width:18px;height:18px"></i></span>
+          </button>
+          <div class="ab-faq-a"><p>Absolutely — all payments are processed through encrypted, PCI-compliant gateways.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 13. CONTACT -->
+    <section aria-labelledby="ab-contact-title">
+      <div class="ab-center ab-reveal">
+        <p class="ab-eyebrow">Reach Out</p>
+        <h2 class="ab-title" id="ab-contact-title">Contact Us</h2>
+      </div>
+      <div class="ab-contact-grid">
+        <div class="ab-contact-card ab-reveal">
+          <div class="ab-contact-icon"><i data-lucide="mail" style="width:20px;height:20px"></i></div>
+          <h4>Email</h4>
+          <p>support@survan.com</p>
+        </div>
+        <div class="ab-contact-card ab-reveal d1">
+          <div class="ab-contact-icon"><i data-lucide="phone" style="width:20px;height:20px"></i></div>
+          <h4>Phone</h4>
+          <p>+91 98765 43210</p>
+        </div>
+        <div class="ab-contact-card ab-reveal d2">
+          <div class="ab-contact-icon"><i data-lucide="message-circle" style="width:20px;height:20px"></i></div>
+          <h4>WhatsApp</h4>
+          <p>+91 98765 43210</p>
+        </div>
+        <div class="ab-contact-card ab-reveal d3">
+          <div class="ab-contact-icon"><i data-lucide="map-pin" style="width:20px;height:20px"></i></div>
+          <h4>Address</h4>
+          <p>SURVAN HQ, India</p>
+        </div>
+      </div>
+      <div class="ab-social-icons ab-reveal">
+        <a href="#" aria-label="Instagram" onclick="return false"><i data-lucide="instagram" style="width:18px;height:18px"></i></a>
+        <a href="#" aria-label="Facebook" onclick="return false"><i data-lucide="facebook" style="width:18px;height:18px"></i></a>
+        <a href="#" aria-label="LinkedIn" onclick="return false"><i data-lucide="linkedin" style="width:18px;height:18px"></i></a>
+        <a href="#" aria-label="YouTube" onclick="return false"><i data-lucide="youtube" style="width:18px;height:18px"></i></a>
+      </div>
+    </section>
+
+    <!-- 14. NEWSLETTER -->
+    <section aria-labelledby="ab-nl-title">
+      <div class="ab-newsletter ab-reveal">
+        <p class="ab-eyebrow">Stay In The Loop</p>
+        <h2 class="ab-title" id="ab-nl-title">Stay Updated</h2>
+        <p class="ab-sub" style="margin:0 auto">Get exclusive offers and new arrivals.</p>
+        <div class="ab-nl-form">
+          <input type="email" id="about-nl-email" placeholder="your@email.com" aria-label="Email address">
+          <button class="btn-primary" onclick="subscribeAboutNewsletter()">Subscribe →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 15. CTA -->
+    <section>
+      <div class="ab-cta ab-reveal">
+        <h2>Ready to Upgrade Your Style?</h2>
+        <p>Discover the latest collections crafted for confidence and comfort.</p>
+        <button class="btn-primary" onclick="showPage('shop')">Shop Now →</button>
+      </div>
+    </section>
+
+  </div>
+
+
   <!-- ═══ ORDERS ═══ -->
   <div id="page-orders" class="page">
     <div class="section-header">
@@ -1130,7 +1514,7 @@
       </div>
       <div class="footer-col">
         <h4>Company</h4>
-        <a>About SURVAN</a>
+        <a onclick="showPage('about')" style="cursor:pointer">About SURVAN</a>
         <a>Careers</a>
         <a>Press</a>
         <a>Terms & Conditions</a>
@@ -1433,6 +1817,7 @@
   <script src="js/orders.js"></script>
   <script src="js/payment.js"></script>
   <script src="js/admin.js"></script>
+  <script src="js/about.js"></script>
   <script src="js/app.js"></script>
 
 </body>
