@@ -127,7 +127,10 @@
           </div>` :
           o.status === 'Delivered' ? `<span style="font-size:.75rem;color:var(--gray);font-family:var(--fd)">Return window expired (5 days)</span>` :
           `<span></span>`}
-        <button onclick="toggleExpand(${i})" style="background:none;border:none;color:var(--gray);cursor:pointer;font-family:var(--fd);font-size:.85rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;transition:color .2s" onmouseover="this.style.color='var(--neon)'" onmouseout="this.style.color='var(--gray)'" id="exp-btn-${i}">View Details ↓</button>
+        <div style="display:flex;align-items:center;gap:1rem">
+          ${['Delivered', 'Cancelled', 'Returned'].includes(o.status) ? `<button onclick="deleteOrderFromHistory('${o.id}')" style="background:none;border:none;color:var(--gray);cursor:pointer;font-family:var(--fd);font-size:.78rem;transition:color .2s" onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='var(--gray)'" title="Remove from order history">🗑️ Delete</button>` : ''}
+          <button onclick="toggleExpand(${i})" style="background:none;border:none;color:var(--gray);cursor:pointer;font-family:var(--fd);font-size:.85rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;transition:color .2s" onmouseover="this.style.color='var(--neon)'" onmouseout="this.style.color='var(--gray)'" id="exp-btn-${i}">View Details ↓</button>
+        </div>
       </div>
     </div>`;
       }).join('');
@@ -198,6 +201,23 @@ Customer ne apna order cancel kar diya hai.`;
           window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
+        renderOrders();
+      } catch {
+        showToast('Server se connect nahi ho saka');
+      }
+    }
+
+    async function deleteOrderFromHistory(orderId) {
+      if (!confirm('Delete this order from your history?\n\nYeh order permanently DELETE nahi hoga — bas tumhari order list se hat jayega. Agar isko refund/return chahiye tha wo pehle kar lo, delete karne ke baad wapas nahi milega.')) return;
+      try {
+        const token = localStorage.getItem('survan_token');
+        const res = await fetch(`${API}/orders/${orderId}/hide`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }
+        });
+        const data = await res.json();
+        if (!res.ok) { showToast('' + data.message); return; }
+        showToast('Order removed from your history');
         renderOrders();
       } catch {
         showToast('Server se connect nahi ho saka');

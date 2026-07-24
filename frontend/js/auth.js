@@ -489,7 +489,10 @@
             <span style="font-size:.78rem;color:var(--gray);font-family:var(--fd)">Order shipped — cancel nahi ho sakta</span>` :
                 `<button onclick="cancelOrder('${o.id}','${o._id}')" style="background:none;border:1px solid #ef444466;color:#ef4444;cursor:pointer;font-family:var(--fd);font-size:.78rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:.35rem .8rem;border-radius:4px;transition:all .2s" onmouseover="this.style.background='#ef444422'" onmouseout="this.style.background='none'">✕ Cancel</button>`
           }
-        <button onclick="toggleAccOrder(${i})" style="background:none;border:none;color:var(--gray);cursor:pointer;font-family:var(--fd);font-size:.82rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;transition:color .2s" onmouseover="this.style.color='var(--neon)'" onmouseout="this.style.color='var(--gray)'" id="acc-exp-btn-${i}">View Details ↓</button>
+        <div style="display:flex;align-items:center;gap:1rem">
+          ${['Delivered', 'Cancelled', 'Returned'].includes(o.status) ? `<button onclick="deleteOrderFromHistory('${o.id}')" style="background:none;border:none;color:var(--gray);cursor:pointer;font-family:var(--fd);font-size:.75rem;transition:color .2s" onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='var(--gray)'" title="Remove from order history">🗑️ Delete</button>` : ''}
+          <button onclick="toggleAccOrder(${i})" style="background:none;border:none;color:var(--gray);cursor:pointer;font-family:var(--fd);font-size:.82rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;transition:color .2s" onmouseover="this.style.color='var(--neon)'" onmouseout="this.style.color='var(--gray)'" id="acc-exp-btn-${i}">View Details ↓</button>
+        </div>
       </div>
     </div>`;
       }).join('');

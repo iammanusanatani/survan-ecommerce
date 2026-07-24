@@ -673,11 +673,6 @@ html {
 }
 
 
-/* ── HIDE OLD BACK BAR ON MOBILE (use bnav instead) ── */
-#back-btn-bar {
-  display: none !important;
-}
-
 /* ── MENU DRAWER RESPONSIVE ── */
 #menu-drawer {
   width: min(290px, 85vw);

@@ -31,6 +31,10 @@ const orderSchema = new mongoose.Schema({
     enum: ['Processing', 'Packed', 'Shipped', 'Delivered', 'Cancelled', 'Returned']
   },
   stockRestored: { type: Boolean, default: false },
+  // Soft-delete for the customer's own view only — order stays intact in
+  // the database (admin still needs it for accounting/records), it just
+  // stops showing up in this user's "My Orders" list.
+  hiddenByUser: { type: Boolean, default: false },
   // Set automatically the moment admin changes status to 'Delivered' —
   // this is the actual delivery date shown to customers, separate from
   // createdAt (order placement date, which is what the 5-day return

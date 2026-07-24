@@ -97,7 +97,7 @@ router.post("/", authMiddleware, async (req, res) => {
 // My orders (customer)
 router.get("/my", authMiddleware, async (req, res) => {
   try {
-    const orders = await Order.find({ userEmail: req.user.email }).sort({ createdAt: -1 });
+    const orders = await Order.find({ userEmail: req.user.email, hiddenByUser: { $ne: true } }).sort({ createdAt: -1 });
     res.json(orders);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -222,6 +222,29 @@ router.patch("/:orderId/cancel", authMiddleware, async (req, res) => {
     }
     await order.save();
     res.json({ message: "Order cancel ho gaya", order });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Remove an order from the customer's own "My Orders" list. This is a
+// soft delete — the record stays in the database (admin still needs it),
+// it just stops showing up for this user. Only allowed once the order is
+// in a final state, so an order still being processed/shipped can't
+// accidentally vanish from someone's tracking view.
+router.patch("/:orderId/hide", authMiddleware, async (req, res) => {
+  try {
+    if (!ORDER_ID_RE.test(req.params.orderId)) {
+      return res.status(400).json({ message: "Invalid order id format" });
+    }
+    const order = await Order.findOne({ orderId: req.params.orderId, userEmail: req.user.email });
+    if (!order) return res.status(404).json({ message: "Order nahi mila" });
+    if (!["Delivered", "Cancelled", "Returned"].includes(order.status)) {
+      return res.status(400).json({ message: "Sirf completed (Delivered/Cancelled/Returned) orders hi delete ho sakte hain" });
+    }
+    order.hiddenByUser = true;
+    await order.save();
+    res.json({ message: "Order removed from your history" });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
