@@ -32,6 +32,20 @@
       showToast('👋 Admin logout ho gaye');
     }
 
+    // Switches which admin section panel is visible — data for every
+    // section is already loaded by showAdminDashboard()/refreshAdminDashboard(),
+    // this just toggles which one is on screen.
+    function showAdminSection(name) {
+      const sections = ['orders', 'products', 'returns', 'reviews', 'coupons', 'settings'];
+      sections.forEach(s => {
+        const panel = document.getElementById('admin-section-' + s);
+        const tab = document.getElementById('admin-nav-' + s);
+        if (panel) panel.style.display = (s === name) ? '' : 'none';
+        if (tab) tab.classList.toggle('active', s === name);
+      });
+      document.querySelector('.admin-nav')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
     async function refreshAdminDashboard() {
       const btn = document.getElementById('admin-refresh-btn');
       const icon = btn ? btn.querySelector('svg, i') : null;

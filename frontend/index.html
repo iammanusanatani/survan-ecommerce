@@ -887,8 +887,25 @@
         </div>
       </div>
 
+      <!-- STATS (always visible, regardless of which section is active) -->
+      <div class="admin-wrap" style="padding-top:0">
+        <div class="admin-grid" id="admin-stats"></div>
+      </div>
+
+      <!-- SECTION NAV -->
+      <div class="admin-wrap" style="padding-top:0">
+        <div class="admin-nav">
+          <div class="admin-nav-item active" id="admin-nav-orders" onclick="showAdminSection('orders')">📦 Orders</div>
+          <div class="admin-nav-item" id="admin-nav-products" onclick="showAdminSection('products')">🛍️ Products</div>
+          <div class="admin-nav-item" id="admin-nav-returns" onclick="showAdminSection('returns')">🔄 Returns</div>
+          <div class="admin-nav-item" id="admin-nav-reviews" onclick="showAdminSection('reviews')">⭐ Reviews</div>
+          <div class="admin-nav-item" id="admin-nav-coupons" onclick="showAdminSection('coupons')">🎟️ Coupons</div>
+          <div class="admin-nav-item" id="admin-nav-settings" onclick="showAdminSection('settings')">⚙️ Settings</div>
+        </div>
+      </div>
+
       <!-- SETUP PANEL -->
-      <div class="admin-wrap" id="setup-panel">
+      <div class="admin-wrap admin-section" id="admin-section-settings" style="display:none">
         <div class="setup-box">
           <h4>Notification Setup (EmailJS — Free)</h4>
           <div class="setup-step"><span>1</span><span>Go to <strong style="color:var(--white)">emailjs.com</strong> →
@@ -950,11 +967,8 @@
         </div>
       </div>
 
-      <!-- STATS -->
-      <div class="admin-wrap" style="padding-top:0">
-        <div class="admin-grid" id="admin-stats"></div>
-
-        <!-- ORDERS TABLE -->
+      <!-- ORDERS TABLE -->
+      <div class="admin-wrap admin-section" id="admin-section-orders" style="padding-top:0">
         <div
           style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem">
           <div style="font-family:var(--fd);font-size:1.5rem;font-weight:900;text-transform:uppercase">All Orders</div>
@@ -997,7 +1011,7 @@
       </div>
 
       <!-- PRODUCTS SECTION -->
-      <div style="margin-top:3rem">
+      <div class="admin-wrap admin-section" id="admin-section-products" style="display:none">
         <div
           style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:.5rem">
           <div style="font-family:var(--fd);font-size:1.5rem;font-weight:900;text-transform:uppercase">🛍️ Products
@@ -1013,7 +1027,7 @@
       </div>
 
       <!-- RETURNS & EXCHANGES SECTION -->
-      <div style="margin-top:3rem">
+      <div class="admin-wrap admin-section" id="admin-section-returns" style="display:none">
         <div
           style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem">
           <div style="font-family:var(--fd);font-size:1.5rem;font-weight:900;text-transform:uppercase"><i
@@ -1030,7 +1044,7 @@
       </div>
 
       <!-- REVIEWS SECTION -->
-      <div style="margin-top:3rem">
+      <div class="admin-wrap admin-section" id="admin-section-reviews" style="display:none">
         <div
           style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem">
           <div style="font-family:var(--fd);font-size:1.5rem;font-weight:900;text-transform:uppercase"><i
@@ -1046,7 +1060,7 @@
       </div>
 
       <!-- COUPONS SECTION -->
-      <div style="margin-top:3rem">
+      <div class="admin-wrap admin-section" id="admin-section-coupons" style="display:none">
         <div
           style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:.5rem">
           <div style="font-family:var(--fd);font-size:1.5rem;font-weight:900;text-transform:uppercase"><i
